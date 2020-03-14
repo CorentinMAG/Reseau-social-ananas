@@ -1,8 +1,8 @@
-#Projet Ananas ! [Work in progress]
+# Projet Ananas ! [Work in progress]
 
 Ce guide récapitule nos principales étapes.
 
-##Se connecter depuis chez soi au gitlab de l'epf
+## Se connecter depuis chez soi au gitlab de l'epf
 
 Il faut tout d'abord installer git for windows (https://gitforwindows.org/). Une fois que c'est fait il faut lancer le git bash et taper ssh-keygen -t rsa -b 4096 -C "prenom.nom@epfedu.fr". Faire tout le temps entré quand on demande de remplir des champs.
 Une fois que les clés sont générés, elles devraient apparaitre dans le dossier C:\Users\votreutilisateur\.ssh
@@ -23,4 +23,4 @@ Pour récupérer les modifications qu'on n'a pas en local:
 - git fetch origin nom_de_la_branche
 - git pull origin nom_de_la_branche (merge avec le depot local)
 
-**A la place de faire le git init et tout ce qui suit on peut faire un git clone ssh://git@gitlab.min.epf.fr:2217/ananas/projet-ananas.git pour récupérer le projet distant**
+** A la place de faire le git init et tout ce qui suit on peut faire un git clone ssh://git@gitlab.min.epf.fr:2217/ananas/projet-ananas.git pour récupérer le projet distant **
