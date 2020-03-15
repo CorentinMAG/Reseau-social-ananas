@@ -24,3 +24,12 @@ Pour récupérer les modifications qu'on n'a pas en local:
 - git pull origin nom_de_la_branche (merge avec le depot local)
 
 **A la place de faire le git init et tout ce qui suit on peut faire un git clone ssh://git@gitlab.min.epf.fr:2217/ananas/projet-ananas.git pour récupérer le projet distant**
+
+## Intégration continue des fichiers sur le serveur
+
+A chaque fois qu'un commit est effectué, le serveur pull les changements. 
+Pour cela il faut créer des clés ssh sur le serveur et copier la clé public dans la section deploy key de gitlab. On fait un git clone puis on crée un fichier github-sync.py avec os.system('git pull') à l'intérieur (on peut également faire un bash).
+Dans gitlab, dans la partie intégration on copie l'url d'accès à ce fichier et on coche:
+- push event 
+- merge request events 
+- enable SSL verification.

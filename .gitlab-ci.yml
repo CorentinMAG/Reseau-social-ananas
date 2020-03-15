@@ -1,0 +1,26 @@
+
+before_script:
+  - python3 -V
+
+stages:
+  - test
+  - build
+  - deploy
+
+job_test:
+  stage: test
+  script:
+    - echo "Running tests..."
+
+job_run:
+  stage: build
+  script:
+    - echo "Building the app..."
+
+job_deployment_staging:
+  stage: deploy
+  script:
+    - echo "deploy the app"
+    environment:
+      name: staging
+      url: https://ananas.min.epf.fr
