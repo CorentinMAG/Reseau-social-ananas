@@ -1,0 +1,117 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&display=swap');
+
+*{
+	box-sizing: border-box;
+}
+
+body{
+	width: 100%;
+	height: 100%;
+	padding:0;
+	margin:0;
+	background: #DA0813;
+	display: flex;
+	font-size: 1.5rem !important;
+	justify-content: center;
+	align-items: center;
+	font-family: 'Roboto',sans-serif;
+}
+
+.container{
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.content{
+	margin-top:3rem;
+}
+.title{
+	text-align: center;
+	color: #DA0813;
+	font-size:2rem;
+	text-transform: uppercase;
+}
+
+legend{
+	color: #DA0813;
+	font-size: 1.2rem;
+}
+#informatif{
+	width: 90px;
+	padding:0 2px;
+}
+#promo{
+	width: 160px;
+	padding:0 2px;
+}
+
+#essentiels{
+	width: 90px;
+	padding:0 2px;
+}
+fieldset{
+	border-radius: 5px;
+	border:2px solid #C5C5C5;
+	padding:15px;
+}
+
+input:invalid{
+	box-shadow: none !important;
+}
+
+form p{
+	position: relative;
+}
+
+form p i{
+	position: absolute;
+	top:20%;
+	left: 5px;
+}
+form p input{
+	padding-left: 30px !important;
+}
+
+input{
+	border-radius: 0 !important;
+	border:none !important;
+	border-bottom:1px solid #C5C5C5 !important;
+}
+select{
+	box-shadow: none !important;
+}
+
+.error{
+	font-size: .9rem;
+	text-align: center;
+}
+
+select:focus{
+	border-color: #DA0813 !important;
+}
+
+input:focus{
+	border-bottom:1px solid #DA0813 !important;
+}
+
+input:focus{
+	box-shadow:none !important;
+}
+
+.zone_button{
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	align-items: center;
+	padding:15px;
+}
+
+button{
+	background-color: #DA0813 !important;
+}
+
+a,a:hover{
+	text-decoration: none;
+	color:#FFFFFF;
+}

@@ -33,3 +33,11 @@ Dans gitlab, dans la partie intégration on copie l'url d'accès à ce fichier e
 - push event 
 - merge request events 
 - enable SSL verification.
+
+## comment push sur le serveur de production
+
+Pour cela il faut définir une autre url dans notre dépot local:
+* git remote add production ssh://min@ananas.min.epf.fr:2248/home/min/ananas.min.epf.fr/projet-ananas.git
+
+Maintenant un git push production master enverra toutes les modifications directement sur le serveur
+Avant il faut bien sûr envoyer une clé public sur le server (la copier dans ~/.ssh/authorized_keys)
