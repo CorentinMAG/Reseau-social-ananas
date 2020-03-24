@@ -25,7 +25,7 @@ SECRET_KEY = 'xu!k68q$@_*82ja*jgqqv+3)5o(s+gsi()cf47e-^75)sr*dv_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ananas.min.epf.fr']
+ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost']
 
 
 # Application definition
@@ -122,12 +122,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL='/media/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
-
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "static"),
+]
+STATIC_ROOT="/var/www/ananas.min.epf.fr/production/static"
