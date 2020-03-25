@@ -41,3 +41,5 @@ Pour cela il faut définir une autre url dans notre dépot local:
 
 Maintenant un git push production master enverra toutes les modifications directement sur le serveur
 Avant il faut bien sûr envoyer une clé public sur le server (la copier dans ~/.ssh/authorized_keys)
+
+**Attention de ne pas push n'importe quoi sur le serveur de prod**
