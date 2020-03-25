@@ -97,6 +97,7 @@ input:invalid{
 
 .mdc-button{
 	background: #da0813 !important;
+	margin-bottom:0;
 }
 
 .mdc-button i{

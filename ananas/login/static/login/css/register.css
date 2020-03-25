@@ -107,11 +107,13 @@ input:focus{
 	padding:15px;
 }
 
-button{
-	background-color: #DA0813 !important;
-}
 
 a,a:hover{
 	text-decoration: none;
 	color:#FFFFFF;
+}
+
+.mdc-button{
+	background: #da0813 !important;
+	margin-bottom:0;
 }
