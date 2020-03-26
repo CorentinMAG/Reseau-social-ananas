@@ -8,6 +8,7 @@ class Campus(models.Model):
 
 	class Meta:
 		verbose_name='Campus'
+		verbose_name_plural="Campus"
 	def __str__(self):
 		return self.nom
 
@@ -16,6 +17,7 @@ class Majeures(models.Model):
 
 	class Meta:
 		verbose_name='Majeures'
+		verbose_name_plural="Majeures"
 
 	def __str__(self):
 		return self.nom
@@ -33,5 +35,5 @@ class UserProfile(models.Model):
 		verbose_name='User profile'
 
 	def __str__(self):
-		return self.user.nom
+		return self.user.first_name+" "+self.user.last_name
 
