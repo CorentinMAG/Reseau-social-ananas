@@ -1,8 +1,25 @@
-from django.contrib.auth.forms import AuthenticationForm,UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm,UserCreationForm,PasswordResetForm,SetPasswordForm
 from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
 from .models import UserProfile,Campus,Majeures
+import re
+
+class Custom_password_reset_form(PasswordResetForm):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control','autofocus': 'autofocus','placeholder':'Email'}))
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        regex=re.compile('^([a-zA-Z0-9_\-\.]+)@epfedu.fr$')
+        print(regex.match(email))
+        if not regex.match(email):
+            raise forms.ValidationError('Entrer votre mail epf')
+        return email
+
+class Custom_password_reset_form_confirm(SetPasswordForm):
+    new_password1=forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Nouveau mot de passe'}))
+    new_password2=forms.CharField(widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Confirmer le mot de passe'}))
+
 
 class ConnexionForm(ModelForm):
     class Meta:

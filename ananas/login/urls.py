@@ -12,5 +12,6 @@ urlpatterns=[
     re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.MyPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     re_path(r'^reset/done/$', views.MyPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+    path('error/forbidden',views.Forbidden.as_view(),name='forbidden')
 	
 ]

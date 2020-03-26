@@ -28,8 +28,14 @@ body{
 }
 
 .error{
+	position: relative;
 	font-size:1rem !important;
 	text-align: center;
+}
+.error i{
+	position:absolute;
+	top:30%;
+	left:28%;
 }
 
 
