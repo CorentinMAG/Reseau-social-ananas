@@ -86,7 +86,7 @@
 					<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 					{% if form.email.errors %}
 					{%for error in form.email.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password1}}</p>
@@ -98,7 +98,7 @@
 					<p><i class="fas fa-unlock-alt"></i>{{form.password2}}</p>
 					{% if form.password2.errors %}
 					{%for error in form.password2.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:20px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:2px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 				</fieldset>

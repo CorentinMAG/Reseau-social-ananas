@@ -66,6 +66,13 @@ class RegisterForm(UserCreationForm):
             raise forms.ValidationError('Entrer un numéro valide')
         return phone
 
+    def clean_naissance(self):
+        naissance=self.cleaned_data['naissance']
+        regex=re.compile('^([0-2][0-9]|(3)[0-1])(\/)(((0)[0-9])|((1)[0-2]))(\/)\d{4}$')
+        if not regex.match(naissance):
+            raise forms.ValidationError('Entrer une date valide [dd/mm/YYYY]')
+        return naissance
+
     def save(self,commit=True):
         user = super(RegisterForm, self).save(commit=False)
         user.first_name = self.cleaned_data["nom"]
