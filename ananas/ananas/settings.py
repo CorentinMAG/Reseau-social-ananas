@@ -27,7 +27,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost']
 
-
+PHONENUMBER_DB_FORMAT = 'NATIONAL'
+PHONENUMBER_DEFAULT_REGION="FR"
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'login',
+    'phonenumber_field',
 ]
 
 MIDDLEWARE = [

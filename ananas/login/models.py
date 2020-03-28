@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Campus(models.Model):
 	nom=models.CharField(max_length=30)
@@ -27,7 +28,7 @@ class UserProfile(models.Model):
 	avatar=models.ImageField(upload_to='avatar/')
 	promo=models.IntegerField()
 	naissance=models.CharField(max_length=10)
-	phone=models.CharField(max_length=10)
+	phone=PhoneNumberField()
 	majeure=models.ForeignKey(Majeures,on_delete=models.CASCADE)
 	campus=models.ForeignKey(Campus,on_delete=models.CASCADE)
 

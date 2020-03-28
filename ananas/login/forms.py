@@ -4,6 +4,7 @@ from django import forms
 from django.forms import ModelForm
 from .models import UserProfile,Campus,Majeures
 import re
+import datetime
 
 class Custom_password_reset_form(PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control','autofocus': 'autofocus','placeholder':'Email'}))
@@ -44,11 +45,11 @@ class RegisterForm(UserCreationForm):
     prenom=forms.CharField(label="",widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Prénom','id':'prenom'}))
     password1=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Password','id':'password1'}))
     password2=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Vérification password','id':'password2'}))
-    promo=forms.IntegerField(label="",widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Promo','id':'promo'}))
+    promo=forms.IntegerField(label="",max_value=9999,min_value=datetime.datetime.now().year,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Promo','id':'promo'}))
     majeure=forms.ModelChoiceField(initial=Majeures.objects.get(nom='Majeure aéronautique & espace'),queryset=Majeures.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'majeure'}))
-    naissance=forms.CharField(label="",widget=forms.DateInput(attrs={'class':'form-control','placeholder':'Date de naissance','id':'naissance'}))
+    naissance=forms.CharField(label="",max_length=10,widget=forms.DateInput(attrs={'class':'form-control','placeholder':'Date de naissance','id':'naissance'}))
     campus=forms.ModelChoiceField(initial=Campus.objects.get(nom='Sceaux'),queryset=Campus.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'select_campus'}))
-    phone=forms.IntegerField(label="",widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Numéro de téléphone','id':'phone'}))
+    phone=forms.CharField(label="",max_length=10,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Numéro de téléphone','id':'phone'}))
 
     class Meta():
         model = User
@@ -62,7 +63,8 @@ class RegisterForm(UserCreationForm):
 
     def clean_phone(self):
         phone=self.cleaned_data['phone']
-        if len(str(phone))!=9:
+        regex=re.compile('^0(6|7)[0-9]{8}$')
+        if not regex.match(phone):
             raise forms.ValidationError('Entrer un numéro valide')
         return phone
 
