@@ -36,7 +36,7 @@ def deconnexion(request):
 
 @login_required
 def view_redirection(request):
-    return HttpResponse("Vous avez été redirigé {0}.".format(request.user.username))
+    return HttpResponse("Vous avez été redirigé {0}.".format(request.user.username)+"<a href='/account/deconnexion'>Déconnexion</a>")
 
 
 class Forbidden(TemplateView):
