@@ -28,7 +28,7 @@ class UserProfile(models.Model):
 	avatar=models.ImageField(upload_to='avatar/')
 	promo=models.IntegerField()
 	naissance=models.CharField(max_length=10)
-	phone=PhoneNumberField()
+	phone=PhoneNumberField(blank=True)
 	majeure=models.ForeignKey(Majeures,on_delete=models.CASCADE)
 	campus=models.ForeignKey(Campus,on_delete=models.CASCADE)
 

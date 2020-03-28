@@ -49,7 +49,7 @@ class RegisterForm(UserCreationForm):
     majeure=forms.ModelChoiceField(initial=Majeures.objects.get(nom='Majeure aéronautique & espace'),queryset=Majeures.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'majeure'}))
     naissance=forms.CharField(label="",max_length=10,widget=forms.DateInput(attrs={'class':'form-control','placeholder':'Date de naissance','id':'naissance'}))
     campus=forms.ModelChoiceField(initial=Campus.objects.get(nom='Sceaux'),queryset=Campus.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'select_campus'}))
-    phone=forms.CharField(label="",max_length=10,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Numéro de téléphone','id':'phone'}))
+    phone=forms.CharField(label="",required=False,max_length=10,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Numéro de téléphone','id':'phone'}))
 
     class Meta():
         model = User
@@ -64,7 +64,7 @@ class RegisterForm(UserCreationForm):
     def clean_phone(self):
         phone=self.cleaned_data['phone']
         regex=re.compile('^0(6|7)[0-9]{8}$')
-        if not regex.match(phone):
+        if not regex.match(phone) and phone!="":
             raise forms.ValidationError('Entrer un numéro valide')
         return phone
 
