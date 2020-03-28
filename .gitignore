@@ -4,3 +4,4 @@ ananasenv/
 db.sqlite3
 __pycache__/
 migrations/
+settings.py
