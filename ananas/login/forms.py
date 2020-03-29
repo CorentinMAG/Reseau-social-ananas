@@ -77,8 +77,8 @@ class RegisterForm(UserCreationForm):
 
     def save(self,commit=True):
         user = super(RegisterForm, self).save(commit=False)
-        user.first_name = self.cleaned_data["nom"]
-        user.last_name = self.cleaned_data["prenom"]
+        user.first_name = self.cleaned_data["prenom"]
+        user.last_name = self.cleaned_data["nom"]
         user.email = self.cleaned_data["email"]
         promo=self.cleaned_data['promo']
         campus=self.cleaned_data['campus']
