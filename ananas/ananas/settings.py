@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'login',
+    'messenger',
     'phonenumber_field',
 ]
 
@@ -75,28 +77,38 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ananas.wsgi.application'
+ASGI_APPLICATION = 'ananas.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+        },
+    },
+}
 
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-
-# DATABASES={
-#     'default':{
-#     'ENGINE':'django.db.backends.postgresql_psycopg2',
-#     'NAME':'ananas',
-#     'USER':'ananas',
-#     'PASSWORD':'vlgklm91',
-#     'HOST':'localhost',
-
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
 #     }
 # }
+
+DATABASES={
+    'default':{
+    'ENGINE':'django.db.backends.postgresql_psycopg2',
+    'NAME':'ananas',
+    'USER':'ananas',
+    'PASSWORD':'vlgklm91',
+    'HOST':'localhost',
+
+    }
+}
 
 
 # Password validation
