@@ -1,10 +1,12 @@
 from django.contrib.auth.forms import AuthenticationForm,UserCreationForm,PasswordResetForm,SetPasswordForm
-from django.contrib.auth.models import User
 from django import forms
 from django.forms import ModelForm
 from .models import UserProfile,Campus,Majeures
+from django.contrib.auth import get_user_model
 import re
 import datetime
+
+User=get_user_model()
 
 class Custom_password_reset_form(PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control','autofocus': 'autofocus','placeholder':'Email'}))
@@ -46,9 +48,9 @@ class RegisterForm(UserCreationForm):
     password1=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Password','id':'password1'}))
     password2=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Vérification password','id':'password2'}))
     promo=forms.IntegerField(label="",max_value=9999,min_value=datetime.datetime.now().year,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Promo','id':'promo'}))
-    majeure=forms.ModelChoiceField(initial=Majeures.objects.get(nom='Majeure aéronautique & espace'),queryset=Majeures.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'majeure'}))
+    majeure=forms.ModelChoiceField(initial=Majeures.objects.first(),queryset=Majeures.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'majeure'}))
     naissance=forms.CharField(label="",max_length=10,widget=forms.DateInput(attrs={'class':'form-control','placeholder':'Date de naissance','id':'naissance'}))
-    campus=forms.ModelChoiceField(initial=Campus.objects.get(nom='Sceaux'),queryset=Campus.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'select_campus'}))
+    campus=forms.ModelChoiceField(initial=Campus.objects.first(),queryset=Campus.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'select_campus'}))
     phone=forms.CharField(label="",required=False,max_length=10,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Numéro de téléphone','id':'phone'}))
 
     class Meta():

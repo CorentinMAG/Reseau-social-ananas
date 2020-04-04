@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'login',
+    'messenger',
     'phonenumber_field',
 ]
 
@@ -75,6 +77,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'ananas.wsgi.application'
+ASGI_APPLICATION='ananas.routing.application'
+
+CHANNEL_LAYERS={
+    'default':{
+        'BACKEND':'channels_redis.core.RedisChannelLayer',
+        'config':{
+            'hosts':[('127.0.0.1',6379)],
+        },
+    },
+}
 
 
 # Database
@@ -138,9 +150,12 @@ MEDIA_URL='/media/'
 
 DEFAULT_FROM_EMAIL="webmaster@localhost"
 
+AUTH_USER_MODEL="login.CustomUser"
+
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
+LOGIN_URL="connexion"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'ananas.webmaster@gmail.com'

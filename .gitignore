@@ -3,5 +3,6 @@ ananasenv/
 .gitlab-ci.yml
 db.sqlite3
 __pycache__/
+**/__pycache__/
 migrations/
-settings.py
+ananas/ananas/settings.py
