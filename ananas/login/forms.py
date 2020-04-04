@@ -60,7 +60,13 @@ class RegisterForm(UserCreationForm):
         email=self.cleaned_data['email']
         if '@epfedu.fr' not in email:
             raise forms.ValidationError('Entrer votre mail epf')
-        return email
+        try:
+            user=User.objects.get(email=email)
+            raise forms.ValidationError('Le mail existe déjà')
+        except user.DoesNotExist:
+            return email
+            
+        
 
     def clean_phone(self):
         phone=self.cleaned_data['phone']
