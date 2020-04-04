@@ -93,23 +93,23 @@ CHANNEL_LAYERS={
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#     }
-# }
-
-DATABASES={
-    'default':{
-    'ENGINE':'django.db.backends.postgresql_psycopg2',
-    'NAME':'ananas',
-    'USER':'ananas',
-    'PASSWORD':'vlgklm91',
-    'HOST':'localhost',
-
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# DATABASES={
+#     'default':{
+#     'ENGINE':'django.db.backends.postgresql_psycopg2',
+#     'NAME':'ananas',
+#     'USER':'ananas',
+#     'PASSWORD':'vlgklm91',
+#     'HOST':'localhost',
+
+#     }
+# }
 
 
 # Password validation
@@ -151,7 +151,6 @@ MEDIA_URL='/media/'
 
 DEFAULT_FROM_EMAIL="webmaster@localhost"
 
-AUTH_USER_MODEL="login.CustomUser"
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)

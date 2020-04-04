@@ -18,6 +18,7 @@ def connexion(request):
         if form.is_valid():
             email = form.cleaned_data["email"]
             password = form.cleaned_data["password"]
+            print(email)
             user = authenticate(email=email, password=password) 
             if user:  
                 login(request, user)  

@@ -1,14 +1,11 @@
 from django.db import models
 from django.db.models.signals import post_save
 from phonenumber_field.modelfields import PhoneNumberField
-from django.contrib.auth.models import AbstractUser
-# from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user_model
 
-# User=get_user_model()
+User=get_user_model()
 
 
-class CustomUser(AbstractUser):
-    email = models.EmailField(unique=True)
 
 class Campus(models.Model):
 	nom=models.CharField(max_length=30)
@@ -31,7 +28,7 @@ class Majeures(models.Model):
 		return self.nom
 
 class UserProfile(models.Model):
-	user=models.OneToOneField(CustomUser,related_name='user',on_delete=models.CASCADE)
+	user=models.OneToOneField(User,related_name='user',on_delete=models.CASCADE)
 	avatar=models.ImageField(upload_to='avatar/')
 	promo=models.IntegerField()
 	naissance=models.CharField(max_length=10)

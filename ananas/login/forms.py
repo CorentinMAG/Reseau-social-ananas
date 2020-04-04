@@ -14,7 +14,6 @@ class Custom_password_reset_form(PasswordResetForm):
     def clean_email(self):
         email = self.cleaned_data['email']
         regex=re.compile('^([a-zA-Z0-9_\-\.]+)@epfedu.fr$')
-        print(regex.match(email))
         if not regex.match(email):
             raise forms.ValidationError('Entrer votre mail epf')
         return email
