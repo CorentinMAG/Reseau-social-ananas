@@ -46,7 +46,7 @@ class RegisterForm(UserCreationForm):
     prenom=forms.CharField(label="",widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Prénom','id':'prenom'}))
     password1=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Password','id':'password1'}))
     password2=forms.CharField(label="",widget=forms.PasswordInput(attrs={'class':'form-control','placeholder':'Vérification password','id':'password2'}))
-    promo=forms.IntegerField(label="",max_value=9999,min_value=datetime.datetime.now().year,widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Promo','id':'promo'}))
+    promo=forms.CharField(max_length=4,label="",widget=forms.TextInput(attrs={'class':'form-control','placeholder':'Promo','id':'promo'}))
     majeure=forms.ModelChoiceField(initial=Majeures.objects.first(),queryset=Majeures.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'majeure'}))
     naissance=forms.CharField(label="",max_length=10,widget=forms.DateInput(attrs={'class':'form-control','placeholder':'Date de naissance','id':'naissance'}))
     campus=forms.ModelChoiceField(initial=Campus.objects.first(),queryset=Campus.objects.all(),label="",widget=forms.Select(attrs={'class':'form-control','id':'select_campus'}))
@@ -63,8 +63,14 @@ class RegisterForm(UserCreationForm):
         try:
             user=User.objects.get(email=email)
             raise forms.ValidationError('Le mail existe déjà')
-        except user.DoesNotExist:
+        except User.DoesNotExist:
             return email
+    def clean_promo(self):
+        promo=self.cleaned_data['promo']
+        regex=re.compile('^20[0-9]{2}$')
+        if not regex.match(promo):
+            raise forms.ValidationError('Année non valide')
+        return promo
             
         
 
