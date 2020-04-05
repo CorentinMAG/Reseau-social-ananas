@@ -93,22 +93,25 @@ CHANNEL_LAYERS={
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+if os.name=='nt':
+
+    DATABASES = {
+        'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
 
-# DATABASES={
-#     'default':{
-#     'ENGINE':'django.db.backends.mysql',
-#     'OPTIONS':{
-#        'read_default_file':'/etc/mysql/conf.d/mysql.cnf'
-#       }
+    DATABASES={
+        'default':{
+        'ENGINE':'django.db.backends.mysql',
+        'OPTIONS':{
+           'read_default_file':'/etc/mysql/conf.d/mysql.cnf'
+          }
 
-#     }
-# }
+        }
+    }
 
 
 # Password validation
