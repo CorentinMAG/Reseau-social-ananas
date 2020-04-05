@@ -16,40 +16,29 @@
 <!------ Include the above in your HEAD tag ---------->
 
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
+<style>
+	*{
+		scroll-behavior: smooth;
+		box-sizing: border-box;
+	}
+</style>
 </head>
 <body>
 
 
 <div id="frame">
 	<div id="sidepanel">
-		<div id="profile">
-			<div class="wrap">
+		<div id="profile" style="height:70px;">
+			<div class="wrap" style="overflow:hidden;">
 				<img id="profile-img" src="https://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
 				<p>Mike Ross</p>
-				<i class="fa fa-chevron-down expand-button" aria-hidden="true"></i>
-				<div id="status-options">
-					<ul>
-						<li id="status-online" class="active"><span class="status-circle"></span> <p>Online</p></li>
-						<li id="status-away"><span class="status-circle"></span> <p>Away</p></li>
-						<li id="status-busy"><span class="status-circle"></span> <p>Busy</p></li>
-						<li id="status-offline"><span class="status-circle"></span> <p>Offline</p></li>
-					</ul>
-				</div>
-				<div id="expanded">
-					<label for="twitter"><i class="fa fa-facebook fa-fw" aria-hidden="true"></i></label>
-					<input name="twitter" type="text" value="mikeross" />
-					<label for="twitter"><i class="fa fa-twitter fa-fw" aria-hidden="true"></i></label>
-					<input name="twitter" type="text" value="ross81" />
-					<label for="twitter"><i class="fa fa-instagram fa-fw" aria-hidden="true"></i></label>
-					<input name="twitter" type="text" value="mike.ross" />
-				</div>
 			</div>
 		</div>
 		<div id="search">
 			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
 			<input type="text" placeholder="Search contacts..." />
 		</div>
-		<div id="contacts">
+		<div id="contacts" style="overflow-y: hidden;">
 			<ul>
 				<li class="contact">
 					<div class="wrap">
@@ -82,28 +71,30 @@
 					</div>
 				</li>
 			</ul>
+			<button style="display: block;margin: auto;"><a href="{%url 'deconnexion' %}">Déconnexion</a></button>
 		</div>
 		<div id="bottom-bar">
 			<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
 			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
 		</div>
 	</div>
-	<div class="content">
+	<div class="content" style="display: flex;flex-direction: column;">
 		<div class="contact-profile">
 			<img src="https://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-			<p>{{username}}</p>
+			{%load jsonTopy %}
+			<p>{{username|parse}}</p>
 			<div class="social-media">
 				<i class="fa fa-facebook" aria-hidden="true"></i>
 				<i class="fa fa-twitter" aria-hidden="true"></i>
 				 <i class="fa fa-instagram" aria-hidden="true"></i>
 			</div>
 		</div>
-		<div class="messages">
+		<div class="messages" style="scrollbar-width:thin; min-height: 0;">
 			<ul id="chat-log">
 			</ul>
 		</div>
-		<div class="message-input">
-			<div class="wrap">
+		<div class="message-input" style="position:relative; ">
+			<div class="wrap" style="display: flex;">
 			<input type="text" id="chat-message-input" placeholder="Write your message..." />
 			<i class="fa fa-paperclip attachment" aria-hidden="true"></i>
 			<button class="submit" id="chat-message-submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
@@ -114,12 +105,16 @@
 <script src='//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script><script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 <script src="{{STATIC_URL}}/static/messenger/js/chat.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/reconnecting-websocket.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+<script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
 <script>
+	var wsprotocol;
+  location.protocol =="http:" ? wsprotocol = "ws:" : wsprotocol="wss:"
   const roomName = {{ room_name_json }};
   const username = {{ username }};
 
   const chatSocket = new ReconnectingWebSocket(
-      'wss://'
+      wsprotocol+'//'
       + window.location.host
       + '/ws/messenger/'
       + roomName
@@ -133,11 +128,12 @@
   chatSocket.onmessage = function(e) {
       var data = JSON.parse(e.data);
       if(data['command']=='messages'){
-        for(let i=0;i<data['messages'].length;i++){
+        for(let i=data['messages'].length-1;i>=0;i--){
           createMessage(data['messages'][i])
         }
       }else if(data['command']=='new_message'){
           createMessage(data['message'])
+          document.querySelector('.messages').scrollTop=document.querySelector('.messages').scrollHeight;
         }
   };
 
@@ -160,7 +156,9 @@
       var msgListTag=document.createElement('li');
       var imgTag=document.createElement('img');
       var pTag=document.createElement('p');
-      pTag.textContent=data.content;
+      var small=document.createElement('small');
+      small.textContent=moment((new Date(data.timestamp).getTime())).fromNow();
+      pTag.innerHTML=data.content+'</br>';
       imgTag.src="https://emilcarlsson.se/assets/mikeross.png";
       if(author==username){
         msgListTag.classList="sent";
@@ -168,6 +166,7 @@
         msgListTag.classList="replies";
       }
       msgListTag.appendChild(imgTag);
+      pTag.appendChild(small);
       msgListTag.appendChild(pTag)
       document.querySelector('#chat-log').appendChild(msgListTag);
   }

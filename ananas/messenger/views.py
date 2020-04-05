@@ -4,6 +4,7 @@ from django.utils.safestring import mark_safe
 import json
 
 
+@login_required
 def index(request):
     return render(request, 'messenger/index.html', {})
     

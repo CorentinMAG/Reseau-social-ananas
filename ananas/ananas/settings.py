@@ -102,11 +102,10 @@ DATABASES = {
 
 # DATABASES={
 #     'default':{
-#     'ENGINE':'django.db.backends.postgresql_psycopg2',
-#     'NAME':'ananas',
-#     'USER':'ananas',
-#     'PASSWORD':'vlgklm91',
-#     'HOST':'localhost',
+#     'ENGINE':'django.db.backends.mysql',
+#     'OPTIONS':{
+#        'read_default_file':'/etc/mysql/conf.d/mysql.cnf'
+#       }
 
 #     }
 # }
