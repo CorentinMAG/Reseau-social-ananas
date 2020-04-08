@@ -14,7 +14,7 @@ from rest_framework.authtoken.models import Token
 def connexion(request):
     if request.user.is_authenticated:
         if not request.session.get('token'):
-            token, _ = Token.objects.get_or_create(user=user)
+            token, _ = Token.objects.get_or_create(user=request.user)
             request.session['token']=token.key
         return redirect(reverse('room', kwargs={'room_name': '5'}))
     else:
