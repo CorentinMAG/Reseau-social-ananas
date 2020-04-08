@@ -1,4 +1,4 @@
-from django.contrib.auth.forms import AuthenticationForm,UserCreationForm,PasswordResetForm,SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm,PasswordResetForm,SetPasswordForm
 from django import forms
 from django.forms import ModelForm
 from .models import UserProfile,Campus,Majeures
@@ -7,6 +7,7 @@ import re
 import datetime
 
 User=get_user_model()
+
 
 class Custom_password_reset_form(PasswordResetForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control','autofocus': 'autofocus','placeholder':'Email'}))

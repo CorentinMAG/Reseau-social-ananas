@@ -9,26 +9,35 @@ from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
+from rest_framework.authtoken.models import Token
 
 def connexion(request):
-    error = False
-
-    if request.method == "POST":
-        form = ConnexionForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data["email"]
-            password = form.cleaned_data["password"]
-            print(email)
-            user = authenticate(email=email, password=password) 
-            if user:  
-                login(request, user)  
-                return redirect(view_redirection)
-            else: 
-                error = True
+    if request.user.is_authenticated:
+        if not request.session.get('token'):
+            token, _ = Token.objects.get_or_create(user=user)
+            request.session['token']=token.key
+        return redirect(reverse('room', kwargs={'room_name': '5'}))
     else:
-        form = ConnexionForm()
+        error = False
 
-    return render(request, 'login/connexion.html', locals())
+        if request.method == "POST":
+            form = ConnexionForm(request.POST)
+            if form.is_valid():
+                email = form.cleaned_data["email"]
+                password = form.cleaned_data["password"]
+                print(email)
+                user = authenticate(email=email, password=password) 
+                if user:
+                    token, _ = Token.objects.get_or_create(user=user)
+                    request.session['token']=token.key
+                    login(request, user)  
+                    return redirect(view_redirection)
+                else: 
+                    error = True
+        else:
+            form = ConnexionForm()
+
+        return render(request, 'login/connexion.html', locals())
 
 
 def deconnexion(request):
@@ -37,7 +46,7 @@ def deconnexion(request):
 
 @login_required
 def view_redirection(request):
-    return redirect(reverse('room', kwargs={'room_name': 'test'}))
+    return redirect(reverse('room', kwargs={'room_name': '5'}))
 
 
 class Forbidden(TemplateView):

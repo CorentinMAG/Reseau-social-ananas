@@ -1,26 +1,26 @@
 class WebSocketService {
 
 	static instance = null;
-	callbacks = {}:
+	callbacks = {};
 
-		static getInstance() {
-			if (!WebSocketService) {
-				WebSocketService.instance = new WebSocketService()
+	static getInstance() {
+		if (!WebSocketService) {
+			WebSocketService.instance = new WebSocketService()
 
-			}
-			return WebSocketService.instance;
 		}
+		return WebSocketService.instance;
+	}
 	constructor() {
 		this.socketRef = null;
 	}
 
-	connect() {
-		const path = "ws://127.0.0.1:8000/ws/messenger/test/";
+	connect(chatURL) {
+		const path = `ws://127.0.0.1:8000/ws/messenger/${chatURL}/`;
 		this.socketRef = new WebSocket(path);
 		this.socketRef.onopen = () => {
 
 		};
-		rhis.socketNewMessage(JSON.stringify({
+		this.socketNewMessage(JSON.stringify({
 			command: 'fetch_messages'
 		}))
 		this.socketRef.onmessage = (e) => {
@@ -34,6 +34,10 @@ class WebSocketService {
 			this.connect();
 
 		};
+	}
+
+	disconnect() {
+		this.socketRef.close();
 	}
 	socketNewMessage(data) {
 		const parsedData = JSON.parse(data);
