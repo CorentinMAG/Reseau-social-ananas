@@ -4,7 +4,9 @@ from . import views
 
 urlpatterns=[
 	path('connexion/',views.connexion,name='connexion'),
-	path('register/',views.RegisterView.as_view(),name='register'),
+    path('register/',views.RegisterView,name="register"),
+	path('etudiant/',views.EtudiantView,name='etudiant'),
+    path('autre/',views.AutreView,name="autre"),
 	path('deconnexion/',views.deconnexion,name='deconnexion'),
 	path('redirection/',views.view_redirection,name='redirection'),
 	re_path(r'^password_reset/$', views.MyPasswordResetView.as_view(), name='password_reset'),
@@ -12,6 +14,8 @@ urlpatterns=[
     re_path(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.MyPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     re_path(r'^reset/done/$', views.MyPasswordResetCompleteView.as_view(), name='password_reset_complete'),
-    path('error/forbidden',views.Forbidden.as_view(),name='forbidden')
+    path('error/forbidden',views.Forbidden.as_view(),name='forbidden'),
+    re_path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.activate, name='activate'),
 	
 ]

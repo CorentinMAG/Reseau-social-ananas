@@ -11,15 +11,16 @@ User=get_user_model()
 def room(request, room_name):
    return render(request, 'messenger/room.html', {
        'room_name_json': mark_safe(json.dumps(room_name)),
-       'username':mark_safe(json.dumps(request.user.username))
+       'username':mark_safe(json.dumps(request.user.first_name)),
+       'email':mark_safe(json.dumps(request.user.email))
  })
 
 def get_last_10_messages(chatID):
  	chat=get_object_or_404(Chat,id=chatID)
  	return chat.messages.order_by('-timestamp').all()[:10]
 
-def get_user_contact(username):
- 	user=get_object_or_404(User,username=username)
+def get_user_contact(email):
+ 	user=get_object_or_404(User,email=email)
  	return get_object_or_404(Contact,user=user)
 
 def get_current_chat(chatID):

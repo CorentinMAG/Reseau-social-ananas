@@ -1,0 +1,32 @@
+{% extends "header.html" %}
+{% block title %}Register{%endblock%}
+{%block headerlink %}<!-- CSS connexion page -->
+  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/password_reset.css">
+  <style>
+	.choose{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-evenly;
+		height:300px;
+	}
+	p{
+		width: 50%;
+	}
+</style>
+<!-- End css connexion page -->{% endblock %}
+
+{%block content%}
+<div class="container">
+		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
+			<div class="title">
+				<h1>Choisissez le type de compte</h1>
+			</div>
+			<div class="choose">
+				<p class="mdc-button mdc-button--raised"><a href="{% url 'etudiant' %}"><span class="mdc-button__ripple"></span> Etudiant</a></p>
+				<p class="mdc-button mdc-button--raised"> <a href="{% url 'autre' %}"><span class="mdc-button__ripple"></span> Autre</a></p>
+				<p class="mdc-button mdc-button--raised"> <a href="{% url 'connexion' %}"><span class="mdc-button__ripple"></span> Retour</a></p>
+			</div>
+		</div>
+	</div>
+{%endblock%}

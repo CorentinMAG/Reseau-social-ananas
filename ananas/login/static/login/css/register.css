@@ -33,6 +33,8 @@ body{
 	text-transform: uppercase;
 }
 
+
+
 legend{
 	color: #DA0813;
 	font-size: 1.2rem;
@@ -56,7 +58,7 @@ fieldset{
 	padding:15px;
 }
 
-input:invalid{
+input:invalid,textarea:invalid{
 	box-shadow: none !important;
 }
 
@@ -78,6 +80,7 @@ input{
 	border:none !important;
 	border-bottom:1px solid #C5C5C5 !important;
 }
+
 select{
 	box-shadow: none !important;
 }
@@ -87,7 +90,7 @@ select{
 	text-align: center;
 }
 
-select:focus{
+select:focus,textarea:focus{
 	border-color: #DA0813 !important;
 }
 
@@ -95,7 +98,7 @@ input:focus{
 	border-bottom:1px solid #DA0813 !important;
 }
 
-input:focus{
+input:focus,textarea:focus{
 	box-shadow:none !important;
 }
 
@@ -107,6 +110,11 @@ input:focus{
 	padding:15px;
 }
 
+#pills-tab{
+	align-items: center;
+	justify-content: space-evenly;
+
+}
 
 a,a:hover{
 	text-decoration: none;

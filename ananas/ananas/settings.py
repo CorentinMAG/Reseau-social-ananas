@@ -58,7 +58,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ananas.urls'
 
-AUTHENTICATION_BACKENDS = ['login.EmailBackend.EmailBackend','django.contrib.auth.backends.ModelBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 TEMPLATES = [
     {
@@ -148,6 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr'
 
+AUTH_USER_MODEL="login.CustomUser"
 
 TIME_ZONE = 'UTC'
 
@@ -163,7 +164,7 @@ MEDIA_URL='/media/'
 
 DEFAULT_FROM_EMAIL="webmaster@localhost"
 
-
+#AUTH_USER_MODEL="login.CustomUser"
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
