@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'channels',
     'login',
     'messenger',
+    'timeline',
     'phonenumber_field',
     'rest_framework',
     'rest_framework.authtoken',

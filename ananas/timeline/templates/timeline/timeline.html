@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeline</title>
+</head>
+<body>
+<h1>Bienvenue sur la timeline !</h1>
+
+{% for article in derniers_articles %}
+    <div class="article">
+        <h3>{{ article.titre }}</h3>
+        <p>{{ article.contenu_post|truncatewords_html:7 }}</p>
+        <p><a href={{ article.id }}>Lire la suite</a></p>
+    </div>
+{% empty %}
+    <p>Aucun article sur la timeline.</p>
+{% endfor %}
+</body>
+</html>
