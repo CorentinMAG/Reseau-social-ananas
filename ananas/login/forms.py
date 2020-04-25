@@ -61,7 +61,8 @@ class ConnexionForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if '@epfedu.fr' not in email or '@epf.fr' not in email:
+        regex = re.compile('^([a-zA-Z0-9_\-\.]+)@?(epfedu|epf).fr$')
+        if not regex.match(email):
             raise forms.ValidationError('Entrer votre mail epf')
         return email
 
