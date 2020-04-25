@@ -7,3 +7,4 @@ __pycache__/
 migrations/
 ananas/ananas/settings.py
 bin/
+.idea/

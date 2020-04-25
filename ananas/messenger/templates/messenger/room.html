@@ -1,5 +1,6 @@
 <!DOCTYPE html><html class=''>
 <head>
+	<script src="https://kit.fontawesome.com/6042c2ff25.js" crossorigin="anonymous"></script>
 <link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
 <script src="https://use.typekit.net/hoy3lrg.js"></script>
 <script>try{Typekit.load({ async: true });}catch(e){}</script>
@@ -20,6 +21,49 @@
 	*{
 		scroll-behavior: smooth;
 		box-sizing: border-box;
+	}
+	body{
+		margin:0 !important;
+		padding:0;
+	}
+	.container{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+
+	}
+	.add_chat{
+		width: 100%;
+	}
+	*{
+		box-sizing: border-box;
+	}
+	.add_email_chat{
+		border:none;
+		width: 100%;
+	}
+	.all_email{
+
+		list-style-type: none;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		padding-bottom: 5px;
+		padding-top:5px;
+	}
+	.chips{
+		border:1px solid #C5C5C5;
+		padding: 5px;
+		background:#C5C5C5;
+		margin:5px 5px;
+
+		border-radius: 50px;
+	}
+	.fa-times{
+		padding:5px;
+		cursor: pointer;
 	}
 </style>
 </head>
@@ -47,7 +91,10 @@
 			{% endif %}
 		</div>
 		<div id="bottom-bar">
-			<button id="addcontact"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> <span>Add contact</span></button>
+			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+  Créer un chat
+</button>
+
 			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
 		</div>
 	</div>
@@ -74,22 +121,46 @@
 		</div>
 	</div>
 </div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="left:0%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">Créer un chat</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      		<div class="modal-body">
+				<div class="container">
+					<form action="" class="add_chat">
+						<input class="add_email_chat" type="email" id="emailField" placeholder="Email..." class="form-control"/>
+						<ul class="all_email"></ul>
+					</form>
+				</div>
+      		</div>
+      		<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        		<button class="submit_add_chat btn btn-primary" type="submit">Créer</button>
+      		</div>
+    </div>
+  </div>
+</div>
 <script src='//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script><script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 <script src="{{STATIC_URL}}/static/messenger/js/chat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
 <script >
 	let contact_ul=document.querySelector('#contacts').firstElementChild;
-	const token="{{ request.session.token }}"
+	const token="{{ request.session.token }}";
 	const email={{email}}
 	let wsprotocol;
-  	location.protocol =="http:" ? wsprotocol = "ws:" : wsprotocol="wss:"
-  	const username = {{ username }};
-	function getUserChat(token,username){
+  	location.protocol ==="http:" ? wsprotocol = "ws:" : wsprotocol="wss:";
+  	const username = {{ username }}
+	function getUserChat(token){
 		fetch(`/messenger-api/?email=${email}`,{
 			method:'GET',
 			credentials:'include',
-			headers:{'Authorization':'Token '+token,'Content-Type': 'application/json'}
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
 		}).then(resp=>{
 			resp.json().then(data=>{
 				data.map(obj=>createContact(obj))
@@ -109,7 +180,7 @@
 		let c_name=document.createElement('p');
 		c_name.classList="name";
 		let c_pre=document.createElement('p');
-		c_pre.classList="preview"
+		c_pre.classList="preview";
 		let c_spanpre=document.createElement('span');
 		c_li.appendChild(c_div);
 		c_div.appendChild(c_span);
@@ -124,7 +195,7 @@
  
 		c_li.addEventListener('click', (e)=>{
 			try{
-				chatSocket.close()
+				chatSocket.close();
 				chatSocket=new WebSocket(wsprotocol+'//'
       					+ window.location.host
       					+ '/ws/messenger/'
@@ -140,18 +211,18 @@
 			}
 			chatSocket.onopen=function(e){
 					fetchMessages();
-			}
+			};
 		  	chatSocket.onmessage = function(e) {
 		      var data = JSON.parse(e.data);
-		     if(data['command']=='messages'){
-		     	document.querySelector('#chat-log').innerHTML!="" ? document.querySelector('#chat-log').innerHTML="" :""
+		     if(data['command']==='messages'){
+		     	document.querySelector('#chat-log').innerHTML!=="" ? document.querySelector('#chat-log').innerHTML="" :"";
 		        for(let i=data['messages'].length-1;i>=0;i--){
 		         createMessage(data['messages'][i])
 		       }
 
 		       document.querySelector('.messages').scrollTop=document.querySelector('.messages').scrollHeight;
-		      }else if(data['command']=='new_message'){
-		          createMessage(data['message'])
+		      }else if(data['command']==='new_message'){
+		          createMessage(data['message']);
 		          document.querySelector('.messages').scrollTop=document.querySelector('.messages').scrollHeight;
 		        }
 		  };
@@ -165,7 +236,7 @@
 		  document.querySelector('#chat-message-submit').onclick = function(e) {
 		      const messageInputDom = document.querySelector('#chat-message-input');
 		      const message = messageInputDom.value;
-		      if(message.length!=0){
+		      if(message.length!==0){
 		        chatSocket.send(JSON.stringify({
 		          'message': message,
 		          'command':'new_message',
@@ -198,20 +269,68 @@
       small.textContent=moment((new Date(data.timestamp).getTime())).fromNow();
       pTag.innerHTML=data.content+'</br>';
       imgTag.src="https://emilcarlsson.se/assets/mikeross.png";
-      if(author==username){
+      if(author===username){
         msgListTag.classList="sent";
       }else{
         msgListTag.classList="replies";
       }
       msgListTag.appendChild(imgTag);
       pTag.appendChild(small);
-      msgListTag.appendChild(pTag)
+      msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
   }
 
   
-  getUserChat(token,username)
+  getUserChat(token);
+	let button_add_chat=document.querySelector('.submit_add_chat');
+	let ul =document.querySelector('.all_email');
+let i = document.querySelectorAll('.fa-times');
+let input = document.querySelector('.add_email_chat');
+let form = document.querySelector('.add_chat');
+form.onsubmit=(e)=>e.preventDefault();
 
+input.onkeyup = function(e) {
+      if (e.keyCode === 13 && e.target.validity.typeMismatch===false) {  // enter, return
+          construct(e.target.value);
+          e.target.value=""
+      }
+  };
+
+ function construct(value){
+ 	let li=document.createElement('li');
+ 	li.classList="chips";
+ 	let i = document.createElement('i');
+ 	let span = document.createElement('span');
+ 	i.classList='fas fa-times';
+ 	Event(i,ul);
+ 	li.appendChild(i);
+ 	span.textContent=value;
+ 	li.appendChild(span);
+ 	ul.appendChild(li)
+ }
+
+ function Event(i,parent){
+ 	i.addEventListener('click',(e)=>{
+		const currentElement=e.currentTarget;
+		parent.removeChild(currentElement.parentElement)
+	})
+ }
+ button_add_chat.addEventListener('click',()=>{
+ 	const participants=[];
+ 	const allMail = document.querySelectorAll('.chips');
+ 	allMail.forEach((chips)=>{participants.push(chips.textContent)});
+ 	participants.includes(`${email}`) ? "" : participants.push(`${email}`);
+	 if(participants.length>1){
+	 	fetch('/messenger-api/create/',{
+	 		method:'POST',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+			body:JSON.stringify({messages:[],participants:participants})
+		}).then(console.log)
+	 }
+ })
+</script>
+<script>
 </script>
 </body>
 </html>
