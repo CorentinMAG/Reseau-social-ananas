@@ -25,7 +25,7 @@ SECRET_KEY = 'xu!k68q$@_*82ja*jgqqv+3)5o(s+gsi()cf47e-^75)sr*dv_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost']
+ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost','127.0.0.1']
 
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION="FR"
