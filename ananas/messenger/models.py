@@ -21,7 +21,7 @@ class Message(models.Model):
 		return self.contact.user.email
 
 class Chat(models.Model):
-	participants=models.ManyToManyField(Contact,related_name="chats",blank=True)
+	participants=models.ManyToManyField(Contact,related_name="chats")
 	messages=models.ManyToManyField(Message,blank=True)
 
 	def __str__(self):
