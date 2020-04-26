@@ -163,7 +163,8 @@
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
 		}).then(resp=>{
 			resp.json().then(data=>{
-				data.map(obj=>createContact(obj))
+				if(data['detail']){console.error('Pas de chat!!')}
+				else{data.map(obj=>createContact(obj))}
 			})
 		})
 	}
@@ -326,7 +327,8 @@ input.onkeyup = function(e) {
 			credentials:'include',
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
 			body:JSON.stringify({messages:[],participants:participants})
-		}).then(console.log)
+		}).then((response)=>{if(response.ok){}else{throw new Error('')}}).catch(console.log)
+				//.then(contact_ul.innerHTML="").then(getUserChat(token)).catch(console.log)
 	 }
  })
 </script>
