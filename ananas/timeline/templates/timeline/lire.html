@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Timeline</title>
+</head>
+    <body>
+        <h1>Pour avoir un article complet !</h1>
+        <h1>{{ post.titre }} <span class="small"> </span></h1>
+        <p class="infos">Rédigé par {{ post.auteur }}, le {{ post.date|date:"DATE_FORMAT" }}</p>
+        <div class="contenu">{{ post.contenu_post|linebreaks }}</div>
+    </body>
+</html>
