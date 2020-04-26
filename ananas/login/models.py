@@ -87,8 +87,15 @@ class Administration(models.Model):
     avatar = models.ImageField(upload_to='avatar/',blank=True)
     phone = PhoneNumberField(blank=True, verbose_name='numéro de téléphone')
     Birthdate = models.CharField(max_length=10, verbose_name='Date de naissance',blank=True)
+<<<<<<< HEAD
 >>>>>>> c6d4e4d931dfa6349270095376d9401c94bc5fa8
+=======
+>>>>>>> 785f967dbfe2cf0a2fffafd7ea145882b51b2226
     campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
+<<<<<<< HEAD
+=======
+
+>>>>>>> 785f967dbfe2cf0a2fffafd7ea145882b51b2226
