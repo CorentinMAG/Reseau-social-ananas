@@ -25,5 +25,6 @@ urlpatterns = [
     path('account/',include('login.urls')),
     path('messenger-api/',include('messenger.api.urls')),
     path('messenger/',include('messenger.urls')),
+    path('timeline/', include("timeline.urls")),
     path('',lambda r: HttpResponseRedirect('account/connexion')),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

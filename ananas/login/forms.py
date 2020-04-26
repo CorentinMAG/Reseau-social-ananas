@@ -5,6 +5,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 import re
 
+
 User = get_user_model()
 
 GENDER = (
@@ -38,7 +39,7 @@ class Custom_password_reset_form(PasswordResetForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        regex = re.compile('^([a-zA-Z0-9_\-\.]+)@epfedu.fr$')
+        regex = re.compile('^([a-zA-Z0-9_\-\.]+)@?(epfedu|epf).fr$')
         if not regex.match(email):
             raise forms.ValidationError('Entrer votre mail epf')
         return email
