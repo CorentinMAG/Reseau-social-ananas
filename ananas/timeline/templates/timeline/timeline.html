@@ -7,11 +7,11 @@
 <body>
 <h1>Bienvenue sur la timeline !</h1>
 
-{% for article in derniers_articles %}
-    <div class="article">
-        <h3>{{ article.titre }}</h3>
-        <p>{{ article.contenu_post|truncatewords_html:7 }}</p>
-        <p><a href={{ article.id }}>Lire la suite</a></p>
+{% for post in posts %}
+    <div class="post">
+        <h3>{{ post.titre }}</h3>
+        <p>{{ post.contenu_post|truncatewords_html:7 }}</p>
+        <p><a href={{ post.id }}>Lire la suite</a></p>
     </div>
 {% empty %}
     <p>Aucun article sur la timeline.</p>
