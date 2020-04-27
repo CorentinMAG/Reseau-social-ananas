@@ -43,7 +43,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=50, verbose_name='Nom')
     is_etudiant = models.BooleanField(default=True, verbose_name="Etudiant")
     is_autre = models.BooleanField(default=False, verbose_name="Autre")
-    genre = models.CharField(choices=GENDER, default='homme', max_length=5)
+    genre = models.CharField(choices=GENDER, max_length=5,blank=True,null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 

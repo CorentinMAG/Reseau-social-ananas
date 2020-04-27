@@ -1,22 +1,11 @@
 <!DOCTYPE html><html class=''>
 <head>
 	<script src="https://kit.fontawesome.com/6042c2ff25.js" crossorigin="anonymous"></script>
-<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
-<script src="https://use.typekit.net/hoy3lrg.js"></script>
-<script>try{Typekit.load({ async: true });}catch(e){}</script>
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
-
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <style>
 	*{
 		scroll-behavior: smooth;
@@ -65,6 +54,9 @@
 		padding:5px;
 		cursor: pointer;
 	}
+	.invisible{
+		display:none;
+	}
 </style>
 </head>
 <body>
@@ -82,7 +74,7 @@
 			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
 			<input type="text" placeholder="Search contacts..." />
 		</div>
-		<div id="contacts" style="overflow-y: hidden;">
+		<div id="contacts" style="overflow-y: auto;">
 			<ul>
 			</ul>
 			<button style="display: block;margin: auto;"><a href="{%url 'deconnexion' %}">Déconnexion</a></button>
@@ -131,6 +123,7 @@
         </button>
       </div>
       		<div class="modal-body">
+				<span id="error_add" class="alert alert-danger invisible">Une/des adresses mail sont invalides !</span>
 				<div class="container">
 					<form action="" class="add_chat">
 						<input class="add_email_chat" type="email" id="emailField" placeholder="Email..." class="form-control"/>
@@ -145,7 +138,6 @@
     </div>
   </div>
 </div>
-<script src='//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script><script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 <script src="{{STATIC_URL}}/static/messenger/js/chat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
@@ -156,6 +148,15 @@
 	let wsprotocol;
   	location.protocol ==="http:" ? wsprotocol = "ws:" : wsprotocol="wss:";
   	const username = {{ username }}
+
+  	const firstSocket=new WebSocket(wsprotocol+'//'
+      					+ window.location.host
+      					+ '/ws/messenger/accueil/');
+  	firstSocket.onopen=(e)=>{console.log('first open')};
+  	firstSocket.onmessage=function(e){
+  		contact_ul.innerHTML="";
+  		getUserChat(token)
+	};
 	function getUserChat(token){
 		fetch(`/messenger-api/?email=${email}`,{
 			method:'GET',
@@ -288,10 +289,11 @@
 let i = document.querySelectorAll('.fa-times');
 let input = document.querySelector('.add_email_chat');
 let form = document.querySelector('.add_chat');
+let modal=document.querySelector('#exampleModalCenter');
 form.onsubmit=(e)=>e.preventDefault();
 
 input.onkeyup = function(e) {
-      if (e.keyCode === 13 && e.target.validity.typeMismatch===false) {  // enter, return
+      if (e.keyCode === 13 && e.target.validity.typeMismatch===false && e.target.value!=="") {  // enter, return
           construct(e.target.value);
           e.target.value=""
       }
@@ -327,10 +329,23 @@ input.onkeyup = function(e) {
 			credentials:'include',
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
 			body:JSON.stringify({messages:[],participants:participants})
-		}).then((response)=>{if(response.ok){}else{throw new Error('')}}).catch(console.log)
-				//.then(contact_ul.innerHTML="").then(getUserChat(token)).catch(console.log)
+		}).then((response)=>{
+			if(response.ok){
+				console.log('création d\'un nouveau channel...');
+				$('#exampleModalCenter').modal('hide');
+				firstSocket.send(JSON.stringify({
+		          'command':'fetch_channels',
+		          'id':'new'
+		      }));
+			}
+			else{throw new Error('Un utilisateur n\'exise pas!')}
+		}
+			).catch(document.querySelector('#error_add').classList.remove('invisible'))
 	 }
- })
+ });
+	$('#exampleModalCenter').on('hidden.bs.modal',(e)=>{
+		document.querySelector('#error_add').classList.contains('invisible')? "":document.querySelector('#error_add').classList.add('invisible')
+	})
 </script>
 <script>
 </script>

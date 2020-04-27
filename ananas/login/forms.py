@@ -8,12 +8,6 @@ import re
 
 User = get_user_model()
 
-GENDER = (
-        ('homme', 'Homme'),
-        ('femme', 'Femme'),
-    )
-
-
 class CustomUserCreationForm(UserCreationForm):
     """Formulaire de création d'utilisateur dans le site
     d'administration de django"""
@@ -71,7 +65,6 @@ class ConnexionForm(forms.Form):
 class AutreForm(forms.Form):
     """Formulaire pour enregistrer les membres
     de l'administration et les profs"""
-    genre=forms.ChoiceField(choices=GENDER,widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_gender'}))
     campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
                                     widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_autre'}))
     email = forms.EmailField(label="", widget=forms.EmailInput(
@@ -115,8 +108,6 @@ class AutreForm(forms.Form):
 
 class EtudiantForm(forms.Form):
     """Formulaire d'inscription pour les étudiants"""
-    genre = forms.ChoiceField(choices=GENDER,
-                              widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_gender'}))
     email = forms.EmailField(label="", widget=forms.EmailInput(
         attrs={'class': 'form-control', 'placeholder': 'prenom.nom@epfedu.fr', 'id': 'email'}))
     nom = forms.CharField(label="",

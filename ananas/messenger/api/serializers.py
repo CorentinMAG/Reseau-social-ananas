@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from messenger.models import Chat
-from messenger.views import get_user_contact
+from messenger.views import get_user_contact,verify_participants
 
 
 class ContactSerializer(serializers.StringRelatedField):
@@ -17,10 +17,14 @@ class ChatSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         participants = validated_data.pop('participants')
-        chat = Chat()
-        chat.save()
-        for email in participants:
-            contact = get_user_contact(email)
-            chat.participants.add(contact)
-        chat.save()
-        return chat
+        try:
+            verify_participants(participants)
+            chat = Chat()
+            chat.save()
+            for email in participants:
+                contact = get_user_contact(email)
+                chat.participants.add(contact)
+                chat.save()
+            return chat
+        except:
+            return None

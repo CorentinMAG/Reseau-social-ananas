@@ -16,13 +16,17 @@ def room(request, room_name):
  })
 
 def get_last_10_messages(chatID):
- 	chat=get_object_or_404(Chat,id=chatID)
- 	return chat.messages.order_by('-timestamp').all()[:10]
+    chat = get_object_or_404(Chat,id=chatID)
+    return chat.messages.order_by('-timestamp').all()[:10]
 
 def get_user_contact(email):
- 	user=get_object_or_404(User,email=email)
- 	return get_object_or_404(Contact,user=user)
+    user = get_object_or_404(User,email=email)
+    return get_object_or_404(Contact,user=user)
+
+def verify_participants(participants):
+    for email in participants:
+        user=User.objects.get(email=email)
 
 def get_current_chat(chatID):
-	return get_object_or_404(Chat,id=chatID)
+    return get_object_or_404(Chat,id=chatID)
 
