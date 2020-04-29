@@ -10,14 +10,6 @@ User = get_user_model()
 
 class ChatConsumer(WebsocketConsumer):
 
-    # def fetch_messages(self,data):
-    #     messages = get_last_10_messages(data['id'])
-    #     content={
-    #         'command':'messages',
-    #         'messages':self.messages_to_json(messages)
-    #     }
-    #     self.send_chat_message(content)
-
     def fetch_user_messages(self, data):
         messages = get_last_10_messages(data['id'])
         content = {
@@ -54,7 +46,6 @@ class ChatConsumer(WebsocketConsumer):
             'timestamp': str(message.timestamp)
         }
     def fetch_channels(self,data):
-        print(data)
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -100,7 +91,6 @@ class ChatConsumer(WebsocketConsumer):
     # Receive message from WebSocket
     def receive(self, text_data):
         data = json.loads(text_data)
-        print(data)
         self.commands[data['command']](self, data)
 
     def send_chat_message(self, message):
