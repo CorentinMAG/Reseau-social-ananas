@@ -98,13 +98,8 @@
 			<img src="https://emilcarlsson.se/assets/harveyspecter.png" alt="" />
 			{%load jsonTopy %}
 			<p>{{username|parse}}</p>
-			<div class="social-media">
-				<i class="fa fa-facebook" aria-hidden="true"></i>
-				<i class="fa fa-twitter" aria-hidden="true"></i>
-				 <i class="fa fa-instagram" aria-hidden="true"></i>
-			</div>
 		</div>
-		<div class="messages" style="scrollbar-width:thin; min-height: 0;">
+		<div class="messages" style="scrollbar-width:thin; min-height: 0;margin-bottom: 64px;">
 			<ul id="chat-log">
 			</ul>
 		</div>
@@ -342,28 +337,37 @@ input.onkeyup = function(e) {
 	})
  }
  //création chat public (doit être réglementé)
- publicButton.addEventListener('click',()=>{
- 	fetch('/messenger-api/create/',{
- 		method:'POST',
-		credentials:'include',
-		headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
-		body:JSON.stringify({messages:[],participants:['all'],name:document.querySelector('#chat_name').value})})
-			.then((response)=>{
-				if(response.ok){
-					firstSocket.send(JSON.stringify({
-		          'command':'fetch_channels',
-		          'id':'new'
-		      }));
-				$('#exampleModalCenter').modal('hide');
-				}else{throw new Error('Un utilisateur n\'exise pas!')}
-			}).catch(document.querySelector('#error_add').classList.remove('invisible'))
+ publicButton.addEventListener('click',()=> {
+	 if (document.querySelector('#chat_name').value !== "") {
+		 fetch('/messenger-api/create/', {
+			 method: 'POST',
+			 credentials: 'include',
+			 headers: {'Authorization': `Token ${token}`, 'Content-Type': 'application/json'},
+			 body: JSON.stringify({
+				 messages: [],
+				 participants: ['all'],
+				 name: document.querySelector('#chat_name').value
+			 })
+		 })
+				 .then((response) => {
+					 if (response.ok) {
+						 firstSocket.send(JSON.stringify({
+							 'command': 'fetch_channels',
+							 'id': 'new'
+						 }));
+						 $('#exampleModalCenter').modal('hide');
+					 } else {
+						 throw new Error('Un utilisateur n\'exise pas!')
+					 }
+				 }).catch(document.querySelector('#error_add').classList.remove('invisible'))
+	 }
  });
  button_add_chat.addEventListener('click',()=>{
  	const participants=[];
  	const allMail = document.querySelectorAll('.chips');
  	allMail.forEach((chips)=>{participants.push(chips.textContent)});
  	participants.includes(`${email}`) ? "" : participants.push(`${email}`);
-	 if(participants.length>1){
+	 if(participants.length>1 && document.querySelector('#chat_name').value!=="" ){
 	 	fetch('/messenger-api/create/',{
 	 		method:'POST',
 			credentials:'include',
