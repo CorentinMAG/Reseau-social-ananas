@@ -54,7 +54,7 @@
 			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password1}}</p>
 					{% if form.password1.errors %}
-					{%for error in form:.password1.errors%}
+					{%for error in form.password1.errors%}
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
