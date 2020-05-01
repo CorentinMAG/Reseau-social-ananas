@@ -26,7 +26,7 @@
 			<form method="post" action="">
 				{% csrf_token %}
 				<fieldset>
-					<legend id="informatif">Informatif</legend>
+					<legend id="informatif" style="width: 75px;">Etudiant</legend>
 					<p><i class="fas fa-user"></i>{{form.nom}}</p>
 					{% if form.nom.errors %}
 					{% for error in form.nom.errors %}

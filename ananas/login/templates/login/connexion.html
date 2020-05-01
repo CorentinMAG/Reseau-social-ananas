@@ -20,8 +20,8 @@
 			{% endif %}
 			<form action="" method="post">
 				{% csrf_token %}
-				<p><i class="fas fa-envelope"></i><input type="email" name="email" class="form-control" placeholder="Identifiant" id="email" maxlength="254"></p>
-				<p><i class="fas fa-unlock"></i><input type="password" name="password" class="form-control" placeholder="Mot de passe" id="password" maxlength="128" required></p>
+				<p><i class="fas fa-envelope"></i>{{form.email}}</p>
+				<p><i class="fas fa-unlock"></i>{{form.password}}</p>
 				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Rester connecté</div><div style="text-align: right"><div class="onoffswitch"><input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
 				    <label class="onoffswitch-label" for="myonoffswitch">
 				        <div class="onoffswitch-inner"></div>
