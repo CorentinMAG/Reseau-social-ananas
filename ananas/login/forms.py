@@ -133,15 +133,11 @@ class EtudiantForm(forms.Form):
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password1'}))
+        attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Vérification password', 'id': 'password2'}))
-    promo = forms.CharField(max_length=4, label="", widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Promo', 'id': 'promo'}))
+        attrs={'class': 'form-control', 'placeholder': 'Vérification du mot de passe', 'id': 'password2'}))
     majeure = forms.ModelChoiceField(initial=Majeure.objects.first(), queryset=Majeure.objects.all(), label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
-    campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
-                                    widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus'}))
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -185,10 +181,8 @@ class EtudiantForm(forms.Form):
         user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
         user.is_active = False
 
-        promo = self.cleaned_data['promo']
-        campus = self.cleaned_data['campus']
         majeure = self.cleaned_data['majeure']
-        profilEtudiant = Etudiant(user=user, promo=promo, majeure=majeure, campus=campus)
+        profilEtudiant = Etudiant(user=user, majeure=majeure)
         profilEtudiant.save()
         if commit:
             user.save()
