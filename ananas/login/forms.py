@@ -5,12 +5,13 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 import re
 
-
 User = get_user_model()
+
 
 class CustomUserCreationForm(UserCreationForm):
     """Formulaire de création d'utilisateur dans le site
     d'administration de django"""
+
     class Meta(UserCreationForm):
         model = User
         fields = ('email',)
@@ -19,6 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     """Formulaire de modification d'utilisateur dans le site d'administration
     de django"""
+
     class Meta(UserChangeForm):
         model = User
         fields = ('email',)
@@ -88,18 +90,34 @@ class AutreForm(forms.Form):
         except User.DoesNotExist:
             return email
 
+    def clean(self):
+        cleaned_data = super(AutreForm, self).clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 != password2:
+                self.add_error("password2",
+                               "Les mots de passe sont différents !"
+                               )
+            else:
+                if len(password1) < 6:
+                    self.add_error("password2",
+                                   "le mot de passe est trop court ! ")
+
+        return cleaned_data
+
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
         nom = self.cleaned_data["nom"]
         email = self.cleaned_data['email']
         password = self.cleaned_data['password1']
         campus = self.cleaned_data['campus']
-        genre=self.cleaned_data["genre"]
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,genre=genre)
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
         user.is_active = False
         user.is_etudiant = False
         user.is_autre = True
-        profilAutre = Administration(user=user,campus=campus)
+        profilAutre = Administration(user=user, campus=campus)
         profilAutre.save()
         if commit:
             user.save()
@@ -130,6 +148,30 @@ class EtudiantForm(forms.Form):
             raise forms.ValidationError('Le mail existe déjà')
         except User.DoesNotExist:
             return email
+
+    def clean_promo(self):
+        promo = self.cleaned_data['promo']
+        regex = re.compile('^20[0-9]{2}$')
+        if not regex.match(promo):
+            raise forms.ValidationError('Année non valide')
+        return promo
+
+    def clean(self):
+        cleaned_data = super(EtudiantForm, self).clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 != password2:
+                self.add_error("password2",
+                               "Les mots de passe sont différents !"
+                               )
+            else:
+                if len(password1) < 6:
+                    self.add_error("password2",
+                                   "le mot de passe est trop court ! ")
+
+        return cleaned_data
 
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
