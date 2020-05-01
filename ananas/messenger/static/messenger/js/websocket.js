@@ -4,7 +4,7 @@ class WebSocketService {
 	callbacks = {};
 
 	static getInstance() {
-		if (!WebSocketService) {
+		if (!WebSocketService.instance) {
 			WebSocketService.instance = new WebSocketService()
 
 		}
@@ -18,16 +18,16 @@ class WebSocketService {
 		const path = `ws://127.0.0.1:8000/ws/messenger/${chatURL}/`;
 		this.socketRef = new WebSocket(path);
 		this.socketRef.onopen = () => {
-
+			console.log('WebSocket open')
 		};
-		this.socketNewMessage(JSON.stringify({
+		/*this.socketNewMessage(JSON.stringify({
 			command: 'fetch_messages'
-		}))
+		}))*/
 		this.socketRef.onmessage = (e) => {
 			this.socketNewMessage(e.data);
 		};
 		this.socketRef.onerror = (e) => {
-			console.log(e.massage);
+			console.log(e.message);
 
 		};
 		this.socketRef.onclose = () => {
@@ -42,7 +42,7 @@ class WebSocketService {
 	socketNewMessage(data) {
 		const parsedData = JSON.parse(data);
 		const command = parsedData.command;
-		if (Object.keys(this.callbacks).length == 0) {
+		if (Object.keys(this.callbacks).length === 0) {
 			return;
 		}
 		if (command === 'messages') {
@@ -52,20 +52,22 @@ class WebSocketService {
 			this.callbacks[command](parsedData.message)
 		}
 	}
-	fetchMessages(username) {
+	fetchMessages(username, roomName) {
 		this.sendMessage({
 			command: 'fetch_messages',
-			username: username
+			username: username,
+			id: roomName
 		});
 	}
 	newChatMessage(message) {
 		this.sendMessage({
 			command: 'new_message',
 			from: message.from,
-			message: message.content
+			message: message.content,
+			id: roomName
 		})
 	}
-	addCalbacks(messagesCallback, newMessageCallback) {
+	addCallbacks(messagesCallback, newMessageCallback) {
 		this.callbacks['messages'] = messagesCallback;
 		this.callbacks['new_message'] = newMessageCallback;
 	}
@@ -93,6 +95,10 @@ class WebSocketService {
 					recursion(callback);
 				}
 			}, 1)
+	}
+
+	state() {
+		return this.socketRef.readyState;
 	}
 }
 

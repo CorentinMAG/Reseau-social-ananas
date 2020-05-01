@@ -25,7 +25,7 @@ SECRET_KEY = 'xu!k68q$@_*82ja*jgqqv+3)5o(s+gsi()cf47e-^75)sr*dv_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost']
+ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost','127.0.0.1']
 
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION="FR"
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'login',
     'messenger',
+    'timeline',
     'phonenumber_field',
     'rest_framework',
     'rest_framework.authtoken',
@@ -57,7 +58,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'ananas.urls'
 
-AUTHENTICATION_BACKENDS = ['login.EmailBackend.EmailBackend','django.contrib.auth.backends.ModelBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
 TEMPLATES = [
     {
@@ -147,6 +148,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'fr'
 
+AUTH_USER_MODEL="login.CustomUser"
 
 TIME_ZONE = 'UTC'
 
@@ -162,7 +164,7 @@ MEDIA_URL='/media/'
 
 DEFAULT_FROM_EMAIL="webmaster@localhost"
 
-
+#AUTH_USER_MODEL="login.CustomUser"
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
