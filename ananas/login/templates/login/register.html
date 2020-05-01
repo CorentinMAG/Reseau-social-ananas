@@ -14,13 +14,12 @@
   
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	
-  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/register.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/register.css?t=<? echo time(); ?>" media="all">
   <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
 </head>
 <body>
 	<div class="container">
 		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
-			<div class="title">Créer un compte</div>
 			{% if form.non_field_errors %}
 			<p class="error alert alert-danger">{{form.non_field_errors}}</p>
 			{% endif %}
@@ -28,12 +27,6 @@
 				{% csrf_token %}
 				<fieldset>
 					<legend id="informatif">Informatif</legend>
-					<p><i class="fas fa-user"></i>{{form.username}}</p>
-					{% if form.username.errors %}
-					{% for error in form.username.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
 					<p><i class="fas fa-user"></i>{{form.nom}}</p>
 					{% if form.nom.errors %}
 					{% for error in form.nom.errors %}
@@ -47,58 +40,83 @@
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-					<p><i class="fas fa-calendar-day"></i>{{form.naissance}}</p>
-					{% if form.naissance.errors %}
-					{%for error in form.naissance.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-					<p><i class="fas fa-mobile-alt"></i>{{form.phone}}</p>
-					{% if form.phone.errors %}
-					{%for error in form.phone.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-				</fieldset>
-				<fieldset>
-					<legend id="promo">Promo & Majeure</legend>
-					<p><i class="fas fa-user-graduate"></i>{{form.promo}}</p>
-					{% if form.promo.errors %}
-					{%for error in form.promo.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-					<p>{{form.majeure}}</p>
-					{% if form.majeure.errors %}
-					{%for error in form.majeure.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-					<p>{{form.campus}}</p>
-					{% if form.campus.errors %}
-					{%for error in form.campus.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-				</fieldset>
-				<fieldset>
-					<legend id="essentiels">Essentiels</legend>
-					<p><i class="fas fa-envelope"></i>{{form.email}}</p>
+					<p><i class="fas fa-envelope"></i><input type="email" name="email" class="form-control" placeholder=" Adresse Mail" id="email" maxlength="254"></p>
 					{% if form.email.errors %}
 					{%for error in form.email.errors%}
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-					<p><i class="fas fa-unlock-alt"></i>{{form.password1}}</p>
-					{% if form.password1.errors %}
-					{%for error in form.password1.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
+					<p><i class="fas fa-calendar-day"></i>{{form.naissance}}</p>
+					{% if form.naissance.errors %}
+					{%for error in form.naissance.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-					<p><i class="fas fa-unlock-alt"></i>{{form.password2}}</p>
+					<p><select id="choix" class="majeure" onchange="changeColor(this);">
+                    <option value="" >Cursus</option>
+                      <OPTION VALUE="2019PSBFI1    000101">1A - Bachelor Future Innovators</OPTION>
+  <OPTION VALUE="2019PSFHM1    000101">1A - Formation Franco-Allemande</OPTION>
+  <OPTION VALUE="2019PSSHE1    000101">1A - Formation Franco-Québécoise</OPTION>
+  <OPTION VALUE="2019PMFGE1    000101">1A - Formation Généraliste (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE1    000101">1A - Formation Généraliste (Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE1    000101">1A - Formation Généraliste (Troyes)</OPTION>
+  <OPTION VALUE="2019PMSIG1    000101">1A - Formation Passerelle SIGMA-EPF (Montpellier)</OPTION>
+  <OPTION VALUE="2019PMSTI1    000101">1A - Formation Technologique (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSBBI2    000101">2A - Bachelor Business Innovators</OPTION>
+  <OPTION VALUE="2019PMFGE2    000101">2A - Formation Généraliste (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE2    000101">2A - Formation Généraliste (Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE2    000101">2A - Formation Généraliste (Troyes)</OPTION>
+  <OPTION VALUE="2019PMSTI2    000101">2A - Formation Technologique (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSBBI3    000101">3A - Bachelor Business Innovators</OPTION>
+  <OPTION VALUE="2019PMAPP1    000101">3A - Formation Apprentissage (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFHM3    000101">3A - Formation Franco-Allemande</OPTION>
+  <OPTION VALUE="2019PSSHE3    000101">3A - Formation Franco-Québécoise</OPTION>
+  <OPTION VALUE="2019PMFGE3    000101">3A - Formation Généraliste (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE3    000101">3A - Formation Généraliste (Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE3    000101">3A - Formation Généraliste (Troyes)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000102">4A - Cycle d'Harmonisation (Sceaux)</OPTION>
+  <OPTION VALUE="2019PMAPP2    000101">4A - Formation Apprentissage (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000101">4A - MAE - MEM - MIN - MIS - MSM(Sceaux)</OPTION>
+  <OPTION VALUE="2019PMFGE4    000101">4A - MDE - MEE - (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000103">4A - Majeure Aéronautique et Espace (Sceaux)</OPTION>
+  <OPTION VALUE="2019PMFGE4    000102">4A - Majeure Data Engineering (Montpellier)</OPTION>
+  <OPTION VALUE="2019PMFGE4    000103">4A - Majeure Energie et Environnement (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000104">4A - Majeure Engineering et Management (Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE4    000101">4A - Majeure Ingénierie et Architecture Durable (Troyes)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000105">4A - Majeure Ingénierie et Numérique (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000106">4A - Majeure Ingénierie et Santé (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSFGE4    000107">4A - Majeure Structures et Matériaux (Sceaux)</OPTION>
+  <OPTION VALUE="2019PMAPP3    000101">5A - Formation Apprentissage (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFHM5    000101">5A - Formation Franco-Allemande</OPTION>
+  <OPTION VALUE="2019PSFGE5    000101">5A - MAE - MEM - MIN - MIS - MSM(Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE5    000101">5A - MBE - MSC ICE (Troyes)</OPTION>
+  <OPTION VALUE="2019PTFGE5    000103">5A - MSC ICE (Troyes)</OPTION>
+  <OPTION VALUE="2019PSFGE5    000102">5A - Majeure Aéronautique et Espace (Sceaux)</OPTION>
+  <OPTION VALUE="2019PTFGE5    000102">5A - Majeure Bâtiment et Eco-cités (Troyes)</OPTION>
+  <OPTION VALUE="2019PMFGE5    000101">5A - Majeure Energie et Environnement (Montpellier)</OPTION>
+  <OPTION VALUE="2019PSFGE5    000103">5A - Majeure Engineering et Management (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSFGE5    000104">5A - Majeure Ingénierie et Numérique (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSFGE5    000105">5A - Majeure Ingénierie et Santé (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSFGE5    000106">5A - Majeure Structures et Matériaux (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSAPP1    000101">Apprentissage 1ère Année (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSAPP2    000101">Apprentissage 2ème Année (Sceaux)</OPTION>
+  <OPTION VALUE="2019PSAPP3    000101">Apprentissage 3ème Année (Sceaux)</OPTION>
+                </select></p>
+					{% if form.majeure.errors %}
+					{%for error in form.majeure.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
+			{% endfor %}
+			{% endif %}
+					<p><i class="fas fa-unlock-alt"></i><input type="password" name="password" class="form-control" placeholder="Mot de passe" id="password" maxlength="128" required></p>
+					{% if form.password1.errors %}
+					{%for error in form.password1.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
+			{% endfor %}
+			{% endif %}
+					<p><i class="fas fa-unlock-alt"></i><input type="password" name="password" class="form-control" placeholder="Vérification du mot de passe" id="password" maxlength="128" required></p>
 					{% if form.password2.errors %}
 					{%for error in form.password2.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:2px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 				</fieldset>
