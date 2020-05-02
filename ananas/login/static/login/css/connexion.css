@@ -9,27 +9,29 @@ body{
 	height: 100vh;
 	padding:0;
 	margin:0;
-	background: url('/static/login/img/index.jpg');
+	background: url('/static/login/img/indexbbb.png');
 	background-repeat: no-repeat;
 	background-size: contain;
+	background-color: #da0813;
 	display: flex;
 	font-size: 1.5rem !important;
 	justify-content: center;
 	align-items: center;
-	font-family: 'Roboto',sans-serif;
+	font-family: 'Helvetica',sans-serif;
 }
 
 .title{
 	text-transform: uppercase;
 	font-size: 1.7rem;
 	font-weight: 600;
-	color:#da0813;
+	color:#ffffff;
 	text-align: center;
 }
 
 .error{
 	position: relative;
-	font-size:1rem !important;
+	font-size:0.9rem !important;
+	font-family: 'Helvetica',sans-serif;
 	text-align: center;
 }
 .error i{
@@ -46,16 +48,17 @@ body{
 }
 
 .content{
-	width: 400px;
+	width: 320px;
 	height: 400px;
 	padding:15px;
-	opacity:.9;
+	opacity:1;
 	margin-bottom: 0 !important;
 	display: flex;
 	flex-direction: column;
-	background:#ecf0f1 !important;
+	background:#da0812 !important;
 	justify-content: space-around;
 	align-items: space-evenly;
+	box-shadow: 40px 0px 0px black;
 }
 
 .zone_button{
@@ -64,25 +67,35 @@ body{
 	flex-wrap: wrap;
 	justify-content: space-evenly;
 	align-items: center;
-	margin-top:30px;
 	padding:10px;
 }
 
 p{
 	position:relative;
+	color:#FFFFFF;
 	
 }
 
 p i{
 	position: absolute;
 	top:20%;
-	left:3px;
+	left:0px;
+	color:#FFFFFF;
 
 }
 form{
 	padding:10px;
+	/*background-color:#da0813;*/
 }
 
+.form-control{
+	background-color:#e12f38 !important;
+	color: #FFFFFF;
+}
+
+.form-control:focus{
+	color: #FFFFFF;
+}
 
 p input{
 	border:none !important;
@@ -93,8 +106,22 @@ p input{
 
 input:focus{
 	box-shadow: none !important;
-	border-bottom: 1px solid #da0813 !important;
+	border-bottom: 1px solid #FFFFFF !important;
 
+}
+.alert-danger {
+	color:#FFFFFF;
+	background-color:#da0813;
+}
+
+.fas fa-envelope{
+	border-bottom: 1px solid #FFFFFF !important;
+}
+
+.custom-control-label{
+	font-size: 13px;
+	color:#FFFFFF;
+	font-family: 'Helvetica',sans-serif;
 }
 
 input:invalid{
@@ -118,10 +145,13 @@ input:invalid{
 
 a{
 	text-decoration:none !important;
+	color:#FFFFFF;
+	font-size: 14px !important;
 }
 
 #toast{
-	background-color: #DA0813;
+	/*background-color: #DA0813;*/
+
 	color:#FFFFFF;
 }
 
@@ -132,3 +162,110 @@ a{
 	}
 }
 
+
+
+.onoffswitch {
+    position: relative;
+    width: 25px;
+  height:13px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    margin: 0px auto;
+}
+
+.onoffswitch-checkbox {
+    display: none;
+}
+
+input::-webkit-input-placeholder {
+color: #FFFFFF !important;
+}
+input:-moz-placeholder { /* Firefox 18- */
+color: #FFFFFF !important; 
+}
+input::-moz-placeholder { /* Firefox 19+ */
+color: #FFFFFF !important; 
+}
+input:-ms-input-placeholder { 
+color: #FFFFFF !important; 
+}
+input{
+	border-bottom: 1px solid #FFFFFF !important
+}
+
+.onoffswitch-label {
+    display: block;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid #999999;
+    border-radius: 0px;
+}
+
+.onoffswitch-inner {
+    width: 200%;
+    margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s;
+    -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s;
+    transition: margin 0.3s ease-in 0s;
+}
+
+.onoffswitch-inner:before,
+.onoffswitch-inner:after {
+    float: left;
+    width: 50%;
+    height: 10px;
+    padding: 0;
+    line-height: 26px;
+    font-size: 14px;
+    color: white;
+    font-family: Trebuchet, Arial, sans-serif;
+    font-weight: bold;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+.onoffswitch-inner:before {
+    content: "";
+    padding-left: 10px;
+    background-color: #FFFFFF;
+    color: #FFFFFF;
+}
+
+.onoffswitch-inner:after {
+    content: "";
+    padding-right: 10px;
+    background-color: #da0813;
+    color: #FFFFFF;
+    text-align: right;
+}
+
+.onoffswitch-switch {
+    width: 5px;
+    margin: 0px;
+    background: #FFFFFF;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 20px;
+    -moz-transition: all 0.3s ease-in 0s;
+    -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s;
+    transition: all 0.3s ease-in 0s;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+
+p span {
+  float: left;
+}

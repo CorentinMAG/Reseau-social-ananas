@@ -5,12 +5,13 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 import re
 
-
 User = get_user_model()
+
 
 class CustomUserCreationForm(UserCreationForm):
     """Formulaire de création d'utilisateur dans le site
     d'administration de django"""
+
     class Meta(UserCreationForm):
         model = User
         fields = ('email',)
@@ -19,6 +20,7 @@ class CustomUserCreationForm(UserCreationForm):
 class CustomUserChangeForm(UserChangeForm):
     """Formulaire de modification d'utilisateur dans le site d'administration
     de django"""
+
     class Meta(UserChangeForm):
         model = User
         fields = ('email',)
@@ -52,7 +54,7 @@ class ConnexionForm(forms.Form):
     email = forms.CharField(
         widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email', 'id': 'email'}))
     password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password'}))
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password'}))
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -88,18 +90,34 @@ class AutreForm(forms.Form):
         except User.DoesNotExist:
             return email
 
+    def clean(self):
+        cleaned_data = super(AutreForm, self).clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 != password2:
+                self.add_error("password2",
+                               "Les mots de passe sont différents !"
+                               )
+            else:
+                if len(password1) < 6:
+                    self.add_error("password2",
+                                   "le mot de passe est trop court ! ")
+
+        return cleaned_data
+
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
         nom = self.cleaned_data["nom"]
         email = self.cleaned_data['email']
         password = self.cleaned_data['password1']
         campus = self.cleaned_data['campus']
-        genre=self.cleaned_data["genre"]
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,genre=genre)
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
         user.is_active = False
         user.is_etudiant = False
         user.is_autre = True
-        profilAutre = Administration(user=user,campus=campus)
+        profilAutre = Administration(user=user, campus=campus)
         profilAutre.save()
         if commit:
             user.save()
@@ -115,15 +133,11 @@ class EtudiantForm(forms.Form):
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password1'}))
+        attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Vérification password', 'id': 'password2'}))
-    promo = forms.CharField(max_length=4, label="", widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Promo', 'id': 'promo'}))
+        attrs={'class': 'form-control', 'placeholder': 'Vérification du mot de passe', 'id': 'password2'}))
     majeure = forms.ModelChoiceField(initial=Majeure.objects.first(), queryset=Majeure.objects.all(), label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
-    campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
-                                    widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus'}))
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -142,19 +156,33 @@ class EtudiantForm(forms.Form):
             raise forms.ValidationError('Année non valide')
         return promo
 
+    def clean(self):
+        cleaned_data = super(EtudiantForm, self).clean()
+        password1 = cleaned_data.get('password1')
+        password2 = cleaned_data.get('password2')
+
+        if password1 and password2:
+            if password1 != password2:
+                self.add_error("password2",
+                               "Les mots de passe sont différents !"
+                               )
+            else:
+                if len(password1) < 6:
+                    self.add_error("password2",
+                                   "le mot de passe est trop court ! ")
+
+        return cleaned_data
+
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
         password = self.cleaned_data["password1"]
         nom = self.cleaned_data["nom"]
         email = self.cleaned_data["email"]
-        genre=self.cleaned_data["genre"]
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,genre=genre)
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
         user.is_active = False
 
-        promo = self.cleaned_data['promo']
-        campus = self.cleaned_data['campus']
         majeure = self.cleaned_data['majeure']
-        profilEtudiant = Etudiant(user=user, promo=promo, majeure=majeure, campus=campus)
+        profilEtudiant = Etudiant(user=user, majeure=majeure)
         profilEtudiant.save()
         if commit:
             user.save()

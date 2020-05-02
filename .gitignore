@@ -5,6 +5,5 @@ db.sqlite3
 __pycache__/
 *.py[cod]
 migrations/
-ananas/ananas/settings.py
 bin/
 .idea/

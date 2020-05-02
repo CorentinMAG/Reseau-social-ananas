@@ -14,20 +14,19 @@
   
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	
-  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/register.css">
+  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/register.css?t=<? echo time(); ?>" media="all">
   <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
 </head>
 <body>
 	<div class="container">
 		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
-			<div class="title">Créer un compte</div>
 			{% if form.non_field_errors %}
 			<p class="error alert alert-danger">{{form.non_field_errors}}</p>
 			{% endif %}
 			<form method="post" action="">
 				{% csrf_token %}
 				<fieldset>
-					<legend id="informatif">Informatif</legend>
+					<legend id="informatif" style="width: 75px;">Etudiant</legend>
 					<p><i class="fas fa-user"></i>{{form.nom}}</p>
 					{% if form.nom.errors %}
 					{% for error in form.nom.errors %}
@@ -41,46 +40,28 @@
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-				</fieldset>
-				<fieldset>
-					<legend id="promo">Promo & Majeure</legend>
-					<p><i class="fas fa-user-graduate"></i>{{form.promo}}</p>
-					{% if form.promo.errors %}
-					{%for error in form.promo.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-					<p>{{form.majeure}}</p>
-					{% if form.majeure.errors %}
-					{%for error in form.majeure.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-					<p>{{form.campus}}</p>
-					{% if form.campus.errors %}
-					{%for error in form.campus.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-				</fieldset>
-				<fieldset>
-					<legend id="essentiels">Essentiels</legend>
 					<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 					{% if form.email.errors %}
 					{%for error in form.email.errors%}
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
+					<p>{{form.majeure}}</p>
+					{% if form.majeure.errors %}
+					{%for error in form.majeure.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
+			{% endfor %}
+			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password1}}</p>
 					{% if form.password1.errors %}
 					{%for error in form.password1.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password2}}</p>
 					{% if form.password2.errors %}
 					{%for error in form.password2.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:2px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 				</fieldset>
