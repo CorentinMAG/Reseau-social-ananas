@@ -22,7 +22,7 @@
 				{% csrf_token %}
 				<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 				<p><i class="fas fa-unlock"></i>{{form.password}}</p>
-				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Rester connecté</div><div style="text-align: right"><div class="onoffswitch"><input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Rester connecté</div><div style="text-align: right"><div class="onoffswitch">{{form.stay_connected}}
 				    <label class="onoffswitch-label" for="myonoffswitch">
 				        <div class="onoffswitch-inner"></div>
 				        <div class="onoffswitch-switch"></div>
