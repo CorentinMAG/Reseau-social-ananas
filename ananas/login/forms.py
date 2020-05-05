@@ -55,7 +55,7 @@ class ConnexionForm(forms.Form):
         widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email', 'id': 'email'}))
     password = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password'}))
-    stay_connected = forms.BooleanField(required=False, initial=True, widget=forms.CheckboxInput(
+    stay_connected = forms.BooleanField(initial=False, widget=forms.CheckboxInput(
         attrs={'class': 'onoffswitch-checkbox', 'id': 'myonoffswitch'}))
 
     def clean_email(self):
