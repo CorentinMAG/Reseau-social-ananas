@@ -33,6 +33,7 @@ img{
   background:blue;
 }
 
+
 /*BUTTON WITH Material Design class*/
 .mdc-button{
   font-size: 0.7em;
@@ -43,6 +44,20 @@ img{
 }
 .mdc-button a:hover{
 	color:#FFFFFF;
+}
+/*SCROLLBAR FOR CHROME & SAFARI*/
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
 }
 
 /*SIDEPANNEL*/
@@ -86,8 +101,10 @@ img{
   list-style-type: none;
   overflow-y:auto;
   max-height: 300px;
+  scrollbar-width:thin;
 }
 .chat{
+  width: 90%;
   margin:5px 0 5px 0;
   cursor: pointer;
 }
@@ -146,12 +163,14 @@ section{
 .messages{
   padding:20px 5px;
   height: 88vh;
-  overflow-y:auto ;
+  overflow-y:auto;
+  scrollbar-width:thin;
 }
 #chat-log{
   list-style-type: none;
   margin: 0;
 }
+
 .sent{
   display: flex;
   flex-direction: row;
@@ -213,6 +232,7 @@ section{
   max-height: 500px;
   overflow-y: auto;
 }
+
 @media screen and (max-width:900px){
   #all_participants{
     padding: 5px;
