@@ -61,7 +61,7 @@ def deconnexion(request):
 
 @login_required
 def view_redirection(request):
-    return redirect(reverse('room', kwargs={'room_name': '5'}))
+    return redirect(reverse('room', kwargs={'room_name': 'accueil'}))
 
 
 class Forbidden(TemplateView):

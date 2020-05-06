@@ -1,116 +1,58 @@
-<!DOCTYPE html><html class=''>
-<head>
-	<script src="https://kit.fontawesome.com/6042c2ff25.js" crossorigin="anonymous"></script>
-<!------ Include the above in your HEAD tag ---------->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+{% extends "header.html" %}
+{% block title %}Messagerie{%endblock%}
+{%block headerlink %}<!-- CSS connexion page -->
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-<style>
-	*{
-		scroll-behavior: smooth;
-		box-sizing: border-box;
-	}
-	body{
-		margin:0 !important;
-		padding:0;
-	}
-	.container{
-		display: flex;
-		justify-content: center;
-		align-items: center;
-
-	}
-	.add_chat{
-		width: 100%;
-	}
-	*{
-		box-sizing: border-box;
-	}
-	.add_email_chat{
-		border:none;
-		width: 100%;
-	}
-	.all_email{
-
-		list-style-type: none;
-		padding: 0;
-		margin: 0;
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		padding-bottom: 5px;
-		padding-top:5px;
-	}
-	.chips{
-		border:1px solid #C5C5C5;
-		padding: 5px;
-		background:#C5C5C5;
-		margin:5px 5px;
-
-		border-radius: 50px;
-	}
-	.fa-times{
-		padding:5px;
-		cursor: pointer;
-	}
-	.invisible{
-		display:none;
-	}
-	.activeChat{
-		background: blue;
-	}
-</style>
-</head>
-<body>
-
-
-<div id="frame">
-	<div id="sidepanel">
-		<div id="profile" style="height:70px;">
-			<div class="wrap" style="overflow:hidden;">
+{% endblock %}
+{% block content %}
+<main id="frame">
+	{%load jsonTopy %}
+	<nav id="sidepanel">
+		<div id="profile">
 				<img id="profile-img" src="https://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
-				<p>Mike Ross</p>
-			</div>
+			<span>{{username|parse}}</span>
 		</div>
-		<div id="search">
-			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-			<input type="text" placeholder="Search contacts..." />
-		</div>
-		<div id="contacts" style="overflow-y: auto;">
-			<ul>
-			</ul>
-			<button style="display: block;margin: auto;"><a href="{%url 'deconnexion' %}">Déconnexion</a></button>
+		<div id="deconnection">
+			<p class="mdc-button mdc-button--raised"><a href="{%url 'deconnexion' %}"><span class="mdc-button__ripple"></span>Déconnexion</a></p>
 {% if user.is_superuser %}
-			<button style="display: block;margin: auto;" ><a href="/admin">admin</a></button>
+			<p class="mdc-button mdc-button--raised"><a href="/admin"><span class="mdc-button__ripple"></span>admin</a></p>
 			{% endif %}
 		</div>
-		<div id="bottom-bar">
-			<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-  Créer un chat
-</button>
-
-			<button id="settings"><i class="fa fa-cog fa-fw" aria-hidden="true"></i> <span>Settings</span></button>
-		</div>
-	</div>
-	<div class="content" style="display: flex;flex-direction: column;">
-		<div class="contact-profile">
-			<img src="https://emilcarlsson.se/assets/harveyspecter.png" alt="" />
-			{%load jsonTopy %}
-			<p>{{username|parse}}</p>
-		</div>
-		<div class="messages" style="scrollbar-width:thin; min-height: 0;margin-bottom: 64px;">
-			<ul id="chat-log">
+		<p id="messagerie">Messagerie</p>
+		<div id="all_chats">
+			<ul>
 			</ul>
 		</div>
-		<div class="message-input" style="position:absolute; ">
-			<div class="wrap" style="display: flex;">
+		<div id="bottom-bar">
+			<button class="mdc-button mdc-button--raised" data-toggle="modal" data-target="#exampleModalCenter">
+				<span class="mdc-button__ripple"></span>Créer un chat
+			</button>
+			<button id="settings" class="mdc-button mdc-button--raised"><i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button>
+		</div>
+	</nav>
+	<section class="content">
+		<div class="chat-profile">
+			<span id="current_chat_name"></span>
+			<i class="fas fa-thumbtack"></i>
+		</div>
+		<div class="messages">
+			<ul id="chat-log"></ul>
+		</div>
+		<div class="message-input">
+			<div class="wrap">
 			<input type="text" id="chat-message-input" placeholder="Ecrivez votre message..." />
-			<button class="submit" id="chat-message-submit" style="width:10%;"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+			<button class="submit" id="chat-message-submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 			</div>
 		</div>
-	</div>
-</div>
+	</section>
+	<nav id="sidepannel2">
+		<div id="participants">
+			<p>Participants</p>
+		</div>
+		<div id="list_participants">
+			<ul id="all_participants"></ul>
+		</div>
+	</nav>
+</main>
 <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered" role="document" style="left:0%">
     <div class="modal-content">
@@ -138,10 +80,13 @@
     </div>
   </div>
 </div>
+{% endblock %}
+{% block script %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
 <script >
-	let contact_ul=document.querySelector('#contacts').firstElementChild;
+	let contact_ul=document.querySelector('#all_chats').firstElementChild;
+	let participants_ul=document.querySelector('#all_participants');
 	const token="{{ request.session.token }}";
 	const email={{email}}
 	let wsprotocol;
@@ -171,43 +116,70 @@
 					let length_actual_chat = contact_ul.children.length;
 					if(length_chat !== length_actual_chat) {
 						for (let obj = length_actual_chat; obj < length_chat; obj++) {
-							createContact(data[obj])
+							createChat(data[obj])
 						}
 					}
 				}
 			})
 		})
 	}
+	function fetchParticipants(token,chat){
+  		fetch(`/messenger-api/${chat}`,{
+			method:'GET',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+		}).then(resp=>{
+			resp.json().then(data=>{
+				for(const participant of data['participants']) {
+					Participant(participant)
+				}
+			})
+		})
+	}
 	let chatSocket;
-	function createContact(contact){
-		let c_li=document.createElement('li');
-		c_li.classList="contact";
+  	function Participant(participant){
+  		let c_li=document.createElement('li');
+		c_li.classList="chat";
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
-		let c_span=document.createElement('span');
-		c_span.classList="contact-status";
 		let c_img=document.createElement('img');
-		let c_meta=document.createElement('div');
-		c_meta.classList="meta";
-		let c_name=document.createElement('p');
+		let c_name=document.createElement('span');
+		c_name.classList="name";
+		let c_pre=document.createElement('p');
+		let first_name=participant.split('.')[0];
+		let last_name=participant.split('.')[1].split('@')[0];
+		c_pre.classList="preview";
+		c_li.appendChild(c_div);
+		c_img.src="https://emilcarlsson.se/assets/jonathansidwell.png";
+		c_div.appendChild(c_img);
+		c_name.textContent=`${first_name} ${last_name.toUpperCase()}`;
+		c_div.appendChild(c_name);
+		c_div.appendChild(c_pre);
+		participants_ul.appendChild(c_li);
+	}
+	function createChat(contact){
+		let c_li=document.createElement('li');
+		c_li.classList="chat";
+		let c_div=document.createElement('div');
+		c_div.classList="wrap";
+		let c_img=document.createElement('img');
+		let c_name=document.createElement('span');
 		c_name.classList="name";
 		let c_pre=document.createElement('p');
 		c_pre.classList="preview";
-		let c_spanpre=document.createElement('span');
 		c_li.appendChild(c_div);
-		c_div.appendChild(c_span);
 		c_img.src="https://emilcarlsson.se/assets/jonathansidwell.png";
 		c_div.appendChild(c_img);
 		c_name.textContent=contact.name;
-		c_meta.appendChild(c_name);
-		c_meta.appendChild(c_pre);
-		c_div.appendChild(c_meta);
-		c_pre.appendChild(c_spanpre);
+		c_div.appendChild(c_name);
+		c_div.appendChild(c_pre);
 		contact_ul.appendChild(c_li);
  
 		c_li.addEventListener('click', (e)=>{
 			 let current = document.querySelector('.activeChat');
 			 let name =contact.id;
+			 document.querySelector('#current_chat_name').innerHTML=`${contact.name}`;
+			 participants_ul.innerHTML=""? fetchParticipants(token,name) :participants_ul.innerHTML="";fetchParticipants(token,name);
 			 if(current!=null){
 			 	current.classList.remove('activeChat');
 			 	e.currentTarget.classList.add('activeChat')
@@ -280,21 +252,22 @@
       }
   };
   function createMessage(data){
-      var author=data['author'];
-      var msgListTag=document.createElement('li');
-      var imgTag=document.createElement('img');
-      var pTag=document.createElement('p');
-      var small=document.createElement('small');
-      small.textContent=moment((new Date(data.timestamp).getTime())).fromNow();
-      pTag.innerHTML=data.content+'</br>';
+      let author=data['author'];
+      let msgListTag=document.createElement('li');
+      let imgTag=document.createElement('img');
+      let authorTag=document.createElement('span');
+      authorTag.textContent=author;
+      let pTag=document.createElement('p');
+      let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
+      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><p>${data.content}</p>`;
       imgTag.src="https://emilcarlsson.se/assets/mikeross.png";
-      if(author===username){
-        msgListTag.classList="sent";
-      }else{
-        msgListTag.classList="replies";
-      }
+      msgListTag.classList="sent";
+      // if(author===username){
+      //   msgListTag.classList="sent";
+      // }else{
+      //   msgListTag.classList="replies";
+      // }
       msgListTag.appendChild(imgTag);
-      pTag.appendChild(small);
       msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
   }
@@ -394,5 +367,4 @@ input.onkeyup = function(e) {
 </script>
 <script>
 </script>
-</body>
-</html>
+{%endblock%}
