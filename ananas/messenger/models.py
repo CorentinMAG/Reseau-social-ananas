@@ -1,31 +1,36 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 User = get_user_model()
 
 
-class Contact(models.Model):
-    user = models.ForeignKey(User, related_name="friends", on_delete=models.CASCADE)
-    friends = models.ManyToManyField('self', blank=True)
-
-    def __str__(self):
-        return self.user.email
-
-
 class Message(models.Model):
-    contact = models.ForeignKey(Contact, related_name="messages", on_delete=models.CASCADE)
+    contact = models.ForeignKey(User, related_name="messages", on_delete=models.CASCADE)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.contact.user.email
+        return self.contact.email
 
 
 class Chat(models.Model):
-    name=models.CharField(max_length=100)
-    participants = models.ManyToManyField(Contact, related_name="chats")
+    name = models.CharField(max_length=100)
+    participants = models.ManyToManyField(User, related_name="chats")
     messages = models.ManyToManyField(Message, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=7)
 
     def __str__(self):
         return "{}".format(self.pk)
+
+
+@receiver(post_save, sender=User)
+def Connect_user_to_public_chat(sender, instance, **kwargs):
+    try:
+        PublicChat = Chat.objects.filter(status='Public')
+        for chat in PublicChat:
+            chat.participants.add(instance)
+    except:
+        return

@@ -142,6 +142,46 @@ img{
   }
 }
 
+/*FORM ADD CHAT*/
+.add_chat{
+  width: 100%;
+}
+
+.add_email_chat{
+  border:none;
+  width: 100%;
+}
+.all_email{
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding-bottom: 5px;
+  padding-top:5px;
+}
+.chips{
+  border:1px solid #C5C5C5;
+  padding: 5px;
+  background:#C5C5C5;
+  margin:5px 5px;
+  border-radius: 50px;
+}
+.fa-times{
+  padding:5px;
+  cursor: pointer;
+}
+.invisible{
+  visibility:hidden;
+}
+
+#error_add{
+  display: block;
+  text-align: center;
+}
+
+
 /*SECTION*/
 section{
   width: 60%;

@@ -63,10 +63,10 @@
         </button>
       </div>
       		<div class="modal-body">
-				<span id="error_add" class="alert alert-danger invisible">Une/des adresses mails sont invalides !</span>
+				<span id="error_add" class="alert alert-danger invisible"></span>
 				<div class="container">
 					<form action="" class="add_chat">
-						<input type="text" id="chat_name" placeholder="Nom du chat" class="form-control"/>
+						<input type="text" id="chat_name" placeholder="Nom du chat" class="form-control" required/>
 						<input class="add_email_chat" type="email" id="emailField" placeholder="Email..." class="form-control"/>
 						<ul class="all_email"></ul>
 					</form>
@@ -92,6 +92,8 @@
 	let wsprotocol;
   	location.protocol ==="http:" ? wsprotocol = "ws:" : wsprotocol="wss:";
   	const username = {{ username }}
+
+
 
   	const firstSocket=new WebSocket(wsprotocol+'//'
       					+ window.location.host
@@ -209,7 +211,7 @@
 					fetchMessages();
 			};
 		  	chatSocket.onmessage = function(e) {
-		      var data = JSON.parse(e.data);
+		      let data = JSON.parse(e.data);
 		     if(data['command']==='messages'){
 		     	document.querySelector('#chat-log').innerHTML!=="" ? document.querySelector('#chat-log').innerHTML="" :"";
 		        for(let i=data['messages'].length-1;i>=0;i--){
@@ -319,7 +321,8 @@ input.onkeyup = function(e) {
 			 body: JSON.stringify({
 				 messages: [],
 				 participants: ['all'],
-				 name: document.querySelector('#chat_name').value
+				 name: document.querySelector('#chat_name').value,
+				 status:'Public'
 			 })
 		 })
 				 .then((response) => {
@@ -332,7 +335,10 @@ input.onkeyup = function(e) {
 					 } else {
 						 throw new Error('Un utilisateur n\'exise pas!')
 					 }
-				 }).catch(document.querySelector('#error_add').classList.remove('invisible'))
+				 }).catch(()=>{
+				 	document.querySelector('#error_add').textContent="Une/des adresses mails invalide(s) !";
+				 	document.querySelector('#error_add').classList="alert alert-danger"
+		 			})
 	 }
  });
  button_add_chat.addEventListener('click',()=>{
@@ -345,24 +351,34 @@ input.onkeyup = function(e) {
 	 		method:'POST',
 			credentials:'include',
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
-			body:JSON.stringify({messages:[],participants:participants,name:document.querySelector('#chat_name').value})
+			body:JSON.stringify({
+				messages:[],
+				participants:participants,
+				name:document.querySelector('#chat_name').value,
+				status:'Private'
+			})
 		}).then((response)=>{
 			if(response.ok){
+				document.querySelector('#error_add').classList="alert alert-success";
 				document.querySelector('#error_add').textContent='création d\'un nouveau channel...';
 				firstSocket.send(JSON.stringify({
 		          'command':'fetch_channels',
 		          'id':'new'
 		      }));
 				$('#exampleModalCenter').modal('hide');
+				ul.innerHTML=""
 			}
 			else{throw new Error('Un utilisateur n\'exise pas!')}
 		}
-			).catch(document.querySelector('#error_add').classList.remove('invisible'))
+			).catch(()=>{
+				document.querySelector('#error_add').textContent="Une/des adresses mails invalide(s) !";
+				document.querySelector('#error_add').classList="alert alert-danger"
+	 		})
 	 }
  });
 	$('#exampleModalCenter').on('hidden.bs.modal',(e)=>{
 		input.value="";
-		document.querySelector('#error_add').classList.contains('invisible')? "":document.querySelector('#error_add').classList.add('invisible')
+		document.querySelector('#error_add').classList="invisible"
 	})
 </script>
 <script>
