@@ -8,7 +8,7 @@
 	{%load jsonTopy %}
 	<nav id="sidepanel">
 		<div id="profile">
-				<img id="profile-img" src="https://emilcarlsson.se/assets/mikeross.png" class="online" alt="" />
+				<img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
 			<span>{{username|parse}}</span>
 		</div>
 		<div id="deconnection">
@@ -148,11 +148,12 @@
 		let c_name=document.createElement('span');
 		c_name.classList="name";
 		let c_pre=document.createElement('p');
-		let first_name=participant.split('.')[0];
-		let last_name=participant.split('.')[1].split('@')[0];
+		c_img.src=participant.avatar;
+
+		let first_name=participant.first_name;
+		let last_name=participant.last_name.toUpperCase();
 		c_pre.classList="preview";
 		c_li.appendChild(c_div);
-		c_img.src="https://emilcarlsson.se/assets/jonathansidwell.png";
 		c_div.appendChild(c_img);
 		c_name.textContent=`${first_name} ${last_name.toUpperCase()}`;
 		c_div.appendChild(c_name);
@@ -170,7 +171,7 @@
 		let c_pre=document.createElement('p');
 		c_pre.classList="preview";
 		c_li.appendChild(c_div);
-		c_img.src="https://emilcarlsson.se/assets/jonathansidwell.png";
+		c_img.src=contact.avatar;
 		c_div.appendChild(c_img);
 		c_name.textContent=contact.name;
 		c_div.appendChild(c_name);
@@ -196,7 +197,7 @@
       					+ '/')
 
 			}else if(chatSocket.url.includes(name)){
-
+				//////////////
 			}
 			else{
     			chatSocket.close();
@@ -262,19 +263,13 @@
       let pTag=document.createElement('p');
       let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
       pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><p>${data.content}</p>`;
-      imgTag.src="https://emilcarlsson.se/assets/mikeross.png";
       msgListTag.classList="sent";
-      // if(author===username){
-      //   msgListTag.classList="sent";
-      // }else{
-      //   msgListTag.classList="replies";
-      // }
+      imgTag.src=data['avatar'];
       msgListTag.appendChild(imgTag);
       msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
   }
 
-  
   AppendNewChat(token);
 	let button_add_chat=document.querySelector('.submit_add_chat');
 	let ul =document.querySelector('.all_email');

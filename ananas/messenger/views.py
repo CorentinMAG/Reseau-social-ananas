@@ -10,7 +10,6 @@ User = get_user_model()
 
 @login_required
 def room(request, room_name):
-    create_or_not_contact(request.user.email)
     return render(request, 'messenger/room.html', {
         'room_name_json': mark_safe(json.dumps(room_name)),
         'username': mark_safe(json.dumps(request.user.first_name)),
@@ -23,18 +22,13 @@ def add_all_users():
     return user
 
 
-def create_or_not_contact(email):
-    user = User.objects.get(email=email)
-    print(user)
-
-
 def get_last_10_messages(chatID):
     chat = get_object_or_404(Chat, id=chatID)
     return chat.messages.order_by('-timestamp').all()[:10]
 
 
 def get_user_contact(email):
-    user = get_object_or_404(User, email=email)
+    user = User.objects.get(email=email)
     return user
 
 

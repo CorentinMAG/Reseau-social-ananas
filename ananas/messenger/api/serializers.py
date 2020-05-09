@@ -1,9 +1,17 @@
 from rest_framework import serializers
 from messenger.models import Chat
 from messenger.views import get_user_contact, verify_participants, add_all_users
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class ContactSerializer(serializers.StringRelatedField):
+    def to_representation(self, value):
+        info_user = {'email': value.email, 'first_name': value.first_name, 'last_name': value.last_name,
+                     'avatar': value.avatar}
+        return info_user
+
     def to_internal_value(self, value):
         return value
 
@@ -13,7 +21,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'messages', 'participants', 'name', 'status')
+        fields = ('id', 'participants', 'name', 'status', 'avatar')
 
     def create(self, validated_data):
         admin = self.context['request'].user

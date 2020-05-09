@@ -42,10 +42,12 @@ class ChatConsumer(WebsocketConsumer):
         return {
             'id': message.id,
             'author': message.contact.first_name,
+            'avatar':message.contact.avatar,
             'content': message.content,
             'timestamp': str(message.timestamp)
         }
-    def fetch_channels(self,data):
+
+    def fetch_channels(self, data):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -55,7 +57,6 @@ class ChatConsumer(WebsocketConsumer):
         )
 
     commands = {
-        # 'fetch_messages':fetch_messages,
         'new_message': new_message,
         'fetch_user_messages': fetch_user_messages,
         'fetch_channels': fetch_channels
@@ -120,4 +121,3 @@ class ChatConsumer(WebsocketConsumer):
         message = event['message']
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
-
