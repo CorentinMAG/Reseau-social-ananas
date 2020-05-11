@@ -27,7 +27,6 @@
 			<button class="mdc-button mdc-button--raised" data-toggle="modal" data-target="#exampleModalCenter">
 				<span class="mdc-button__ripple"></span>Créer un chat
 			</button>
-<!--			<button id="settings" class="mdc-button mdc-button&#45;&#45;raised"><i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button>-->
 		</div>
 	</nav>
 	<section class="content">
@@ -78,6 +77,25 @@
         		<button class="submit_add_chat btn btn-primary" type="submit">Créer</button>
 				<button class="btn btn-info" id="public_chat">Public</button>
       		</div>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="staticBackdropLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        test
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Understood</button>
+      </div>
     </div>
   </div>
 </div>
@@ -165,7 +183,7 @@
 				if(current_participants.length>0){
 					for(const participant of data['participants']){
 						if(arr.includes(participant.email)===false){
-							Participant(participant)
+							Participant(participant,data)
 						}
 					}
 					if(RemovedParticipants.length>0){
@@ -173,7 +191,7 @@
 					}
 				}else{
 					for(const participant of data['participants']){
-						Participant(participant)
+						Participant(participant,data)
 					}
 				}
 			})
@@ -183,9 +201,13 @@
   	function RemoveParticipant(participant){
   		participant.parentElement.removeChild(participant)
 	}
-  	function Participant(participant){
+  	function Participant(participant,data){
 		let c_li=document.createElement('li');
 		c_li.classList="chat";
+		if(data['admin'].includes(participant.email)){
+			c_li.style.color="#f1c40f";
+			c_li.dataset.is_admin=true
+		}
 		c_li.dataset.email=participant.email;
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
@@ -213,6 +235,8 @@
 					let settingBtn = document.createElement('button');
 					settingBtn.classList='mdc-button mdc-button--raised';
 					settingBtn.setAttribute('id','settings');
+					settingBtn.setAttribute('data-toggle','modal');
+					settingBtn.setAttribute('data-target','#staticBackdrop');
 					settingBtn.innerHTML='<i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button';
 					if(document.querySelector("#bottom-bar").children[1]===undefined){
 						document.querySelector("#bottom-bar").appendChild(settingBtn)
@@ -307,7 +331,6 @@
       					+ name
       					+ '/')
 			 }
-			 //fetchAutorizations(token,name,email);
 
 			chatSocket.onopen=function(e){
 					fetchMessages();
