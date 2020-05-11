@@ -21,19 +21,20 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'participants', 'name', 'status', 'avatar')
+        fields = ('id', 'participants', 'name', 'status', 'avatar', 'admin')
 
     def create(self, validated_data):
         admin = self.context['request'].user
         nom_chat = validated_data['name']
         status = validated_data['status']
         participants = validated_data.pop('participants')
+        chat = Chat()
+        chat.name = nom_chat
+        chat.status = status
         if participants[0] == 'all':
             users = add_all_users()
-            chat = Chat()
-            chat.name = nom_chat
-            chat.status = status
             chat.save()
+            chat.admin.add(admin)
             for user in users:
                 chat.participants.add(user)
                 chat.save()
@@ -41,10 +42,8 @@ class ChatSerializer(serializers.ModelSerializer):
         else:
             try:
                 verify_participants(participants)
-                chat = Chat()
-                chat.name = nom_chat
-                chat.status = status
                 chat.save()
+                chat.admin.add(admin)
                 for email in participants:
                     contact = get_user_contact(email)
                     chat.participants.add(contact)

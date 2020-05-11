@@ -23,6 +23,7 @@ class Chat(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=7)
     avatar = models.URLField(max_length=200, blank=True)
+    admin = models.ManyToManyField(User, related_name='admin',blank=True)
 
     def __str__(self):
         return "{}".format(self.pk)

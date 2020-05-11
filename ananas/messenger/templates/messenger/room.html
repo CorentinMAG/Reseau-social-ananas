@@ -1,6 +1,7 @@
 {% extends "header.html" %}
 {% block title %}Messagerie{%endblock%}
 {%block headerlink %}<!-- CSS connexion page -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
 {% endblock %}
 {% block content %}
@@ -26,7 +27,7 @@
 			<button class="mdc-button mdc-button--raised" data-toggle="modal" data-target="#exampleModalCenter">
 				<span class="mdc-button__ripple"></span>Créer un chat
 			</button>
-			<button id="settings" class="mdc-button mdc-button--raised"><i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button>
+<!--			<button id="settings" class="mdc-button mdc-button&#45;&#45;raised"><i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button>-->
 		</div>
 	</nav>
 	<section class="content">
@@ -84,6 +85,8 @@
 {% block script %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js"></script>
 <script >
 	let contact_ul=document.querySelector('#all_chats').firstElementChild;
 	let participants_ul=document.querySelector('#all_participants');
@@ -100,10 +103,16 @@
       					+ '/ws/messenger/accueil/');
   	firstSocket.onopen=(e)=>{console.log('first open')};
   	firstSocket.onmessage=function(e){
-  		if(JSON.parse(e.data)==='fetch'){
+  		if(JSON.parse(e.data)==='fetch' ||JSON.parse(e.data)['command']==='update'){
+  			if(JSON.parse(e.data)['command']==='update'){
+  				if(chatSocket.url.includes(`/${JSON.parse(e.data)['id']}/`)){
+  					if(email===JSON.parse(e.data)['removed']){
+  						chatSocket.close()
+					}
+				}
+			}
   			AppendNewChat(token)
 		}
-
 	};
   	function AppendNewChat(token){
   		fetch(`/messenger-api/?email=${email}`,{
@@ -114,16 +123,31 @@
 			resp.json().then(data=>{
 				if(data['detail']){console.error('Pas de chat!!')}
 				else{
-					let length_chat = data.length;
-					let length_actual_chat = contact_ul.children.length;
-					if(length_chat !== length_actual_chat) {
-						for (let obj = length_actual_chat; obj < length_chat; obj++) {
-							createChat(data[obj])
+					let current_chat_id=document.querySelectorAll(`li[data-chat_id]`);
+					if(current_chat_id.length>0){
+						let arr=[];
+						let arr2=[];
+						current_chat_id.forEach((element)=>arr.push(Number.parseInt(element.dataset.chat_id)));
+						data.forEach((element)=>arr2.push(Number.parseInt(element.id)));
+						let AddedChat = arr2.filter(x => !arr.includes(x));
+						let RemovedChat = arr.filter(x=>!arr2.includes(x));
+						if(AddedChat.length>0){
+							AddedChat.forEach((id)=>{createChat(data.pop())})
+						}
+						if(RemovedChat.length>0){
+							RemovedChat.forEach((id)=>removeChat(document.querySelector(`[data-chat_id='${id}']`)))
+						}
+					}else{
+						for(const obj of data){
+							createChat(obj)
 						}
 					}
 				}
 			})
 		})
+	}
+	function removeChat(chat){
+  		chat.parentElement.removeChild(chat)
 	}
 	function fetchParticipants(token,chat){
   		fetch(`/messenger-api/${chat}`,{
@@ -132,36 +156,114 @@
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
 		}).then(resp=>{
 			resp.json().then(data=>{
-				for(const participant of data['participants']) {
-					Participant(participant)
+				let arr=[];
+				let arr2=[];
+				let current_participants=document.querySelectorAll('[data-email');
+				current_participants.forEach((element)=>arr.push(element.dataset.email));
+				data['participants'].forEach((participant)=>arr2.push(participant.email));
+				let RemovedParticipants = arr.filter(x=>!arr2.includes(x));
+				if(current_participants.length>0){
+					for(const participant of data['participants']){
+						if(arr.includes(participant.email)===false){
+							Participant(participant)
+						}
+					}
+					if(RemovedParticipants.length>0){
+						RemovedParticipants.forEach((participant)=>RemoveParticipant(document.querySelector(`[data-email='${participant}']`)))
+					}
+				}else{
+					for(const participant of data['participants']){
+						Participant(participant)
+					}
 				}
 			})
-		})
+		}).then(()=>fetchAutorizations(token,chat,email))
 	}
 	let chatSocket;
+  	function RemoveParticipant(participant){
+  		participant.parentElement.removeChild(participant)
+	}
   	function Participant(participant){
-  		let c_li=document.createElement('li');
+		let c_li=document.createElement('li');
 		c_li.classList="chat";
+		c_li.dataset.email=participant.email;
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
 		let c_img=document.createElement('img');
 		let c_name=document.createElement('span');
 		c_name.classList="name";
-		let c_pre=document.createElement('p');
 		c_img.src=participant.avatar;
 
 		let first_name=participant.first_name;
 		let last_name=participant.last_name.toUpperCase();
-		c_pre.classList="preview";
 		c_li.appendChild(c_div);
 		c_div.appendChild(c_img);
 		c_name.textContent=`${first_name} ${last_name.toUpperCase()}`;
 		c_div.appendChild(c_name);
-		c_div.appendChild(c_pre);
 		participants_ul.appendChild(c_li);
 	}
+	function fetchAutorizations(token,name,email){
+  		fetch(`/messenger-api/${name}`,{
+			method:'GET',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+		}).then(resp=>{
+			resp.json().then(data=>{
+				if(data['admin'].includes(email)){
+					let settingBtn = document.createElement('button');
+					settingBtn.classList='mdc-button mdc-button--raised';
+					settingBtn.setAttribute('id','settings');
+					settingBtn.innerHTML='<i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button';
+					if(document.querySelector("#bottom-bar").children[1]===undefined){
+						document.querySelector("#bottom-bar").appendChild(settingBtn)
+					}
+					for(const participant of document.querySelector('#all_participants').children){
+						if(participant.querySelector('.wrap p')===null){
+							let deleteBtn=document.createElement('p');
+							deleteBtn.classList='mdc-button mdc-button--raised';
+							deleteBtn.innerHTML='<span class="mdc-button__ripple"></span><i class="fas fa-skull-crossbones"></i>';
+							participant.firstElementChild.appendChild(deleteBtn);
+							deleteBtn.onclick=(e)=>{
+								let removed=e.currentTarget.parentElement.parentElement.dataset.email;
+								if(!data['admin'].includes(removed)){
+									participants_ul.removeChild(e.currentTarget.parentElement.parentElement);
+
+								}else{
+									removed=null;
+									swal("Impossible", "Vous ne pouvez pas supprimer un administrateur du chat !", "info")
+								}
+								const new_participants = data['participants']
+										.filter( x=> `${x.first_name} ${x.last_name.toUpperCase()}`!== participant.querySelector('.name').textContent)
+										.reduce((acc,obj)=> {
+											acc.push(obj.email);
+											return acc
+										},[]);
+								fetch(`/messenger-api/${data['id']}/update/`, {
+									method:'PUT',
+									credentials:'include',
+									headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+									body:JSON.stringify({
+										participants:new_participants.concat(data['admin']),
+										name:data['name'],
+										status:data['status'],
+										avatar:data['avatar'],
+										admin:data['admin']
+									})
+								}).then((res)=>firstSocket.send(JSON.stringify({
+									'command':'update',
+									'id':data['id'],
+									'removed':removed
+								})))
+							}
+						}
+					}
+						}
+					})
+				})
+  	}
 	function createChat(contact){
 		let c_li=document.createElement('li');
+		c_li.dataset.chat_id=contact.id;
 		c_li.classList="chat";
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
@@ -182,31 +284,30 @@
 			 let current = document.querySelector('.activeChat');
 			 let name =contact.id;
 			 document.querySelector('#current_chat_name').innerHTML=`${contact.name}`;
-			 participants_ul.innerHTML=""? fetchParticipants(token,name) :participants_ul.innerHTML="";fetchParticipants(token,name);
+			 fetchParticipants(token,name);
 			 if(current!=null){
 			 	current.classList.remove('activeChat');
 			 	e.currentTarget.classList.add('activeChat')
 			 }else{
 			 	e.currentTarget.classList.add('activeChat')
 			 }
-    		if(chatSocket===undefined){
-    			chatSocket=chatSocket=new WebSocket(wsprotocol+'//'
+			 if(chatSocket){
+			 	if(chatSocket.url.includes(`/${name}/`)===false){
+			 		chatSocket.close();
+					chatSocket=new WebSocket(wsprotocol+'//'
+      		 			+ window.location.host
+      		 			+ '/ws/messenger/'
+      		 			+ name
+      		 			+ '/')
+				}
+			 }else{
+			 	chatSocket=new WebSocket(wsprotocol+'//'
       					+ window.location.host
       					+ '/ws/messenger/'
-      					+ contact.id
+      					+ name
       					+ '/')
-
-			}else if(chatSocket.url.includes(name)){
-				//////////////
-			}
-			else{
-    			chatSocket.close();
-				chatSocket=new WebSocket(wsprotocol+'//'
-      					+ window.location.host
-      					+ '/ws/messenger/'
-      					+ contact.id
-      					+ '/')
-			}
+			 }
+			 //fetchAutorizations(token,name,email);
 
 			chatSocket.onopen=function(e){
 					fetchMessages();
@@ -306,7 +407,7 @@ input.onkeyup = function(e) {
 		parent.removeChild(currentElement.parentElement)
 	})
  }
- //création chat public (doit être réglementé)
+ //public chat
  publicButton.addEventListener('click',()=> {
 	 if (document.querySelector('#chat_name').value !== "") {
 		 fetch('/messenger-api/create/', {
@@ -334,8 +435,13 @@ input.onkeyup = function(e) {
 				 	document.querySelector('#error_add').textContent="Une/des adresses mails invalide(s) !";
 				 	document.querySelector('#error_add').classList="alert alert-danger"
 		 			})
+	 }else{
+	 	document.querySelector('#error_add').textContent="Donnez un nom au chat !";
+	 	document.querySelector('#error_add').classList="alert alert-info"
 	 }
  });
+
+ //private chat
  button_add_chat.addEventListener('click',()=>{
  	const participants=[];
  	const allMail = document.querySelectorAll('.chips');
@@ -369,10 +475,18 @@ input.onkeyup = function(e) {
 				document.querySelector('#error_add').textContent="Une/des adresses mails invalide(s) !";
 				document.querySelector('#error_add').classList="alert alert-danger"
 	 		})
+	 }else if (participants.length===1){
+	 	document.querySelector('#error_add').textContent="Vous ne pouvez pas créer un chat avec 1 seule personne !";
+	 	document.querySelector('#error_add').classList="alert alert-info"
+	 }
+	 else if(document.querySelector('#chat_name').value===""){
+	 	document.querySelector('#error_add').textContent="Donnez un nom à votre chat !";
+	 	document.querySelector('#error_add').classList="alert alert-info"
 	 }
  });
 	$('#exampleModalCenter').on('hidden.bs.modal',(e)=>{
 		input.value="";
+		document.querySelector('#chat_name').value="";
 		document.querySelector('#error_add').classList="invisible"
 	})
 </script>

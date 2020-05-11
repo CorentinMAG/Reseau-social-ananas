@@ -42,7 +42,7 @@ class ChatConsumer(WebsocketConsumer):
         return {
             'id': message.id,
             'author': message.contact.first_name,
-            'avatar':message.contact.avatar,
+            'avatar': message.contact.avatar,
             'content': message.content,
             'timestamp': str(message.timestamp)
         }
@@ -56,10 +56,21 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
+    def update_channels(self, data):
+        print(data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': data
+            }
+        )
+
     commands = {
         'new_message': new_message,
         'fetch_user_messages': fetch_user_messages,
-        'fetch_channels': fetch_channels
+        'fetch_channels': fetch_channels,
+        'update': update_channels
     }
 
     def connect(self):
