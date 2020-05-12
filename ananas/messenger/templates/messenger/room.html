@@ -308,48 +308,46 @@
 								let removed=e.currentTarget.parentElement.parentElement.dataset.email;
 								if(!data['admin'].includes(removed)){
 									swal({
-  title: "Etes vous sûr ?",
-  text: "Cette personne ne pourra plus accéder au salon !",
-  type: "warning",
-  showCancelButton: true,
-												cancelButtonText:"Non",
-  confirmButtonClass: "btn-danger",
-  confirmButtonText: "Oui !",
-  closeOnConfirm: false
-},
-function(){
-	participants_ul.removeChild(document.querySelector(`[data-email='${removed}']`));
-	const new_participants = data['participants']
+  										title: "Etes vous sûr ?",
+  										text: "Cette personne ne pourra plus accéder au salon !",
+  										type: "warning",
+  										showCancelButton: true,
+										cancelButtonText:"Non",
+  										confirmButtonClass: "btn-danger",
+  										confirmButtonText: "Oui !",
+  										closeOnConfirm: false
+									},
+									function(){
+										participants_ul.removeChild(document.querySelector(`[data-email='${removed}']`));
+										const new_participants = data['participants']
 										.filter( x=> `${x.first_name} ${x.last_name.toUpperCase()}`!== participant.querySelector('.name').textContent)
 										.reduce((acc,obj)=> {
 											acc.push(obj.email);
 											return acc
 										},[]);
-								fetch(`/messenger-api/${data['id']}/update/`, {
-									method:'PUT',
-									credentials:'include',
-									headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
-									body:JSON.stringify({
-										participants:new_participants.concat(data['admin']),
-										name:data['name'],
-										status:data['status'],
-										avatar:data['avatar'],
-										admin:data['admin']
-									})
-								}).then((res)=>firstSocket.send(JSON.stringify({
-									'command':'update',
-									'id':data['id'],
-									'removed':removed
-								})))
-  swal("Deleted!", "Your imaginary file has been deleted.", "success");
-});
-
-
+										fetch(`/messenger-api/${data['id']}/update/`, {
+											method:'PUT',
+											credentials:'include',
+											headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+											body:JSON.stringify({
+												participants:new_participants.concat(data['admin']),
+												name:data['name'],
+												status:data['status'],
+												avatar:data['avatar'],
+												admin:data['admin']
+											})
+										}).then((res)=>firstSocket.send(JSON.stringify({
+											'command':'update',
+											'id':data['id'],
+											'removed':removed
+										})));
+										swal("Supprimé!", "Le participant a été supprimé du salon ! ", "success");
+									}
+									);
 								}else{
 									removed=null;
 									swal("Impossible", "Vous ne pouvez pas supprimer un administrateur du chat !", "info")
 								}
-
 							}
 						}
 					}

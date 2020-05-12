@@ -109,7 +109,7 @@ img{
   cursor: pointer;
 }
 .chat:hover{
-  background:#FFFFFF;
+  background:#ff6b6b;
   color: #000000;
 }
 .chat img{
