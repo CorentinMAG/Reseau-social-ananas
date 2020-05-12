@@ -39,4 +39,3 @@ def verify_participants(participants):
 
 def get_current_chat(chatID):
     return get_object_or_404(Chat, id=chatID)
-

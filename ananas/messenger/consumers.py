@@ -22,13 +22,14 @@ class ChatConsumer(WebsocketConsumer):
         user_contact = get_user_contact(data['from'])
         message = Message.objects.create(
             contact=user_contact,
-            content=data['message'])
+            content=data['message'],
+            is_admin=bool(data['status']))
         current_chat = get_current_chat(data['id'])
         current_chat.messages.add(message)
         current_chat.save()
         content = {
             'command': 'new_message',
-            'message': self.message_to_json(message)
+            'message': self.message_to_json(message),
         }
         return self.send_chat_message(content)
 
@@ -44,6 +45,7 @@ class ChatConsumer(WebsocketConsumer):
             'author': message.contact.first_name,
             'avatar': message.contact.avatar,
             'content': message.content,
+            'status': message.is_admin,
             'timestamp': str(message.timestamp)
         }
 

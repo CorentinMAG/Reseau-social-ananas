@@ -9,7 +9,7 @@ from rest_framework.generics import (
     UpdateAPIView
 )
 from messenger.models import Chat
-from .serializers import ChatSerializer
+from .serializers import ChatSerializer,UserSerializer
 
 User = get_user_model()
 
@@ -29,6 +29,14 @@ class ChatListView(ListAPIView):
         if email is not None:
             contact = get_user_contact(email)
             queryset = contact.chats.all()
+        return queryset
+
+class AllUser(ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        queryset=User.objects.all()
         return queryset
 
 

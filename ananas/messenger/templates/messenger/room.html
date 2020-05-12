@@ -90,11 +90,22 @@
         </button>
       </div>
       <div class="modal-body">
-        test
+		  <form action="">
+		  	<div class="form-group">
+    			<label for="exampleFormControlSelect2">Ajouter utilisateurs:</label>
+    			<select multiple class="form-control" id="exampleFormControlSelect2">
+    			</select>
+			</div>
+			  <div class="form-group">
+    			<label for="exampleFormControlSelect2">Ajouter Administrateurs:</label>
+    			<select multiple class="form-control" id="exampleFormControlSelect3">
+    			</select>
+			</div>
+		  </form>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Understood</button>
+        <button type="button" class="btn btn-primary" id="settingsValidator">Valider</button>
       </div>
     </div>
   </div>
@@ -103,7 +114,6 @@
 {% block script %}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.js"></script>
 <script >
 	let contact_ul=document.querySelector('#all_chats').firstElementChild;
@@ -191,7 +201,7 @@
 					}
 				}else{
 					for(const participant of data['participants']){
-						Participant(participant,data)
+						Participant(participant)
 					}
 				}
 			})
@@ -201,13 +211,9 @@
   	function RemoveParticipant(participant){
   		participant.parentElement.removeChild(participant)
 	}
-  	function Participant(participant,data){
+  	function Participant(participant){
 		let c_li=document.createElement('li');
 		c_li.classList="chat";
-		if(data['admin'].includes(participant.email)){
-			c_li.style.color="#f1c40f";
-			c_li.dataset.is_admin=true
-		}
 		c_li.dataset.email=participant.email;
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
@@ -224,6 +230,43 @@
 		c_div.appendChild(c_name);
 		participants_ul.appendChild(c_li);
 	}
+	function fetchUsers(token){
+  		fetch('/messenger-api/users/', {
+  			method:'GET',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+  		}).then((resp)=>{
+  			resp.json().then((users)=>{
+  				let select = document.querySelector('#exampleFormControlSelect2');
+  				let selectAdmin=document.querySelector('#exampleFormControlSelect3');
+  				let length=select.options.length;
+				for(let i=length-1;i>=0;i--){
+					select.remove(i)
+				}
+  			for(const user of users){
+  				if(document.querySelector(`[data-email='${user.email}']`)===null){
+  					const option=document.createElement('option');
+  					option.textContent=user.email;
+					option.value=user.email;
+					select.appendChild(option)
+				}
+			}
+  			let length2=selectAdmin.options.length;
+				for(let i=length2-1;i>=0;i--){
+					selectAdmin.remove(i)
+				}
+  			for(const user of users){
+  				if(document.querySelector(`[data-email='${user.email}']`) && document.querySelector(`[data-email='${user.email}']`).dataset.is_admin===''){
+					const option=document.createElement('option');
+  					option.textContent=user.email;
+					option.value=user.email;
+					selectAdmin.appendChild(option)
+
+				}
+			}
+			})
+		})
+	}
 	function fetchAutorizations(token,name,email){
   		fetch(`/messenger-api/${name}`,{
 			method:'GET',
@@ -231,6 +274,16 @@
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
 		}).then(resp=>{
 			resp.json().then(data=>{
+				document.querySelectorAll('[data-email]').forEach((element)=>{
+					element.style.color='#FFFFFF';
+					element.dataset.is_admin='';
+				});
+				for(const admin of data['admin']){
+						if(document.querySelector(`[data-email='${admin}']`) && getComputedStyle(document.querySelector(`[data-email='${admin}']`)).color!=='rgb(241, 196, 15)'){
+							document.querySelector(`[data-email='${admin}']`).style.color="rgb(241, 196, 15)";
+							document.querySelector(`[data-email='${admin}']`).dataset.is_admin=true
+						}
+					}
 				if(data['admin'].includes(email)){
 					let settingBtn = document.createElement('button');
 					settingBtn.classList='mdc-button mdc-button--raised';
@@ -238,6 +291,10 @@
 					settingBtn.setAttribute('data-toggle','modal');
 					settingBtn.setAttribute('data-target','#staticBackdrop');
 					settingBtn.innerHTML='<i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button';
+					settingBtn.onclick=(e)=>{
+						fetchUsers(token)
+
+					};
 					if(document.querySelector("#bottom-bar").children[1]===undefined){
 						document.querySelector("#bottom-bar").appendChild(settingBtn)
 					}
@@ -250,13 +307,19 @@
 							deleteBtn.onclick=(e)=>{
 								let removed=e.currentTarget.parentElement.parentElement.dataset.email;
 								if(!data['admin'].includes(removed)){
-									participants_ul.removeChild(e.currentTarget.parentElement.parentElement);
-
-								}else{
-									removed=null;
-									swal("Impossible", "Vous ne pouvez pas supprimer un administrateur du chat !", "info")
-								}
-								const new_participants = data['participants']
+									swal({
+  title: "Etes vous sûr ?",
+  text: "Cette personne ne pourra plus accéder au salon !",
+  type: "warning",
+  showCancelButton: true,
+												cancelButtonText:"Non",
+  confirmButtonClass: "btn-danger",
+  confirmButtonText: "Oui !",
+  closeOnConfirm: false
+},
+function(){
+	participants_ul.removeChild(document.querySelector(`[data-email='${removed}']`));
+	const new_participants = data['participants']
 										.filter( x=> `${x.first_name} ${x.last_name.toUpperCase()}`!== participant.querySelector('.name').textContent)
 										.reduce((acc,obj)=> {
 											acc.push(obj.email);
@@ -278,10 +341,28 @@
 									'id':data['id'],
 									'removed':removed
 								})))
+  swal("Deleted!", "Your imaginary file has been deleted.", "success");
+});
+
+
+								}else{
+									removed=null;
+									swal("Impossible", "Vous ne pouvez pas supprimer un administrateur du chat !", "info")
+								}
+
 							}
 						}
 					}
-						}
+						}else{
+					if(document.querySelector("#bottom-bar").children[1]!==undefined){
+						document.querySelector("#bottom-bar").removeChild(document.querySelector('#settings'))
+					}
+					if(document.querySelectorAll("#all_participants .wrap p").length>0){
+						document.querySelectorAll("#all_participants .wrap p").forEach((element)=>{
+							element.parentElement.removeChild(element)
+						})
+					}
+				}
 					})
 				})
   	}
@@ -364,7 +445,8 @@
 		          'message': message,
 		          'command':'new_message',
 		          'from':email,
-		          'id':contact.id
+		          'id':contact.id,
+					'status':document.querySelector(`[data-email='${email}']`).dataset.is_admin
 		      }));
 		      messageInputDom.value = '';
 		      }
@@ -387,6 +469,9 @@
       let pTag=document.createElement('p');
       let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
       pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><p>${data.content}</p>`;
+      if(data['status']){
+      	pTag.firstElementChild.style.color="rgb(241, 196, 15)"
+	  }
       msgListTag.classList="sent";
       imgTag.src=data['avatar'];
       msgListTag.appendChild(imgTag);
@@ -511,8 +596,6 @@ input.onkeyup = function(e) {
 		input.value="";
 		document.querySelector('#chat_name').value="";
 		document.querySelector('#error_add').classList="invisible"
-	})
-</script>
-<script>
+	});
 </script>
 {%endblock%}

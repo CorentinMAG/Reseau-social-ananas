@@ -6,6 +6,12 @@ from django.contrib.auth import get_user_model
 User = get_user_model()
 
 
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = ['password', 'is_superuser', 'is_staff', 'groups', 'user_permissions']
+
+
 class ContactSerializer(serializers.StringRelatedField):
     def to_representation(self, value):
         info_user = {'email': value.email, 'first_name': value.first_name, 'last_name': value.last_name,
