@@ -59,7 +59,15 @@ class ChatConsumer(WebsocketConsumer):
         )
 
     def update_channels(self, data):
-        print(data)
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': data
+            }
+        )
+
+    def partial_update(self, data):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -72,7 +80,8 @@ class ChatConsumer(WebsocketConsumer):
         'new_message': new_message,
         'fetch_user_messages': fetch_user_messages,
         'fetch_channels': fetch_channels,
-        'update': update_channels
+        'update': update_channels,
+        'partialUpdate': partial_update
     }
 
     def connect(self):

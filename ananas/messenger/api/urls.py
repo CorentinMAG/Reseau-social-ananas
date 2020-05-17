@@ -7,7 +7,7 @@ from .views import (
     ChatUpdateView,
     ChatDeleteView,
     ChatPublic,
-    AllUser
+    AllUser,
 )
 
 app_name = 'chat'

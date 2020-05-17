@@ -1,6 +1,6 @@
 {% extends "header.html" %}
 {% block title %}Messagerie{%endblock%}
-{%block headerlink %}<!-- CSS connexion page -->
+{%block headerlink %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
 {% endblock %}
@@ -90,7 +90,11 @@
         </button>
       </div>
       <div class="modal-body">
-		  <form action="">
+		  <form action="" id="add_form">
+			  <div class="form-group">
+				  <input id="new_name" type="text" placeholder="Nom du chat..." class="form-control">
+    			</select>
+			</div>
 		  	<div class="form-group">
     			<label for="exampleFormControlSelect2">Ajouter utilisateurs:</label>
     			<select multiple class="form-control" id="exampleFormControlSelect2">
@@ -101,6 +105,9 @@
     			<select multiple class="form-control" id="exampleFormControlSelect3">
     			</select>
 			</div>
+			  <div class="form-group">
+				  <input type="button" class="btn btn-danger form-control" id="delete_chat" value="DELETE">
+			  </div>
 		  </form>
       </div>
       <div class="modal-footer">
@@ -124,24 +131,37 @@
   	location.protocol ==="http:" ? wsprotocol = "ws:" : wsprotocol="wss:";
   	const username = {{ username }}
 
-
-
   	const firstSocket=new WebSocket(wsprotocol+'//'
       					+ window.location.host
       					+ '/ws/messenger/accueil/');
   	firstSocket.onopen=(e)=>{console.log('first open')};
   	firstSocket.onmessage=function(e){
-  		if(JSON.parse(e.data)==='fetch' ||JSON.parse(e.data)['command']==='update'){
+  		if(JSON.parse(e.data)==='fetch' ||JSON.parse(e.data)['command']==='update' || JSON.parse(e.data)['command']==='partialUpdate'){
   			if(JSON.parse(e.data)['command']==='update'){
-  				if(chatSocket.url.includes(`/${JSON.parse(e.data)['id']}/`)){
-  					if(email===JSON.parse(e.data)['removed']){
-  						chatSocket.close()
+  				if(chatSocket){
+  					if(chatSocket.url.includes(`/${JSON.parse(e.data)['id']}/`)){
+  						if(email===JSON.parse(e.data)['removed']){
+  							chatSocket.close()
+						}
 					}
 				}
+			}
+  			if(JSON.parse(e.data)['command']==='partialUpdate'){
+  				console.log(JSON.parse(e.data))
+				UpdateChat(JSON.parse(e.data)['id']);
+				return
 			}
   			AppendNewChat(token)
 		}
 	};
+  	function UpdateChat(id){
+  		if(document.querySelector(`[data-chat_id='${id}']`)){
+  			document.querySelector('#all_chats').firstElementChild.innerHTML="";
+  			AppendNewChat(token)
+		}else{
+  			AppendNewChat(token)
+		}
+	}
   	function AppendNewChat(token){
   		fetch(`/messenger-api/?email=${email}`,{
 			method:'GET',
@@ -237,6 +257,9 @@
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
   		}).then((resp)=>{
   			resp.json().then((users)=>{
+  				let name=document.querySelector('.activeChat').textContent;
+  				let inputName=document.querySelector('#new_name');
+				inputName.value=name;
   				let select = document.querySelector('#exampleFormControlSelect2');
   				let selectAdmin=document.querySelector('#exampleFormControlSelect3');
   				let length=select.options.length;
@@ -595,5 +618,76 @@ input.onkeyup = function(e) {
 		document.querySelector('#chat_name').value="";
 		document.querySelector('#error_add').classList="invisible"
 	});
+	let deleteChat=document.querySelector('#delete_chat');
+	deleteChat.onclick=(e)=> {
+		let chat = document.querySelector('.activeChat').dataset.chat_id;
+		swal({
+					title: "Etes vous sûr ?",
+					text: "Il n'y a pas de retour en arrière possible !",
+					type: "warning",
+					showCancelButton: true,
+					cancelButtonText: "Non",
+					confirmButtonClass: "btn-danger",
+					confirmButtonText: "Oui !",
+					closeOnConfirm: false
+				},
+				function () {
+					fetch(`/messenger-api/${chat}/delete/`, {
+						method: 'DELETE',
+						credentials: 'include',
+						headers: {'Authorization': `Token ${token}`, 'Content-Type': 'application/json'},
+					}).then((resp) => {
+						if (resp.ok) {
+							swal("Supprimé!", "Le participant a été supprimé du salon ! ", "success");
+							firstSocket.send(JSON.stringify({
+								'command': 'partialUpdate',
+								'id': chat
+							}));
+						} else {
+							swal("Erreur", "Vous ne possédez pas les droits pour supprimer ce salon !", "warning");
+						}
+						$('#staticBackdrop').modal('hide');
+					})
+				});
+	};
+	let settingsbtn=document.querySelector('#settingsValidator');
+	settingsbtn.onclick=(e)=> {
+		let chat=document.querySelector('.activeChat').dataset.chat_id;
+		let name=document.querySelector('#new_name').value;
+		let selects = document.querySelectorAll('select');
+		let add_participants = getSelectValues(selects[0]);
+		let add_admins = getSelectValues(selects[1]);
+		fetch(`/messenger-api/${chat}/update/`,{
+			method:'PATCH',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+			body:JSON.stringify({
+				name:name,
+				participants:add_participants,
+				admin:add_admins
+			})
+		}).then((resp)=>{
+			$('#staticBackdrop').modal('hide');
+			firstSocket.send(JSON.stringify({
+		          'command':'partialUpdate',
+		          'id':chat
+		      }));
+		})
+	};
+
+	function getSelectValues(select) {
+  let result = [];
+  let options = select && select.options;
+  let opt;
+
+  for (let i=0, iLen=options.length; i<iLen; i++) {
+    opt = options[i];
+
+    if (opt.selected) {
+      result.push(opt.value || opt.text);
+    }
+  }
+  return result;
+}
 </script>
 {%endblock%}

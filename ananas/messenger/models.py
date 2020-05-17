@@ -18,11 +18,11 @@ class Message(models.Model):
 
 
 class Chat(models.Model):
-    name = models.CharField(max_length=100)
-    participants = models.ManyToManyField(User, related_name="chats")
+    name = models.CharField(max_length=100,blank=True)
+    participants = models.ManyToManyField(User, related_name="chats",blank=True)
     messages = models.ManyToManyField(Message, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=7)
+    status = models.CharField(max_length=7,blank=True)
     avatar = models.URLField(max_length=200, blank=True)
     admin = models.ManyToManyField(User, related_name='admin', blank=True)
 
