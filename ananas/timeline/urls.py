@@ -6,6 +6,7 @@ from . import views
 
 urlpatterns = [
     path('', views.timeline, name='timeline-home'),
+    path('add', views.add_article),
     path('<int:id>', views.lire),
     #path('<int:id>', LireView.as_view(), name='timeline-lire')
 ]

@@ -6,19 +6,28 @@
 </head>
 <body>
     <h1>Bienvenue sur la timeline !</h1>
-    <div>
+
+    <!--Ajouter un nouvel article-->
+    <form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Submit">
+    </form>
+    <div> <!--Liste des posts-->
     {% for post in posts %}
         <div class="post"> <!--TODO: content-markdown-->
             <h3>{{ post.titre }}</h3>
             <p>{{ post.contenu_post|truncatewords_html:7 }}</p>
             <p><a href={{ post.id }}>Lire la suite</a></p>
+
+            {% if post.photo %}
+                <div class="photos">
+                    <img src="/media/{{post.photo}}"/>
+                </div>
+            {% endif %}
         </div>
 
-        {% if post.photo %}
-            <div class="photos">
-                <img src="/media/{{post.photo}}"/>
-            </div>
-        {% endif %}
+
         <div>---------------------</div>
         <!--For comment in comments-->
         {% empty %}

@@ -6,7 +6,7 @@ from django.utils import timezone
 from django.views.generic import TemplateView
 
 from .models import Article, Commentaires
-from .form import CommentForm
+from .form import CommentForm, ArticleForm
 
 
 def timeline(request):
@@ -15,8 +15,24 @@ def timeline(request):
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
-    print(posts)
+    form = ArticleForm(request.POST)
+    if form.is_valid():
+        new_article = form.cleaned_data['contenu_post']
     return render(request, 'timeline/timeline.html', {'posts': posts})
+
+
+def add_article(request):
+    """
+    Ajoute un nouvel article
+    """
+
+    form = ArticleForm(request.POST)
+    if form.is_valid():
+        new_comment = form.cleaned_data['contenu_comm']
+        Commentaires.objects.create(contenu_comm=new_comment, id_post=post)
+        comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
+
+    return render(request, 'timeline/add.html')
 
 
 def lire(request, id):
@@ -25,19 +41,28 @@ def lire(request, id):
     """
     try:
         post = Article.objects.get(id=id)
-        # Commentaire link avec l'article
         comments = Commentaires.objects.filter(id_post=id)
     except post.DoesNotExist:
         raise Http404
 
+    # COMMENTAIRES
     form = CommentForm(request.POST)
     if form.is_valid():
         new_comment = form.cleaned_data['contenu_comm']
         Commentaires.objects.create(contenu_comm=new_comment, id_post=post)
-        comments = Commentaires.objects.filter(id_post=id)
+        comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
 
     args = {'post': post, 'comments': comments, 'form': form}
     return render(request, 'timeline/lire.html', args)
+
+
+def search_timeline(request):  # TODO : Chercher selon les tags
+    """
+    Selectionne les articles correspondant aux champs de recherche
+    """
+    # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
+    posts = Article.objects.filter(id_post=id)
+    return render(request, 'timeline/timeline.html', {'posts': posts})
 
 # def add_comment_to_post(request, pk):
 #     post = get_object_or_404(Article, pk=pk)
