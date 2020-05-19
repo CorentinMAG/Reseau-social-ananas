@@ -43,7 +43,7 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=50, verbose_name='Nom')
     is_etudiant = models.BooleanField(default=True, verbose_name="Etudiant")
     is_autre = models.BooleanField(default=False, verbose_name="Autre")
-    genre = models.CharField(choices=GENDER, default='homme', max_length=5)
+    genre = models.CharField(choices=GENDER, max_length=5,blank=True,null=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
@@ -57,12 +57,12 @@ class Etudiant(models.Model):
     """modèle propre aux étudiant,
     relié au modèle CustomUser avec lequel il partage les attributs"""
     user = models.OneToOneField(CustomUser, related_name="user_etudiant", on_delete=models.CASCADE)
-    promo = models.IntegerField()
+    #promo = models.IntegerField(blank=True)
     avatar = models.ImageField(upload_to='avatar/',blank=True)
     phone = PhoneNumberField(blank=True, verbose_name='numéro de téléphone')
     Birthdate = models.CharField(max_length=10, verbose_name='Date de naissance',blank=True)
     majeure = models.ForeignKey(Majeure, on_delete=models.CASCADE)
-    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    #campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name

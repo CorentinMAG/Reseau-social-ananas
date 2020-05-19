@@ -1,22 +1,11 @@
 <!DOCTYPE html><html class=''>
 <head>
 	<script src="https://kit.fontawesome.com/6042c2ff25.js" crossorigin="anonymous"></script>
-<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
-<script src="https://use.typekit.net/hoy3lrg.js"></script>
-<script>try{Typekit.load({ async: true });}catch(e){}</script>
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
-<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <!------ Include the above in your HEAD tag ---------->
-
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <style>
 	*{
 		scroll-behavior: smooth;
@@ -65,6 +54,12 @@
 		padding:5px;
 		cursor: pointer;
 	}
+	.invisible{
+		display:none;
+	}
+	.activeChat{
+		background: blue;
+	}
 </style>
 </head>
 <body>
@@ -82,7 +77,7 @@
 			<label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
 			<input type="text" placeholder="Search contacts..." />
 		</div>
-		<div id="contacts" style="overflow-y: hidden;">
+		<div id="contacts" style="overflow-y: auto;">
 			<ul>
 			</ul>
 			<button style="display: block;margin: auto;"><a href="{%url 'deconnexion' %}">Déconnexion</a></button>
@@ -103,19 +98,14 @@
 			<img src="https://emilcarlsson.se/assets/harveyspecter.png" alt="" />
 			{%load jsonTopy %}
 			<p>{{username|parse}}</p>
-			<div class="social-media">
-				<i class="fa fa-facebook" aria-hidden="true"></i>
-				<i class="fa fa-twitter" aria-hidden="true"></i>
-				 <i class="fa fa-instagram" aria-hidden="true"></i>
-			</div>
 		</div>
-		<div class="messages" style="scrollbar-width:thin; min-height: 0;">
+		<div class="messages" style="scrollbar-width:thin; min-height: 0;margin-bottom: 64px;">
 			<ul id="chat-log">
 			</ul>
 		</div>
-		<div class="message-input" style="position:relative; ">
+		<div class="message-input" style="position:absolute; ">
 			<div class="wrap" style="display: flex;">
-			<input type="text" id="chat-message-input" placeholder="Write your message..." />
+			<input type="text" id="chat-message-input" placeholder="Ecrivez votre message..." />
 			<button class="submit" id="chat-message-submit" style="width:10%;"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 			</div>
 		</div>
@@ -131,8 +121,10 @@
         </button>
       </div>
       		<div class="modal-body">
+				<span id="error_add" class="alert alert-danger invisible">Une/des adresses mails sont invalides !</span>
 				<div class="container">
 					<form action="" class="add_chat">
+						<input type="text" id="chat_name" placeholder="Nom du chat" class="form-control"/>
 						<input class="add_email_chat" type="email" id="emailField" placeholder="Email..." class="form-control"/>
 						<ul class="all_email"></ul>
 					</form>
@@ -141,12 +133,11 @@
       		<div class="modal-footer">
 				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         		<button class="submit_add_chat btn btn-primary" type="submit">Créer</button>
+				<button class="btn btn-info" id="public_chat">Public</button>
       		</div>
     </div>
   </div>
 </div>
-<script src='//production-assets.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js'></script><script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-<script src="{{STATIC_URL}}/static/messenger/js/chat.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
 <script src="{{STATIC_URL}}/static/messenger/js/momentlocale.js"></script>
 <script >
@@ -156,17 +147,38 @@
 	let wsprotocol;
   	location.protocol ==="http:" ? wsprotocol = "ws:" : wsprotocol="wss:";
   	const username = {{ username }}
-	function getUserChat(token){
-		fetch(`/messenger-api/?email=${email}`,{
+
+  	const firstSocket=new WebSocket(wsprotocol+'//'
+      					+ window.location.host
+      					+ '/ws/messenger/accueil/');
+  	firstSocket.onopen=(e)=>{console.log('first open')};
+  	firstSocket.onmessage=function(e){
+  		if(JSON.parse(e.data)==='fetch'){
+  			AppendNewChat(token)
+		}
+
+	};
+  	function AppendNewChat(token){
+  		fetch(`/messenger-api/?email=${email}`,{
 			method:'GET',
 			credentials:'include',
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
 		}).then(resp=>{
 			resp.json().then(data=>{
-				data.map(obj=>createContact(obj))
+				if(data['detail']){console.error('Pas de chat!!')}
+				else{
+					let length_chat = data.length;
+					let length_actual_chat = contact_ul.children.length;
+					if(length_chat !== length_actual_chat) {
+						for (let obj = length_actual_chat; obj < length_chat; obj++) {
+							createContact(data[obj])
+						}
+					}
+				}
 			})
 		})
 	}
+	let chatSocket;
 	function createContact(contact){
 		let c_li=document.createElement('li');
 		c_li.classList="contact";
@@ -186,7 +198,7 @@
 		c_div.appendChild(c_span);
 		c_img.src="https://emilcarlsson.se/assets/jonathansidwell.png";
 		c_div.appendChild(c_img);
-		c_name.textContent=contact.id;
+		c_name.textContent=contact.name;
 		c_meta.appendChild(c_name);
 		c_meta.appendChild(c_pre);
 		c_div.appendChild(c_meta);
@@ -194,21 +206,33 @@
 		contact_ul.appendChild(c_li);
  
 		c_li.addEventListener('click', (e)=>{
-			try{
-				chatSocket.close();
-				chatSocket=new WebSocket(wsprotocol+'//'
+			 let current = document.querySelector('.activeChat');
+			 let name =contact.id;
+			 if(current!=null){
+			 	current.classList.remove('activeChat');
+			 	e.currentTarget.classList.add('activeChat')
+			 }else{
+			 	e.currentTarget.classList.add('activeChat')
+			 }
+    		if(chatSocket===undefined){
+    			chatSocket=chatSocket=new WebSocket(wsprotocol+'//'
       					+ window.location.host
       					+ '/ws/messenger/'
       					+ contact.id
       					+ '/')
-			}catch(e){
-				chatSocket=new WebSocket(wsprotocol+'//'
-      					+ window.location.host
-      					+ '/ws/messenger/'
-      					+ contact.id
-      					+ '/')
-				
+
+			}else if(chatSocket.url.includes(name)){
+
 			}
+			else{
+    			chatSocket.close();
+				chatSocket=new WebSocket(wsprotocol+'//'
+      					+ window.location.host
+      					+ '/ws/messenger/'
+      					+ contact.id
+      					+ '/')
+			}
+
 			chatSocket.onopen=function(e){
 					fetchMessages();
 			};
@@ -246,10 +270,7 @@
 		      messageInputDom.value = '';
 		      }
 		      
-		  };//
-
-
-			
+		  };
 		})
 
 	}
@@ -258,8 +279,6 @@
           document.querySelector('#chat-message-submit').click();
       }
   };
-
-
   function createMessage(data){
       var author=data['author'];
       var msgListTag=document.createElement('li');
@@ -281,16 +300,18 @@
   }
 
   
-  getUserChat(token);
+  AppendNewChat(token);
 	let button_add_chat=document.querySelector('.submit_add_chat');
 	let ul =document.querySelector('.all_email');
 let i = document.querySelectorAll('.fa-times');
 let input = document.querySelector('.add_email_chat');
 let form = document.querySelector('.add_chat');
+let modal=document.querySelector('#exampleModalCenter');
+let publicButton=document.querySelector('#public_chat');
 form.onsubmit=(e)=>e.preventDefault();
 
 input.onkeyup = function(e) {
-      if (e.keyCode === 13 && e.target.validity.typeMismatch===false) {  // enter, return
+      if (e.keyCode === 13 && e.target.validity.typeMismatch===false && e.target.value!=="") {  // enter, return
           construct(e.target.value);
           e.target.value=""
       }
@@ -315,20 +336,61 @@ input.onkeyup = function(e) {
 		parent.removeChild(currentElement.parentElement)
 	})
  }
+ //création chat public (doit être réglementé)
+ publicButton.addEventListener('click',()=> {
+	 if (document.querySelector('#chat_name').value !== "") {
+		 fetch('/messenger-api/create/', {
+			 method: 'POST',
+			 credentials: 'include',
+			 headers: {'Authorization': `Token ${token}`, 'Content-Type': 'application/json'},
+			 body: JSON.stringify({
+				 messages: [],
+				 participants: ['all'],
+				 name: document.querySelector('#chat_name').value
+			 })
+		 })
+				 .then((response) => {
+					 if (response.ok) {
+						 firstSocket.send(JSON.stringify({
+							 'command': 'fetch_channels',
+							 'id': 'new'
+						 }));
+						 $('#exampleModalCenter').modal('hide');
+					 } else {
+						 throw new Error('Un utilisateur n\'exise pas!')
+					 }
+				 }).catch(document.querySelector('#error_add').classList.remove('invisible'))
+	 }
+ });
  button_add_chat.addEventListener('click',()=>{
  	const participants=[];
  	const allMail = document.querySelectorAll('.chips');
  	allMail.forEach((chips)=>{participants.push(chips.textContent)});
  	participants.includes(`${email}`) ? "" : participants.push(`${email}`);
-	 if(participants.length>1){
+	 if(participants.length>1 && document.querySelector('#chat_name').value!=="" ){
 	 	fetch('/messenger-api/create/',{
 	 		method:'POST',
 			credentials:'include',
 			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
-			body:JSON.stringify({messages:[],participants:participants})
-		}).then(console.log)
+			body:JSON.stringify({messages:[],participants:participants,name:document.querySelector('#chat_name').value})
+		}).then((response)=>{
+			if(response.ok){
+				document.querySelector('#error_add').textContent='création d\'un nouveau channel...';
+				firstSocket.send(JSON.stringify({
+		          'command':'fetch_channels',
+		          'id':'new'
+		      }));
+				$('#exampleModalCenter').modal('hide');
+			}
+			else{throw new Error('Un utilisateur n\'exise pas!')}
+		}
+			).catch(document.querySelector('#error_add').classList.remove('invisible'))
 	 }
- })
+ });
+	$('#exampleModalCenter').on('hidden.bs.modal',(e)=>{
+		input.value="";
+		document.querySelector('#error_add').classList.contains('invisible')? "":document.querySelector('#error_add').classList.add('invisible')
+	})
 </script>
 <script>
 </script>

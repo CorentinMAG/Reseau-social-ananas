@@ -7,24 +7,32 @@
 <div class="container">
 		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
 			<div class="title">
-				<h2>Se connecter</h2>
+				<!--<h2>Se connecter</h2>-->
+				<img src="/static/login/img/phiblanc.png" alt="" height="110px" width="120px"/>
 			</div>
 			{% if error %}
-			<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>Email ou password invalides !</p>
+			<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>Email ou password invalides !</p>
 			{% endif %}
 			{% if form.email.errors %}
 			{% for error in form.email.errors%}
-				<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:85px;"></i>{{error}}</p>
+				<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 				{% endfor %}
 			{% endif %}
 			<form action="" method="post">
 				{% csrf_token %}
 				<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 				<p><i class="fas fa-unlock"></i>{{form.password}}</p>
+				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Rester connecté</div><div style="text-align: right"><div class="onoffswitch"><input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+				    <label class="onoffswitch-label" for="myonoffswitch">
+				        <div class="onoffswitch-inner"></div>
+				        <div class="onoffswitch-switch"></div>
+				    </label></div>
+				<!--</div>-->
+				</div></p>
 
 				<div class="zone_button">
-					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span> Login</button>
 					<p class="mdc-button mdc-button--raised"> <a href="{% url 'register' %}"> <span class="mdc-button__ripple"></span> S'enregistrer</a></p>
+					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span> Login</button>
 					<a href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
 				</div>
 			</form>
