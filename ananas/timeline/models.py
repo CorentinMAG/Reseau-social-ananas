@@ -1,6 +1,10 @@
 from django.db.models import DateField
 from django.utils import timezone
 from django.db import models
+from django.contrib.auth import get_user_model
+
+
+User = get_user_model()
 
 
 class Tags(models.Model):
@@ -68,7 +72,7 @@ class Commentaires(models.Model):
     id_comm = models.AutoField(primary_key=True)
     contenu_comm = models.CharField(max_length=500)
     id_post = models.ForeignKey(Article, on_delete=models.CASCADE, blank=True, null=True)
-    # id_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_comm = models.DateTimeField(auto_now=True,
                                      verbose_name="Date de commentaire", blank=True, null=True)
     last_modif_comm = models.DateTimeField(auto_now=True,
