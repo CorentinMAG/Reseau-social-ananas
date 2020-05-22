@@ -41,11 +41,8 @@ def connexion(request):
                     if user.is_active:
                         token, _ = Token.objects.get_or_create(user=user)
                         request.session['token'] = token.key
-<<<<<<< HEAD
                         if not stay_connected:
                             request.session.set_expiry(0)
-=======
->>>>>>> e0cfff4933b7d8471866c15278c7a8d66fff6cb0
                         login(request, user)
                         return redirect(view_redirection)
                 else:
