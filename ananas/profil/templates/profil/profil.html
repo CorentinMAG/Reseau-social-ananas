@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ananas</title>
+</head>
+<body>
+{% block body %}
+<div class="container">
+    <p>
+        contenu dans la variable "request.user" :
+
+
+        {{ user.first_name }}, {{ user.last_name }}, {{ user.username }}
+    </p>
+</div>
+
+
+
+{% endblock %}
+<p>Page de profil</p>
+
+</body>
+</html>
