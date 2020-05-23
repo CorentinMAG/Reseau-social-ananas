@@ -3,6 +3,7 @@ ananasenv/
 .gitlab-ci.yml
 db.sqlite3
 __pycache__/
+*.py[cod]
 migrations/
 bin/
 .idea/
