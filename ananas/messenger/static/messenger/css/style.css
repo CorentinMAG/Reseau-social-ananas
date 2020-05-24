@@ -21,19 +21,56 @@ body{
   justify-content: center;
   align-content: center;
 }
-img{
-  width:50px;
-  height: 50px;
-  border-radius:50%;
-  border:1px solid #C5C5C5;
+
+.lologo{
+  height: 65px;
+  margin-left: 15px;
+  margin-top:5px;
 }
+
+#tagtitle{
+  font-size: 1.3em;
+  margin-left: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.fa, .fas {
+  color: #000000;
+}
+
+a {
+  background-color: #da0813;
+  color: #FFFFFF;
+}
+.btn-circle {
+  width: 30px;
+  height: 30px;
+  padding: 4px 0px;
+  border-radius: 15px;
+  text-align: center;
+  font-size: 15px;
+  line-height: 1.42857;
+  margin-left: 90px;
+  background-color: #FFFFFF;
+}
+
+
+#group{
+  font-size: 1.3em;
+  margin-left: 15px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-style: italic;
+}
+
 
 /*ACTIVE CHAT*/
 .activeChat{
   background:blue;
 }
 
-
+#settings{
+  color:red;
+}
 /*BUTTON WITH Material Design class*/
 .mdc-button{
   font-size: 0.7em;
@@ -64,10 +101,13 @@ img{
 #sidepanel{
   background: #DA0713;
   display: flex;
+  scrollbar-width:thin;
   flex-direction: column;
   color:#FFFFFF;
   width: 20%;
-  min-height: 100vh;
+  font-size:.8em;
+  overflow-y: auto;
+  height: 100vh;
 }
 #sidepanel #profile{
   display: flex;
@@ -76,6 +116,9 @@ img{
 }
 #sidepanel #profile img{
   margin:0 0 0 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 #sidepanel #profile span{
   margin: 0;
@@ -99,27 +142,51 @@ img{
 }
 #sidepanel #all_chats ul{
   list-style-type: none;
-  overflow-y:auto;
-  max-height: 300px;
-  scrollbar-width:thin;
 }
+#messagerie{
+  margin:10px 0 10px 0;
+  text-align: left;
+  margin-left: 25px;
+  font-size: 1.6em;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#timeline{
+  margin:20px 0 0 0;
+  text-align: left;
+  margin-left: 25px;
+  font-size: 1.6em;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#soustimeline{
+  font-size: 1.35em;
+  margin-left: 40px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+
 .chat{
   width: 90%;
   margin:5px 0 5px 0;
   cursor: pointer;
+}
+#current_chat_name{
+  font-weight: 800;
 }
 .chat:hover{
   background:#ff6b6b;
   color: #000000;
 }
 .chat img{
-  width:40px;
-  height: 40px;
+  width:20px;
+  height: 20px;
   margin:0 10px 0 0;
+  border-radius: 50%;
 }
-.chat .name{
-  line-height: 40px;
-}
+
 .chat .wrap{
   display: flex;
 }
@@ -128,6 +195,19 @@ img{
   justify-content: center;
   align-content: center;
 }
+.badge-secondary {
+  border-style: solid;
+  border-radius: 40%;
+  background-color: #DA0813;
+  color: #FFFFFF;
+  font-size: 0.36em;
+  margin-left: 5px;
+}
+
+.h1, h1 {
+  line-height: 0;
+}
+
 
 @media screen and (max-width:900px) {
   #bottom-bar{
@@ -190,7 +270,8 @@ section{
   position: relative;
 }
 .chat-profile{
-  background: #b2bec3;
+  background: #ecf0f1;
+  border-bottom: 1px solid #000;
   display: flex;
   padding:5px 20px;
   justify-content: space-between;
@@ -203,6 +284,7 @@ section{
 .messages{
   padding:20px 5px;
   height: 88vh;
+  font-size: .8em;
   overflow-y:auto;
   scrollbar-width:thin;
 }
@@ -226,6 +308,11 @@ section{
 .sent:hover{
   background:#2c3e50;
   color:#FFFFFF;
+}
+.sent img{
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
 }
 .sent p span{
   padding:0 0 0 10px;
@@ -256,14 +343,15 @@ section{
 #sidepannel2{
   width: 20%;
   min-height: 100vh;
-  background:#da0713;
+  background:#ecf0f1;
+  border-left:1px solid #000;
   display: flex;
   flex-direction: column;
   color:#FFFFFF;
 }
 #participants{
   font-weight: 800;
-  color:#FFFFFF;
+  color:#000;
   text-align: center;
   margin:10px 0;
 }

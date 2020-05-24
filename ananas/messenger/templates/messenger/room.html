@@ -8,26 +8,47 @@
 <main id="frame">
 	{%load jsonTopy %}
 	<nav id="sidepanel">
-		<div id="profile">
+		<div id=logo>
+			<img id="logo-img" class="lologo" src="../../static/messenger/img/epfblanc.png"/>
+		</div>
+        <div id="profile">
 				<img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
 			<span>{{username|parse}}</span>
 		</div>
-		<div id="deconnection">
-			<p class="mdc-button mdc-button--raised"><a href="{%url 'deconnexion' %}"><span class="mdc-button__ripple"></span>Déconnexion</a></p>
-{% if user.is_superuser %}
-			<p class="mdc-button mdc-button--raised"><a href="/admin"><span class="mdc-button__ripple"></span>admin</a></p>
-			{% endif %}
+
+		<div>
+		<p id="timeline">NEWS</p>
 		</div>
+		<div>
+			<p id="soustimeline">Ecole</p>
+		</div>
+		<div>
+			<p id="soustimeline">Associations</p>
+		</div>
+		<div>
+			<p id="soustimeline">Recherche & Industrie</p>
+		</div>
+		<div>
+			<p id="tagtitle">Tag à la une :</p>
+		</div>
+		<h1><span class="badge badge-secondary">MIN</span><span class="badge badge-secondary">SANTE</span><span class="badge badge-secondary">BDE</span><span class="badge badge-secondary">FAKE</span><span class="badge badge-secondary">JE</span></h1>
 		<p id="messagerie">Messagerie</p>
+
+		<div>
+			<a id="group">Groupes</a><button class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></button>
+		</div>
+
 		<div id="all_chats">
 			<ul>
 			</ul>
 		</div>
-		<div id="bottom-bar">
-			<button class="mdc-button mdc-button--raised" data-toggle="modal" data-target="#exampleModalCenter">
-				<span class="mdc-button__ripple"></span>Créer un chat
-			</button>
+		<div id="deconnection">
+			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
+			{% if user.is_superuser %}
+			<a href="/admin" class="btn btn-outline-light">Admin</a>
+			{% endif %}
 		</div>
+
 	</nav>
 	<section class="content">
 		<div class="chat-profile">
@@ -147,7 +168,7 @@
 				}
 			}
   			if(JSON.parse(e.data)['command']==='partialUpdate'){
-  				console.log(JSON.parse(e.data))
+  				console.log(JSON.parse(e.data));
 				UpdateChat(JSON.parse(e.data)['id']);
 				return
 			}
@@ -298,7 +319,7 @@
 		}).then(resp=>{
 			resp.json().then(data=>{
 				document.querySelectorAll('[data-email]').forEach((element)=>{
-					element.style.color='#FFFFFF';
+					element.style.color='#000';
 					element.dataset.is_admin='';
 				});
 				for(const admin of data['admin']){
@@ -308,18 +329,17 @@
 						}
 					}
 				if(data['admin'].includes(email)){
-					let settingBtn = document.createElement('button');
-					settingBtn.classList='mdc-button mdc-button--raised';
+					let settingBtn = document.createElement('i');
+					settingBtn.classList='fas fa-cog';
 					settingBtn.setAttribute('id','settings');
 					settingBtn.setAttribute('data-toggle','modal');
 					settingBtn.setAttribute('data-target','#staticBackdrop');
-					settingBtn.innerHTML='<i class="fa fa-cog fa-fw" aria-hidden="true"></i><span class="mdc-button__ripple"></span>Settings</button';
 					settingBtn.onclick=(e)=>{
 						fetchUsers(token)
 
 					};
-					if(document.querySelector("#bottom-bar").children[1]===undefined){
-						document.querySelector("#bottom-bar").appendChild(settingBtn)
+					if(document.querySelector(".chat-profile").children[2]===undefined){
+						document.querySelector(".chat-profile").appendChild(settingBtn)
 					}
 					for(const participant of document.querySelector('#all_participants').children){
 						if(participant.querySelector('.wrap p')===null){
@@ -375,8 +395,8 @@
 						}
 					}
 						}else{
-					if(document.querySelector("#bottom-bar").children[1]!==undefined){
-						document.querySelector("#bottom-bar").removeChild(document.querySelector('#settings'))
+					if(document.querySelector(".chat-profile").children[2]!==undefined){
+						document.querySelector(".chat-profile").removeChild(document.querySelector('#settings'))
 					}
 					if(document.querySelectorAll("#all_participants .wrap p").length>0){
 						document.querySelectorAll("#all_participants .wrap p").forEach((element)=>{
@@ -399,7 +419,12 @@
 		let c_pre=document.createElement('p');
 		c_pre.classList="preview";
 		c_li.appendChild(c_div);
-		c_img.src=contact.avatar;
+		if(contact['status']==='Private'){
+		    c_img.src='../../static/messenger/img/logoprive.PNG';
+        }else{
+		    c_img.src='../../static/messenger/img/logopublic.PNG';
+        }
+
 		c_div.appendChild(c_img);
 		c_name.textContent=contact.name;
 		c_div.appendChild(c_name);
