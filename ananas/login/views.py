@@ -35,11 +35,14 @@ def connexion(request):
             if form.is_valid():
                 email = form.cleaned_data["email"]
                 password = form.cleaned_data["password"]
+                stay_connected = form.cleaned_data["stay_connected"]
                 user = authenticate(email=email, password=password)
                 if user:
                     if user.is_active:
                         token, _ = Token.objects.get_or_create(user=user)
                         request.session['token'] = token.key
+                        if not stay_connected:
+                            request.session.set_expiry(0)
                         login(request, user)
                         return redirect(view_redirection)
                 else:
@@ -58,7 +61,7 @@ def deconnexion(request):
 
 @login_required
 def view_redirection(request):
-    return redirect(reverse('room', kwargs={'room_name': '5'}))
+    return redirect(reverse('room', kwargs={'room_name': 'accueil'}))
 
 
 class Forbidden(TemplateView):
@@ -153,7 +156,7 @@ def AutreView(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activer votre compte Ananas'
             message = render_to_string('login/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -184,7 +187,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        login(request, user, backend='login.EmailBackend.EmailBackend')
+        login(request, user)
         messages.success(request, 'Votre compte a été activé ! vous pouvez maintenant vous connecter')
         return redirect(reverse(connexion))
     else:

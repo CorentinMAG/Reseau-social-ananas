@@ -22,13 +22,14 @@ class ChatConsumer(WebsocketConsumer):
         user_contact = get_user_contact(data['from'])
         message = Message.objects.create(
             contact=user_contact,
-            content=data['message'])
+            content=data['message'],
+            is_admin=bool(data['status']))
         current_chat = get_current_chat(data['id'])
         current_chat.messages.add(message)
         current_chat.save()
         content = {
             'command': 'new_message',
-            'message': self.message_to_json(message)
+            'message': self.message_to_json(message),
         }
         return self.send_chat_message(content)
 
@@ -41,11 +42,14 @@ class ChatConsumer(WebsocketConsumer):
     def message_to_json(self, message):
         return {
             'id': message.id,
-            'author': message.contact.user.first_name,
+            'author': message.contact.first_name,
+            'avatar': message.contact.avatar,
             'content': message.content,
+            'status': message.is_admin,
             'timestamp': str(message.timestamp)
         }
-    def fetch_channels(self,data):
+
+    def fetch_channels(self, data):
         async_to_sync(self.channel_layer.group_send)(
             self.room_group_name,
             {
@@ -54,11 +58,30 @@ class ChatConsumer(WebsocketConsumer):
             }
         )
 
+    def update_channels(self, data):
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': data
+            }
+        )
+
+    def partial_update(self, data):
+        async_to_sync(self.channel_layer.group_send)(
+            self.room_group_name,
+            {
+                'type': 'chat_message',
+                'message': data
+            }
+        )
+
     commands = {
-        # 'fetch_messages':fetch_messages,
         'new_message': new_message,
         'fetch_user_messages': fetch_user_messages,
-        'fetch_channels': fetch_channels
+        'fetch_channels': fetch_channels,
+        'update': update_channels,
+        'partialUpdate': partial_update
     }
 
     def connect(self):

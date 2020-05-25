@@ -2,7 +2,9 @@ from django.db.models import DateField
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth import get_user_model
-
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
+import os
 
 User = get_user_model()
 
@@ -26,12 +28,12 @@ class Article(models.Model):
     Un post posté sur la timeline
     """
     id = models.AutoField(primary_key=True)
-    date = models.DateTimeField(default=timezone.now,
+    date = models.DateTimeField(auto_now_add=True,
                                 verbose_name="Date de parution")
     titre = models.CharField(max_length=100)
     auteur = models.CharField(max_length=42)
     contenu_post = models.TextField(null=True)
-    tags = models.ManyToManyField(Tags)
+    tags = models.ManyToManyField(Tags,related_name='tag',blank=True)
 
     photo = models.ImageField(upload_to="photos")
 
@@ -43,6 +45,19 @@ class Article(models.Model):
         verbose_name = "Article"
         verbose_name_plural = "Articles"
         ordering = ["-date"]
+
+
+def _delete_file(path):
+    if os.path.isfile(path):
+        os.remove(path)
+
+
+@receiver(post_delete, sender=Article)
+def delete_article(sender, instance, **kwargs):
+    """Ainsi quand on supprime un article la photo associé est également supprimé
+    (inutile de la garder)"""
+    if instance.photo:
+        _delete_file(instance.photo.path)
 
 
 class Tags_article(models.Model):

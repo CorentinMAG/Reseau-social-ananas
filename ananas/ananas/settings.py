@@ -15,7 +15,6 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
@@ -25,10 +24,10 @@ SECRET_KEY = 'xu!k68q$@_*82ja*jgqqv+3)5o(s+gsi()cf47e-^75)sr*dv_'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['ananas.min.epf.fr','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['ananas.min.epf.fr', 'localhost', '127.0.0.1']
 
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
-PHONENUMBER_DEFAULT_REGION="FR"
+PHONENUMBER_DEFAULT_REGION = "FR"
 # Application definition
 
 INSTALLED_APPS = [
@@ -82,49 +81,46 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ananas.wsgi.application'
 
-ASGI_APPLICATION='ananas.routing.application'
+ASGI_APPLICATION = 'ananas.routing.application'
 
-CHANNEL_LAYERS={
-    'default':{
-        'BACKEND':'channels_redis.core.RedisChannelLayer',
-        'config':{
-            'hosts':[('127.0.0.1',6379)],
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'config': {
+            'hosts': [('127.0.0.1', 6379)],
         },
     },
 }
 
-
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-if os.name=='nt':
+if os.name == 'nt':
 
     DATABASES = {
         'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
 else:
 
-    DATABASES={
-        'default':{
-        'ENGINE':'django.db.backends.mysql',
-        'OPTIONS':{
-           'read_default_file':'/etc/mysql/conf.d/mysql.cnf'
-          }
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'OPTIONS': {
+                'read_default_file': '/etc/mysql/conf.d/mysql.cnf'
+            }
 
         }
     }
 
-
-REST_FRAMEWORK={
-    'DEFAULT_PERMISSION_CLASSES':('rest_framework.permissions.IsAuthenticated',),
-    'DEFAULT_AUTHENTICATION_CLASSES':('rest_framework.authentication.TokenAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.BasicAuthentication',),
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',
+                                       'rest_framework.authentication.SessionAuthentication',
+                                       'rest_framework.authentication.BasicAuthentication',),
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.0/ref/settings/#auth-password-validators
@@ -144,13 +140,12 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
 LANGUAGE_CODE = 'fr'
 
-AUTH_USER_MODEL="login.CustomUser"
+AUTH_USER_MODEL = "login.CustomUser"
 
 TIME_ZONE = 'UTC'
 
@@ -162,15 +157,15 @@ USE_TZ = True
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
-MEDIA_URL='/media/'
+MEDIA_URL = '/media/'
 
-DEFAULT_FROM_EMAIL="webmaster@localhost"
+DEFAULT_FROM_EMAIL = "webmaster@localhost"
 
-#AUTH_USER_MODEL="login.CustomUser"
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# AUTH_USER_MODEL="login.CustomUser"
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
-LOGIN_URL="connexion"
+LOGIN_URL = "connexion"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'ananas.webmaster@gmail.com'
@@ -183,4 +178,4 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-STATIC_ROOT="/var/www/ananas.min.epf.fr/production/static"
+STATIC_ROOT = "/var/www/ananas.min.epf.fr/production/static"
