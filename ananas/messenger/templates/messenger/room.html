@@ -8,13 +8,16 @@
 <main id="frame">
 	{%load jsonTopy %}
 	<nav id="sidepanel">
+		<a href="/timeline">
 		<div id=logo>
 			<img id="logo-img" class="lologo" src="../../static/messenger/img/epfblanc.png"/>
 		</div>
+			</a>
         <div id="profile">
 				<img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
 			<span>{{username|parse}}</span>
 		</div>
+
 
 		<div>
 		<p id="timeline">NEWS</p>
