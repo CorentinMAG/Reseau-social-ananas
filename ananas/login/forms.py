@@ -82,6 +82,10 @@ class AutreForm(forms.Form):
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom_autre'}))
 
+    class Meta:
+        model = Administration
+        fields = ('prenom','nom','password1','password2','email','campus')
+
     def clean_email(self):
         email = self.cleaned_data['email']
         if '@epf.fr' not in email:
@@ -91,23 +95,6 @@ class AutreForm(forms.Form):
             raise forms.ValidationError('Le mail existe déjà')
         except User.DoesNotExist:
             return email
-
-    def clean(self):
-        cleaned_data = super(AutreForm, self).clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-
-        if password1 and password2:
-            if password1 != password2:
-                self.add_error("password2",
-                               "Les mots de passe sont différents !"
-                               )
-            else:
-                if len(password1) < 6:
-                    self.add_error("password2",
-                                   "le mot de passe est trop court ! ")
-
-        return cleaned_data
 
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
@@ -126,7 +113,7 @@ class AutreForm(forms.Form):
         return user
 
 
-class EtudiantForm(forms.Form):
+class EtudiantForm(UserCreationForm):
     """Formulaire d'inscription pour les étudiants"""
     email = forms.EmailField(label="", widget=forms.EmailInput(
         attrs={'class': 'form-control', 'placeholder': 'prenom.nom@epfedu.fr', 'id': 'email'}))
@@ -141,6 +128,9 @@ class EtudiantForm(forms.Form):
     majeure = forms.ModelChoiceField(initial=Majeure.objects.first(), queryset=Majeure.objects.all(), label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
 
+    class Meta:
+        model=User
+        fields =('majeure','password1','password2','nom','prenom','email')
     def clean_email(self):
         email = self.cleaned_data['email']
         if '@epfedu.fr' not in email:
@@ -157,23 +147,6 @@ class EtudiantForm(forms.Form):
         if not regex.match(promo):
             raise forms.ValidationError('Année non valide')
         return promo
-
-    def clean(self):
-        cleaned_data = super(EtudiantForm, self).clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-
-        if password1 and password2:
-            if password1 != password2:
-                self.add_error("password2",
-                               "Les mots de passe sont différents !"
-                               )
-            else:
-                if len(password1) < 6:
-                    self.add_error("password2",
-                                   "le mot de passe est trop court ! ")
-
-        return cleaned_data
 
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
