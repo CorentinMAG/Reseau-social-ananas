@@ -165,7 +165,8 @@
   				if(chatSocket){
   					if(chatSocket.url.includes(`/${JSON.parse(e.data)['id']}/`)){
   						if(email===JSON.parse(e.data)['removed']){
-  							chatSocket.close()
+  							chatSocket.close();
+							document.querySelector('[data-chat_id]').click()
 						}
 					}
 				}
@@ -185,12 +186,12 @@
   	function UpdateChat(id){
   		if(document.querySelector(`[data-chat_id='${id}']`)){
   			document.querySelector('#all_chats').firstElementChild.innerHTML="";
-  			AppendNewChat(token)
+  			AppendNewChat(token,id)
 		}else{
-  			AppendNewChat(token)
+  			AppendNewChat(token,id)
 		}
 	}
-  	function AppendNewChat(token){
+  	function AppendNewChat(token,id){
   		fetch(`/messenger-api/?email=${email}`,{
 			method:'GET',
 			credentials:'include',
@@ -216,6 +217,11 @@
 					}else{
 						for(const obj of data){
 							createChat(obj)
+						}
+						if(id){
+							document.querySelector(`[data-chat_id='${id}']`).click()
+						}else{
+							document.querySelector(`[data-chat_id]`).click()
 						}
 					}
 				}
@@ -669,7 +675,7 @@ input.onkeyup = function(e) {
 						headers: {'Authorization': `Token ${token}`, 'Content-Type': 'application/json'},
 					}).then((resp) => {
 						if (resp.ok) {
-							swal("Supprimé!", "Le participant a été supprimé du salon ! ", "success");
+							swal("Supprimé!", "Le salon a été supprimé ! ", "success");
 							firstSocket.send(JSON.stringify({
 								'command': 'partialUpdate',
 								'id': chat
