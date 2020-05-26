@@ -91,7 +91,7 @@ class ChatUpdateView(UpdateAPIView):
 
 class AdminPermission(permissions.BasePermission):
     """
-    Global permission check for blacklisted IPs.
+    Global permission check for delete chat.
     """
 
     def has_object_permission(self, request, view, *args, **kwargs):

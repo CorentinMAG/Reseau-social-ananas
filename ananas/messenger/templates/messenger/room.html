@@ -171,8 +171,12 @@
 				}
 			}
   			if(JSON.parse(e.data)['command']==='partialUpdate'){
-  				console.log(JSON.parse(e.data));
 				UpdateChat(JSON.parse(e.data)['id']);
+				if(chatSocket.url.includes(`/${JSON.parse(e.data)['id']}/`) && chatSocket.readyState === 3){
+					chatSocket = new WebSocket(wsprotocol+'//'
+      					+ window.location.host
+      					+ `/ws/messenger/${JSON.parse(e.data)['id']}/`)
+				}
 				return
 			}
   			AppendNewChat(token)
@@ -379,7 +383,6 @@
 												participants:new_participants.concat(data['admin']),
 												name:data['name'],
 												status:data['status'],
-												avatar:data['avatar'],
 												admin:data['admin']
 											})
 										}).then((res)=>firstSocket.send(JSON.stringify({
