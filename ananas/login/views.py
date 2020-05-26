@@ -177,7 +177,7 @@ def AutreView(request):
 
 def activate(request, uidb64, token):
     """activation du compte,
-    donc on gère l'envoie de l'email ici
+    donc on gère l'envoi de l'email ici
     avec le token"""
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
