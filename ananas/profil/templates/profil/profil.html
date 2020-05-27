@@ -3,22 +3,122 @@
 <head>
     <meta charset="UTF-8">
     <title>Ananas</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="profil.js"></script>
 </head>
-<body>
-{% block body %}
-<div class="container">
-    <p>
-        contenu dans la variable "request.user" :
+
+<hr>
+<div class="container bootstrap snippet">
+
+    <div class="row">
+  		<div class="col-sm-3"><!--left col-->
 
 
-        {{ user.first_name }}, {{ user.last_name }}, {{ user.username }}
-    </p>
-</div>
+      <div class="text-center">
+        {{form.avatar}}
+
+        <h6>Upload a different photo...</h6>
+        <input type="file" class="text-center center-block file-upload">
+      </div></hr><br>
+
+
+          <div class="panel panel-default">
+            <div class="panel-heading">Date d'inscription <i class="fa fa-1x"></i></div>
+            <div class="panel-body"> {{user.date_joined}} </div>
+          </div>
+
+
+          <ul class="list-group">
+            <li class="list-group-item text-muted">Activity <i class="fa fa-dashboard fa-3x"></i></li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Likes</strong></span> 13</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Posts</strong></span> 37</li>
+            <li class="list-group-item text-right"><span class="pull-left"><strong>Followers</strong></span> 78</li>
+          </ul>
+
+        </div><!--/col-3-->
+
+
+    	<div class="col-sm-9">
+                            <div class="userData ml-3">
+                                <h2 class="d-block" style="font-size: 3rem; font-weight: bold">{{ user.first_name}} {{ user.last_name }}</h2>
+                            </div>
+
+                <hr>
+                  <form class="form" action="##" method="post" id="registrationForm">
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                              <label for="first_name"><h4>Prénom</h4></label>
+                              <p><i class="fas fa-user" id="first_name"f></i>{{form.prenom}}</p>
+                          </div>
+                      </div>
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                            <label for="last_name"><h4>Nom</h4></label>
+                              <p><i class="fas fa-user" id="last_name"f></i>{{form.nom}}</p>
+                          </div>
+                      </div>
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                              <label for="email"><h4>Email</h4></label>
+                              <input type="email" class="form-control" name="email" id="email" placeholder="you@email.com" value ="{{user.email}}" title="enter your email." disabled>
+                          </div>
+                      </div>
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                              <label for="birthdate"><h4>Date de naissance</h4></label>
+                             <p><i class="fas fa-user" id="birthdate"f></i>{{form.naissance}}</p>
+                          </div>
+                      </div>
+
+                      <div class="form-group">
+                          <div class="col-xs-6">
+                             <label for="majeure"><h4>Majeure</h4></label>
+                             <p><i class="fas fa-user" id="majeure"></i>{{form.majeure}}</p>
+                          </div>
+                      </div>
+
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                              <label for="campus"><h4>Campus</h4></label>
+                              <p><i class="fas fa-user" id="campus"></i>{{form.campus}}</p>
+                          </div>
+                      </div>
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                              <label for="password"><h4>Password</h4></label>
+                             <p><i class="fas fa-user" id="password"></i>{{form.password1}}</p>
+                          </div>
+                      </div>
+                      <div class="form-group">
+
+                          <div class="col-xs-6">
+                            <label for="password2"><h4>Verify</h4></label>
+                              <p><i class="fas fa-user" id="password2"></i>{{form.password2}}</p>
+                          </div>
+                      </div>
+                      <div class="form-group">
+                           <div class="col-xs-12">
+                                <br>
+                              	<button class="btn btn-lg btn-success" type="submit"><i class="glyphicon glyphicon-ok-sign"></i> Save</button>
+                               	<button class="btn btn-lg" type="reset"><i class="glyphicon glyphicon-repeat"></i> Reset</button>
+                            </div>
+                      </div>
+              	</form>
+
+              <hr>
 
 
 
-{% endblock %}
-<p>Page de profil</p>
 
-</body>
-</html>
+
+
+        </div><!--/col-9-->
+    </div><!--/row--></html>

@@ -69,7 +69,7 @@ class Etudiant(models.Model):
     Birthdate = models.CharField(max_length=10, verbose_name='Date de naissance', blank=True)
     majeure = models.ForeignKey(Majeure, on_delete=models.CASCADE)
 
-    # campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
+    campus = models.ForeignKey(Campus, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name
