@@ -16,11 +16,8 @@ def timeline(request):
     """
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
-    # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 2")
+    # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
-    form = ArticleForm(request.POST)
-    if form.is_valid():
-        new_article = form.cleaned_data['contenu_post']
     return render(request, 'timeline/timeline.html', {'posts': posts})
 
 
@@ -30,13 +27,22 @@ def add_article(request):
     Ajoute un nouvel article
     """
 
-    form = ArticleForm(request.POST)
-    if form.is_valid():
-        new_comment = form.cleaned_data['contenu_comm']
-        Commentaires.objects.create(contenu_comm=new_comment, id_post=post)
-        comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
+    if request.method == "POST":
+        form = ArticleForm(request.POST)
+        if form.is_valid():
+            new_article = form.cleaned_data['contenu_post']
+            new_titre = form.cleaned_data['titre']
+            print('_______________' + str(new_article))
+            print('_______________' + str(new_titre))
+        else:
+            print('_______________' + 'toto')
+            return render(request, 'timeline/add.html')
 
-    return render(request, 'timeline/add.html')
+    else:
+        form = ArticleForm()
+
+    args = {'form': form}
+    return render(request, 'timeline/add.html', args)
 
 
 @login_required
@@ -55,12 +61,10 @@ def lire(request, id):
     form = CommentForm(request.POST)
     if form.is_valid():
         new_comment = form.cleaned_data['contenu_comm']
-        print("USER", type(request.user))
         truc = request.user
         com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc)
         com.save()
         comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
-    print(request.user.username)
 
     args = {'post': post, 'comments': comments, 'form': form}
     return render(request, 'timeline/lire.html', args)

@@ -1,5 +1,6 @@
 from django.forms import ModelForm, CharField
 from .models import Commentaires, Article
+from django import forms
 
 
 class CommentForm(ModelForm):
@@ -13,9 +14,13 @@ class CommentForm(ModelForm):
         fields = ('contenu_comm',)
 
 
-class ArticleForm(ModelForm):
-    article_content = CharField()
+class ArticleForm(forms.ModelForm):
+    contenu_post = forms.CharField(widget=forms.Textarea(attrs={'cols': "200"}))
 
     class Meta:
         model = Article
-        fields = ('contenu_post',)
+        fields = '__all__'
+
+
+
+
