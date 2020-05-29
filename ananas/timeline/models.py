@@ -32,10 +32,10 @@ class Article(models.Model):
                                 verbose_name="Date de parution")
     titre = models.CharField(max_length=100)
     auteur = models.CharField(max_length=42)
-    contenu_post = models.TextField(null=True)
-    tags = models.ManyToManyField(Tags,related_name='tag',blank=True)
+    contenu_post = models.TextField()
+    tags = models.ManyToManyField(Tags, related_name='tag')
 
-    photo = models.ImageField(upload_to="photos")
+    photo = models.ImageField(upload_to="photos/")
 
     def __str__(self):
         return self.titre

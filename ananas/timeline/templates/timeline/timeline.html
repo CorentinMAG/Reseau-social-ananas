@@ -3,7 +3,10 @@
 {% block content %}
 
     <!--Ajouter un nouvel article-->
+
+    {% if request.user.is_superuser %}
     <a href=add>Nouveau post</a>
+    {% endif %}
 
     <div> <!--Liste des posts-->
     <!--For comment in comments-->

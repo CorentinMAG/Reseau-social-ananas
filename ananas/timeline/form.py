@@ -15,7 +15,9 @@ class CommentForm(ModelForm):
 
 
 class ArticleForm(forms.ModelForm):
-    contenu_post = forms.CharField(widget=forms.Textarea(attrs={'cols': "200"}))
+    #contenu_post = forms.CharField(widget=forms.Textarea(attrs={'cols': "200", 'id': "area1"}))
+
+
 
     class Meta:
         model = Article

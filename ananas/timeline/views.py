@@ -1,14 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect
-
-# Create your views here.
+from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.utils import timezone
 from django.views.generic import TemplateView
-
-from .models import Article, Commentaires
+from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+
+User = get_user_model()
 
 
 @login_required
@@ -18,24 +17,40 @@ def timeline(request):
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
-    return render(request, 'timeline/timeline.html', {'posts': posts})
-
+    print(Tags.objects.get(text_tag='test'))
+    args = {'posts': posts}
+    return render(request, 'timeline/timeline.html', args)
 
 @login_required
+@permission_required('Article.add_article')
 def add_article(request):
     """
     Ajoute un nouvel article
     """
-
     if request.method == "POST":
-        form = ArticleForm(request.POST)
+        form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
-            new_article = form.cleaned_data['contenu_post']
             new_titre = form.cleaned_data['titre']
-            print('_______________' + str(new_article))
-            print('_______________' + str(new_titre))
+            new_auteur = form.cleaned_data['auteur']
+            new_photo = form.cleaned_data['photo']
+            new_post = form.cleaned_data['contenu_post']
+            new_tags = form.cleaned_data['tags']
+            print(new_tags, type(new_tags))
+
+            Articl = Article.objects.create(titre=new_titre,
+                                            auteur=new_auteur,
+                                            contenu_post=new_post,
+                                            photo=new_photo)
+            Articl.save()
+            for tag in new_tags:
+                Articl.tags.add(tag)
+                Articl.save()
+            # Reverse :
+            return redirect(reverse('timeline-home'))
+
+
         else:
-            print('_______________' + 'toto')
+            print('_______________' + 'PAS VALIDE')
             return render(request, 'timeline/add.html')
 
     else:

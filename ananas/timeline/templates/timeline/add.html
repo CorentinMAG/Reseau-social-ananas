@@ -9,6 +9,12 @@
 <body>
 
 <div id="sample">
+    <!-- multipart/form-data : pour accepter les photos -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Publier">
+    </form>
     <script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
     <script type="text/javascript">
         //<![CDATA[
@@ -21,16 +27,6 @@
         });
         //]]>
     </script>
-
-    <form method="post">
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Publier">
-    </form>
-
-
-
-
 </div>
 </body>
 </html>
