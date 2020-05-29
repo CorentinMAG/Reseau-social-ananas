@@ -33,3 +33,11 @@
   font-weight: bolder;
   margin-right: 5px;
 }
+.tag{
+  font-size: 1.4em;
+  border: 1px solid #000;
+  padding:10px;
+  border-radius: 40%;
+  font-weight: 800;
+
+}

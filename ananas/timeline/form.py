@@ -14,8 +14,6 @@ class CommentForm(ModelForm):
 
 
 class ArticleForm(ModelForm):
-    article_content = CharField()
-
     class Meta:
         model = Article
-        fields = ('contenu_post',)
+        fields = '__all__'

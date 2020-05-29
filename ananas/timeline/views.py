@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect,reverse
 
 # Create your views here.
 from django.utils import timezone
@@ -18,10 +18,15 @@ def timeline(request):
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 2")
     posts = Article.objects.all()
-    form = ArticleForm(request.POST)
-    if form.is_valid():
-        new_article = form.cleaned_data['contenu_post']
     return render(request, 'timeline/timeline.html', {'posts': posts})
+
+def delete_comm(request,id):
+    comm = Commentaires.objects.get(pk=id)
+    article = comm.id_post.pk
+    if comm.id_user == request.user:
+        comm.delete()
+    return redirect(reverse('view_article',kwargs={'id':article}))
+
 
 
 @login_required
@@ -47,6 +52,7 @@ def lire(request, id):
 
     try:
         post = Article.objects.get(id=id)
+        tags = post.tags.all()
         comments = Commentaires.objects.filter(id_post=id)
     except post.DoesNotExist:
         raise Http404
@@ -55,14 +61,12 @@ def lire(request, id):
     form = CommentForm(request.POST)
     if form.is_valid():
         new_comment = form.cleaned_data['contenu_comm']
-        print("USER", type(request.user))
         truc = request.user
         com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc)
         com.save()
         comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
-    print(request.user.username)
 
-    args = {'post': post, 'comments': comments, 'form': form}
+    args = {'post': post, 'comments': comments, 'form': form,'tags':tags}
     return render(request, 'timeline/lire.html', args)
 
 
