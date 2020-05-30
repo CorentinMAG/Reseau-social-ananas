@@ -4,7 +4,7 @@
 
     <!--Ajouter un nouvel article-->
 
-    {% if request.user.is_superuser %}
+    {% if can_add_article %}
     <a href=add>Nouveau post</a>
     {% endif %}
 
@@ -15,9 +15,6 @@
             <div class="row">
     {% for post in posts %}<!--TODO: Redimentionner les images-->
 
-
-
-
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100">
             <a href={{ post.id }}><img class="card-img-top" src="/media/{{post.photo}}" alt=""></a>
@@ -25,29 +22,12 @@
               <h4 class="card-title">
                 <a href={{ post.id }}>{{ post.titre }}</a>
               </h4>
-              <p class="card-text">{{ post.contenu_post| safe |truncatewords_html:7 }}</p>
+              <div class="card-text content-markdown">
+                  {{ post.get_markdown|truncatechars_html:20}}
+              </div>
             </div>
           </div>
         </div>
-
-      <!-- /.row -->
-    <!--TODO: content-markdown-->
-    <!--Ancien
-    </div>
-        <div class="post">
-            <h3>{{ post.titre }}</h3>
-            <p>{{ post.contenu_post| safe |truncatewords_html:7 }}</p>
-            <p><a href={{ post.id }}>Lire la suite</a></p>
-
-            {% if post.photo %}
-                <div class="photos">
-                    <img src="/media/{{post.photo}}"/>
-                </div>
-            {% endif %}
-        </div>
-
-
-        <div>---------------------</div>-->
 
         {% empty %}
         <p>Aucun article sur la timeline.</p>
@@ -56,27 +36,4 @@
     </div>
 
 {% endblock %}
-{% block script%}
-    <!--Markdown-->
-    <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/marked/1.1.0/marked.min.js"></script>
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $(".content-markdown").each(function(){
 
-                var article_content = $("this").text()
-                console.log(article_content)
-                var markedArticle = marked(article_content)
-                console.log(markedArticle)
-                $(this).html(markedArticle)
-            })
-
-        })
-    </script>
-<!--Snippet : https://startbootstrap.com/snippets/portfolio-three-column/-->
-
-<!-- /.container -->
-
-{% endblock %}
-</body>
-</html>

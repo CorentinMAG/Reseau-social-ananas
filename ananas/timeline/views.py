@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect, reverse
-from django.utils import timezone
-from django.views.generic import TemplateView
 from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
@@ -17,12 +15,12 @@ def timeline(request):
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
-    print(Tags.objects.get(text_tag='test'))
-    args = {'posts': posts}
+    can_add_article = request.user.has_perm('timeline.add_article')
+    args = {'posts': posts,'can_add_article':can_add_article}
     return render(request, 'timeline/timeline.html', args)
 
 @login_required
-@permission_required('Article.add_article')
+@permission_required('timeline.add_article')
 def add_article(request):
     """
     Ajoute un nouvel article
@@ -31,20 +29,19 @@ def add_article(request):
         form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
             new_titre = form.cleaned_data['titre']
-            new_auteur = form.cleaned_data['auteur']
+            new_auteur = request.user
             new_photo = form.cleaned_data['photo']
             new_post = form.cleaned_data['contenu_post']
             new_tags = form.cleaned_data['tags']
-            print(new_tags, type(new_tags))
 
-            Articl = Article.objects.create(titre=new_titre,
+            new_article = Article.objects.create(titre=new_titre,
                                             auteur=new_auteur,
                                             contenu_post=new_post,
                                             photo=new_photo)
-            Articl.save()
+            new_article.save()
             for tag in new_tags:
-                Articl.tags.add(tag)
-                Articl.save()
+                new_article.tags.add(tag)
+                new_article.save()
             # Reverse :
             return redirect(reverse('timeline-home'))
 

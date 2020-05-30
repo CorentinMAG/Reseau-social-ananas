@@ -12,19 +12,12 @@
 </head>
 <body>
     <div class="article">
-    <h1>{{ post.titre }} <span class="small"> </span></h1>
-    <p class="infos">Rédigé par {{ post.auteur }}, le {{ post.date|date:"DATE_FORMAT" }}</p>
-    <div class="contenu">{{ post.contenu_post| safe |linebreaks }}</div>
-    {% if post.photo %}
+    <h1 style="display:inline-block">{{ post.titre }} <span class="small"> </span></h1><button style="display: inline-block"><a href="{% url 'timeline-home' %}">Retour</a></button>
+    <p class="infos">Rédigé par {{ post.auteur.last_name |upper}} {{post.auteur.first_name}}, le {{ post.date|date:"DATE_FORMAT" }}</p>
     <div class="photos">
         <img src="/media/{{post.photo}}"/>
     </div>
-    {% endif %}
-    <!--{% if post.tags %}
-    <div class="tag">
-        {{ post.tags }}
-    </div>
-    {% endif %}-->
+        <div class="contenu">{{ post.get_markdown}}</div>
     <div class="container">
         <div class="post-comments">
             <!--Partie commentaire-->

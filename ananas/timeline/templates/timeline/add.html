@@ -1,32 +1,31 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Nouvel article</title>
-    <link rel="stylesheet" type="text/css" href="../../MarkItUp/markitup/skins/simple/style.css" />
-    <link rel="stylesheet" type="text/css" href="../../MarkItUp/markitup/sets/default/style.css" />
-</head>
-<body>
+{% extends "header.html" %}
+{% block title %}Nouvel article{% endblock %}
+{% block headerlink %}
+    <link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/add.css">
+       {{form.media}}
+{% endblock %}
 
+{% block content %}
 <div id="sample">
     <!-- multipart/form-data : pour accepter les photos -->
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        {{ form }}
+        <div id="header_zone">
+            <div class="form-group" id="title_zone">
+                {{form.titre}}
+            </div>
+            <div class="form-group" id="photo_zone">
+                {{form.photo}}
+            </div>
+        </div>
+        <div class="form-group" id="tag_zone">
+            {{form.tags}}
+        </div>
+        <div class="form-group" id="contenu_zone">
+            {{form.contenu_post}}
+        </div>
         <input type="submit" value="Publier">
+        <button><a href="{% url 'timeline-home' %}">Retour</a></button>
     </form>
-    <script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script>
-    <script type="text/javascript">
-        //<![CDATA[
-        bkLib.onDomLoaded(function() {
-            new nicEditor().panelInstance('area1');
-            new nicEditor({fullPanel : true}).panelInstance('area2');
-            new nicEditor({iconsPath : '../nicEditorIcons.gif'}).panelInstance('area3');
-            new nicEditor({buttonList : ['fontSize','bold','italic','underline','strikeThrough','subscript','superscript','html','image']}).panelInstance('area4');
-            new nicEditor({maxHeight : 600}).panelInstance('area5');
-        });
-        //]]>
-    </script>
 </div>
-</body>
-</html>
+{% endblock %}
