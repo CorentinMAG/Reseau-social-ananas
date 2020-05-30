@@ -41,3 +41,10 @@
   font-weight: 800;
 
 }
+.toggle_children{
+  display: none;
+}
+
+input[type='text']{
+  width: 50% !important;
+}

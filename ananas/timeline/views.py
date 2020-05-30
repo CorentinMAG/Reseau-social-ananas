@@ -20,6 +20,7 @@ def timeline(request):
     posts = Article.objects.all()
     return render(request, 'timeline/timeline.html', {'posts': posts})
 
+@login_required
 def delete_comm(request,id):
     comm = Commentaires.objects.get(pk=id)
     article = comm.id_post.pk
@@ -62,9 +63,18 @@ def lire(request, id):
     if form.is_valid():
         new_comment = form.cleaned_data['contenu_comm']
         truc = request.user
-        com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc)
+        parent_obj=None
+        try:
+            parent_id =int(request.POST.get('parent_id'))
+        except:
+            parent_id=None
+        if parent_id:
+            parent_qs = Commentaires.objects.filter(pk=parent_id)
+            if parent_qs.exists() and parent_qs.count()==1:
+                parent_obj=parent_qs.first()
+        com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc,parent=parent_obj)
         com.save()
-        comments = Commentaires.objects.filter(id_post=id)  # Actualise liste commentaires
+        comments = Commentaires.objects.filter(id_post=id,parent=None)  # Actualise liste commentaires
 
     args = {'post': post, 'comments': comments, 'form': form,'tags':tags}
     return render(request, 'timeline/lire.html', args)
@@ -78,33 +88,3 @@ def search_timeline(request):  # TODO : Chercher selon les tags
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.filter(id_post=id)
     return render(request, 'timeline/timeline.html', {'posts': posts})
-
-# def add_comment_to_post(request, pk):
-#     post = get_object_or_404(Article, pk=pk)
-#     if request.method == "POST":
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             comment = form.save(commit=False)
-#             comment.post = post
-#             comment.save()
-#             return redirect('post_detail', pk=post.pk)
-#     else:
-#         form = CommentForm()
-#     return render(request, 'timeline/add_comment_to_post.html', {'form': form})
-
-# class LireView(TemplateView):
-#     template_name = "timeline/lire.html"
-#
-#     def get(self, request):
-#         form = CommentForm()
-#         return render(request, self.template_name, {'form': form})
-#
-#     def post(self, request):
-#         form = CommentForm(request.POST)
-#         if form.is_valid():
-#             your_comment = form.cleaned_data['your_comment']
-#             form = CommentForm()
-#
-#
-#         args = {'form': form, 'your_comment': your_comment}
-#         return render(request, self.template_name, args)

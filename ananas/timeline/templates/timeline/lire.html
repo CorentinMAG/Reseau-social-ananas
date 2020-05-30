@@ -26,7 +26,7 @@
     <div class="container">
         <div class="post-comments">
             <!--Partie commentaire-->
-            <form method="post">
+            <form method="post" class="form-inline">
                 {% csrf_token %}
                 {{ form }}
                 <input type="submit" value="Publier">
@@ -36,10 +36,11 @@
             <!--Boucle sur tous les commentaires-->
             <div class="media">
                 <div class="media-heading">
-                    <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse"
-                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample">
-                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                    </button> <span class="label label-info">{{comment.date_comm}}</span> {{comment.id_user.first_name}}<!--TODO : Ajouter nom du mec qui a commenté-->
+<!--                    <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse"-->
+<!--                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>-->
+                    </button> <span class="label label-info"> il y a {{comment.date_comm |timesince}}</span> {{comment.id_user.first_name}}
+                    {% if comment.children.count > 0 %} | <span>{{comment.children.count}} repl{{comment.children.count|pluralize:"y,ies"}} </span> {% endif %}
                 </div>
 
                 <div class="panel-collapse collapse in" id="collapseTwo">
@@ -52,18 +53,68 @@
 
                     <div class="media-body">
                         <p>{{ comment }}</p>
+                            <div class="comment-meta">
+                                {% if request.user.email == comment.id_user.email %}
+                                <span><a href="{% url "delete_comm" comment.pk %}">delete</a></span>
+                                 {% endif %}
+                                <span><a href="#" class="comment-reply-btn">Reply</a></span>
+                            </div>
+                        <!-- comment-meta -->
+                    </div>
+                    <div class="comment-reply toggle_children" >
+                        <form method="post" class="form-inline">
+                {% csrf_token %}
+                {{ form }}
+                        <input type="hidden" name="parent_id" value="{{comment.pk}}">
+                <input type="submit" value="Reply">
+            </form>
+                         {% for child_comment in comment.children %}
+                    <blockquote>
+                       <div class="media">
+                <div class="media-heading">
+<!--                    <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse"-->
+<!--                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample">-->
+<!--                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>-->
+                    </button> <span class="label label-info"> il y a {{child_comment.date_comm |timesince}}</span> {{child_comment.id_user.first_name}}<!--TODO : Ajouter nom du mec qui a commenté-->
+                </div>
+
+                <div class="panel-collapse collapse in" id="collapseTwo">
+
+                    <div class="media-left">
+                        <!-- vote-wrap -->
+                    </div>
+                    <!-- media-left -->
+
+
+                    <div class="media-body">
+                        <p>{{ child_comment }}</p>
                         {% if request.user.email == comment.id_user.email %}
                             <div class="comment-meta">
-                                <span><a href="{% url "delete_comm" comment.pk %}">delete</a></span>
+                                <span><a href="{% url "delete_comm" child_comment.pk %}">delete</a></span>
                             </div>
                         {% endif %}
                         <!-- comment-meta -->
                     </div>
+                </div>
+                       </div>
+                    </blockquote>
+                    {% endfor%}
+
+                    </div>
+
                 </div>
 
 
             </div>
             {% endfor %} <!-- Fin des commentaires -->
     </div>
+        <script>
+            $(document).ready(function(){
+                $('.comment-reply-btn').click((e)=>{
+                    e.preventDefault();
+                   e.currentTarget.parentElement.parentElement.parentElement.nextElementSibling.classList.toggle('toggle_children')
+                })
+            })
+        </script>
 </body>
 </html>

@@ -88,8 +88,20 @@ class Commentaires(models.Model):
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_comm = models.DateTimeField(auto_now_add=True,
                                      verbose_name="Date de commentaire", blank=True, null=True)
-    last_modif_comm = models.DateTimeField(auto_now=True,
-                                           verbose_name="Date dernière modification", blank=True, null=True)
+    parent= models.ForeignKey('self',blank=True,null=True,on_delete=models.CASCADE)
+
+    def children(self):
+        return Commentaires.objects.filter(parent=self)
+
+    @property
+    def is_parent(self):
+        if self.parent is not None:
+            return False
+        else:
+            return True
+
+
+
 
     def approve(self):
         self.approved_comment = True
