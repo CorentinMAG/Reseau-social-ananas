@@ -12,17 +12,16 @@
 </head>
 <body>
     <div class="article">
-    <h1>{{ post.titre }} <span class="small"> </span></h1>
-    <p class="infos">Rédigé par {{ post.auteur }}, le {{ post.date|date:"DATE_FORMAT" }}</p><br/>
-        {% for tag in tags %}
+    <h1 style="display:inline-block">{{ post.titre }} <span class="small"> </span></h1><button style="display: inline-block"><a href="{% url 'timeline-home' %}">Retour</a></button>
+    <p class="infos">Rédigé par {{ post.auteur.last_name |upper}} {{post.auteur.first_name}}, le {{ post.date|date:"DATE_FORMAT" }}</p>
+    {% for tag in tags %}
         <span class="tag">{{tag}}</span>
         {% endfor %}
-    <div class="contenu">{{ post.contenu_post| safe |linebreaks }}</div>
-    {% if post.photo %}
-    <div class="photos">
+
+        <div class="photos">
         <img src="/media/{{post.photo}}"/>
     </div>
-    {% endif %}
+        <div class="contenu">{{ post.get_markdown}}</div>
     <div class="container">
         <div class="post-comments">
             <!--Partie commentaire-->
@@ -36,9 +35,6 @@
             <!--Boucle sur tous les commentaires-->
             <div class="media">
                 <div class="media-heading">
-<!--                    <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse"-->
-<!--                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample">-->
-<!--                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>-->
                     </button> <span class="label label-info"> il y a {{comment.date_comm |timesince}}</span> {{comment.id_user.first_name}}
                     {% if comment.children.count > 0 %} | <span>{{comment.children.count}} repl{{comment.children.count|pluralize:"y,ies"}} </span> {% endif %}
                 </div>
@@ -72,9 +68,6 @@
                     <blockquote>
                        <div class="media">
                 <div class="media-heading">
-<!--                    <button class="btn btn-default btn-collapse btn-xs" type="button" data-toggle="collapse"-->
-<!--                            data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseExample">-->
-<!--                        <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>-->
                     </button> <span class="label label-info"> il y a {{child_comment.date_comm |timesince}}</span> {{child_comment.id_user.first_name}}<!--TODO : Ajouter nom du mec qui a commenté-->
                 </div>
 
@@ -84,7 +77,6 @@
                         <!-- vote-wrap -->
                     </div>
                     <!-- media-left -->
-
 
                     <div class="media-body">
                         <p>{{ child_comment }}</p>
@@ -99,12 +91,8 @@
                        </div>
                     </blockquote>
                     {% endfor%}
-
                     </div>
-
                 </div>
-
-
             </div>
             {% endfor %} <!-- Fin des commentaires -->
     </div>

@@ -1,15 +1,19 @@
 {% extends "header.html" %}
 {% block title %}Timeline{% endblock %}
 {% block content %}
+
+    <!--Ajouter un nouvel article-->
+
+    {% if can_add_article %}
+    <a href=add>Nouveau post</a>
+    {% endif %}
+
     <div> <!--Liste des posts-->
     <!--For comment in comments-->
         <!--TODO: Finir d'intégrer le bootsnip-->
         <div class="container">
             <div class="row">
     {% for post in posts %}<!--TODO: Redimentionner les images-->
-
-
-
 
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100">
@@ -23,14 +27,18 @@
                     <span class="tag">{{tag}}</span>
                     {% endfor %}
                 </h6>
-              <p class="card-text">{{ post.contenu_post| safe |truncatewords_html:7 }}</p>
+              <div class="card-text content-markdown">
+                  {{ post.get_markdown|truncatechars_html:20}}
+              </div>
             </div>
           </div>
         </div>
+
+        {% empty %}
+        <p>Aucun article sur la timeline.</p>
     {% endfor %}
                 </div>
     </div>
 
 {% endblock %}
-</body>
-</html>
+

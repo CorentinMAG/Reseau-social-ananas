@@ -3,6 +3,8 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 import os
+from markdown_deux import markdown
+from django.utils.safestring import mark_safe
 
 User = get_user_model()
 
@@ -29,14 +31,19 @@ class Article(models.Model):
     date = models.DateTimeField(auto_now_add=True,
                                 verbose_name="Date de parution")
     titre = models.CharField(max_length=100)
-    auteur = models.CharField(max_length=42)
-    contenu_post = models.TextField(null=True)
-    tags = models.ManyToManyField(Tags,related_name='tag',blank=True)
+    auteur = models.ForeignKey(User,on_delete=models.CASCADE)
+    contenu_post = models.TextField()
+    tags = models.ManyToManyField(Tags, related_name='tag')
 
-    photo = models.ImageField(upload_to="photos")
+    photo = models.ImageField(upload_to="photos/")
 
     def __str__(self):
         return self.titre
+
+    def get_markdown(self):
+        content = self.contenu_post
+        markdown_content =markdown(content)
+        return mark_safe(markdown_content)
 
     class Meta:
         # Change l'affichage du nom dans l'interface admin

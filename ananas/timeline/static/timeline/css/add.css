@@ -1,0 +1,42 @@
+*{
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+form{
+    display: flex;
+    flex-direction: column;
+}
+#header_zone{
+    display: flex;
+    justify-content: space-evenly;
+}
+#title_zone{
+    width: 400px;
+    display: inline-block;
+}
+#photo_zone{
+    display: inline-block;
+}
+#tag_zone{
+    margin: 10px 50px;
+}
+.wmd-wrapper{
+    display: flex;
+    justify-content: space-evenly;
+}
+.wmd-input-id_contenu_post{
+    width: 45%;
+}
+.wmd-panel{
+    margin: 0 !important;
+}
+.wmd-preview{
+    width: 45%;
+    max-height: 341px;
+    min-height: 341px;
+    overflow-y: auto;
+}
+
+img{
+    width: 100px;
+}

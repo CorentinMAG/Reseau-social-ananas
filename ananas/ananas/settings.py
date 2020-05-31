@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'profil',
+    'markdown_deux',
+    'pagedown'
 ]
+
+PAGEDOWN_IMAGE_UPLOAD_ENABLED=True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
