@@ -102,11 +102,11 @@ class AutreForm(forms.Form):
         email = self.cleaned_data['email']
         password = self.cleaned_data['password1']
         campus = self.cleaned_data['campus']
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,campus=campus)
         user.is_active = False
         user.is_etudiant = False
         user.is_autre = True
-        profilAutre = Administration(user=user, campus=campus)
+        profilAutre = Administration(user=user)
         profilAutre.save()
         if commit:
             user.save()
@@ -121,6 +121,8 @@ class EtudiantForm(UserCreationForm):
                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom', 'id': 'nom'}))
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom'}))
+    campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
+                                    widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_etudiant'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
@@ -130,7 +132,7 @@ class EtudiantForm(UserCreationForm):
 
     class Meta:
         model=User
-        fields =('majeure','password1','password2','nom','prenom','email')
+        fields =('majeure','password1','password2','nom','prenom','email','campus')
     def clean_email(self):
         email = self.cleaned_data['email']
         if '@epfedu.fr' not in email:
@@ -141,19 +143,13 @@ class EtudiantForm(UserCreationForm):
         except User.DoesNotExist:
             return email
 
-    def clean_promo(self):
-        promo = self.cleaned_data['promo']
-        regex = re.compile('^20[0-9]{2}$')
-        if not regex.match(promo):
-            raise forms.ValidationError('Année non valide')
-        return promo
-
     def save(self, commit=True):
         prenom = self.cleaned_data["prenom"]
         password = self.cleaned_data["password1"]
         nom = self.cleaned_data["nom"]
         email = self.cleaned_data["email"]
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password)
+        campus=self.cleaned_data['campus']
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,campus=campus)
         user.is_active = False
 
         majeure = self.cleaned_data['majeure']
