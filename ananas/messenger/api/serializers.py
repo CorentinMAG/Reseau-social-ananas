@@ -16,6 +16,8 @@ class ContactSerializer(serializers.StringRelatedField):
     def to_representation(self, value):
         info_user = {'email': value.email, 'first_name': value.first_name, 'last_name': value.last_name,
                      'avatar': value.avatar}
+        if value.photo:
+            info_user['photo'] = value.photo.url
         return info_user
 
     def to_internal_value(self, value):

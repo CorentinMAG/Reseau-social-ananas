@@ -40,7 +40,7 @@ class ChatConsumer(WebsocketConsumer):
         return result
 
     def message_to_json(self, message):
-        return {
+        obj = {
             'id': message.id,
             'author': message.contact.first_name,
             'avatar': message.contact.avatar,
@@ -48,6 +48,9 @@ class ChatConsumer(WebsocketConsumer):
             'status': message.is_admin,
             'timestamp': str(message.timestamp)
         }
+        if message.contact.photo:
+            obj['photo']=message.contact.photo.url
+        return obj
 
     def fetch_channels(self, data):
         async_to_sync(self.channel_layer.group_send)(

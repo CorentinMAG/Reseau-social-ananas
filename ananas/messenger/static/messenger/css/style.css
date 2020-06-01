@@ -21,7 +21,9 @@ body{
   justify-content: center;
   align-content: center;
 }
-
+#user_name{
+  cursor: pointer;
+}
 .lologo{
   height: 65px;
   margin-left: 15px;

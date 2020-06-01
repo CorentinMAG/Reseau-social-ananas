@@ -14,8 +14,12 @@
 		</div>
 			</a>
         <div id="profile">
-				<img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
-			<span>{{username|parse}}</span>
+			{% if request.user.photo is not None and request.user.photo != "" %}
+           <img id="profile-img" src="{{request.user.photo.url}}" class="online" alt="" />
+          {% else %}
+          <img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
+          {% endif %}
+			<span id="user_name">{{username|parse}}</span>
 		</div>
 
 
@@ -274,7 +278,11 @@
 		let c_img=document.createElement('img');
 		let c_name=document.createElement('span');
 		c_name.classList="name";
-		c_img.src=participant.avatar;
+		if(participant['photo']){
+			c_img.src=participant.photo
+		}else{
+			c_img.src=participant.avatar;
+		}
 
 		let first_name=participant.first_name;
 		let last_name=participant.last_name.toUpperCase();
@@ -283,6 +291,9 @@
 		c_name.textContent=`${first_name} ${last_name.toUpperCase()}`;
 		c_div.appendChild(c_name);
 		participants_ul.appendChild(c_li);
+		c_li.addEventListener('click',(e)=>{
+			window.location = `/profil/${c_li.dataset.email}`
+		})
 	}
 	function fetchUsers(token){
   		fetch('/messenger-api/users/', {
@@ -361,6 +372,7 @@
 							deleteBtn.innerHTML='<span class="mdc-button__ripple"></span><i class="fas fa-skull-crossbones"></i>';
 							participant.firstElementChild.appendChild(deleteBtn);
 							deleteBtn.onclick=(e)=>{
+								e.stopPropagation()
 								let removed=e.currentTarget.parentElement.parentElement.dataset.email;
 								if(!data['admin'].includes(removed)){
 									swal({
@@ -531,7 +543,12 @@
       	pTag.firstElementChild.style.color="rgb(241, 196, 15)"
 	  }
       msgListTag.classList="sent";
-      imgTag.src=data['avatar'];
+      if(data['photo']){
+      	imgTag.src=data['photo'];
+	  }else{
+      	imgTag.src=data['avatar'];
+	  }
+      console.log(data)
       msgListTag.appendChild(imgTag);
       msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
@@ -726,5 +743,8 @@ input.onkeyup = function(e) {
   }
   return result;
 }
+document.querySelector('#user_name').addEventListener('click',(e)=>{
+	window.location = "/profil"
+})
 </script>
 {%endblock%}
