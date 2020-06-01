@@ -1,4 +1,5 @@
 env/
+media/
 ananasenv/
 .gitlab-ci.yml
 db.sqlite3
@@ -7,5 +8,3 @@ __pycache__/
 migrations/
 bin/
 .idea/
-media/
-ananas/media/pagedown-uploads
