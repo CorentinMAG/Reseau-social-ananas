@@ -27,7 +27,7 @@ class ChatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Chat
-        fields = ('id', 'participants', 'name', 'status', 'avatar', 'admin')
+        fields = ('id', 'participants', 'name', 'status', 'admin')
 
     def create(self, validated_data):
         admin = self.context['request'].user

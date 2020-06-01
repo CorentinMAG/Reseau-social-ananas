@@ -1,11 +1,34 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Nouvel article</title>
-</head>
-<body>
-Ajouter un nouvel article, c'est ici !
+{% extends "header.html" %}
+{% block title %}Nouvel article{% endblock %}
+{% block headerlink %}
+    <link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/add.css">
+       {{form.media}}
+{% endblock %}
 
-</body>
-</html>
+{% block content %}
+<div id="sample">
+    <!-- multipart/form-data : pour accepter les photos -->
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div id="header_zone">
+            <div class="form-group" id="title_zone">
+                {{form.titre}}
+            </div>
+            <div class="form-group" id="photo_zone">
+                {{form.photo}}
+            </div>
+        </div>
+        <div class="form-group" id="tag_zone">
+            {% if can_add_tag %}
+            <a href="{% url 'add-tag' %}">Ajouter tag</a>
+            {% endif %}
+            {{form.tags}}
+        </div>
+        <div class="form-group" id="contenu_zone">
+            {{form.contenu_post}}
+        </div>
+        <input type="submit" value="Publier">
+        <button><a href="{% url 'timeline-home' %}">Retour</a></button>
+    </form>
+</div>
+{% endblock %}

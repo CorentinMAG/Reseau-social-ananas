@@ -14,11 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path,include,re_path
+from django.urls import path,include
 from django.http import HttpResponseRedirect
 from django.conf.urls.static import static
 from django.conf import settings
 
+handler404 = 'login.views.error_404'
+handler500 = 'login.views.error_404'
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +29,8 @@ urlpatterns = [
     path('messenger/',include('messenger.urls')),
     path('timeline/', include("timeline.urls")),
     path('profil/', include("profil.urls")),
+path('', include('pagedown.urls')),
     path('',lambda r: HttpResponseRedirect('account/connexion')),
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+

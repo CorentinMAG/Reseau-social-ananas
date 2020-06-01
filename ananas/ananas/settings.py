@@ -45,7 +45,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'profil',
+    'markdown_deux',
+    'pagedown'
 ]
+
+PAGEDOWN_IMAGE_UPLOAD_ENABLED=True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -159,12 +163,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media/'
 
-DEFAULT_FROM_EMAIL = "webmaster@localhost"
-
-# AUTH_USER_MODEL="login.CustomUser"
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.0/howto/static-files/
 LOGIN_URL = "connexion"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -172,7 +170,6 @@ EMAIL_HOST_USER = 'ananas.webmaster@gmail.com'
 EMAIL_HOST_PASSWORD = 'afdauqweelyrpnph'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'Ananas Team <noreply@codingwithmitch.com>'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [

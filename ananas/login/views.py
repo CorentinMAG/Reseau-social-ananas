@@ -64,6 +64,10 @@ def view_redirection(request):
     return redirect(reverse('room', kwargs={'room_name': 'accueil'}))
 
 
+def error_404(request, *args, **kwargs):
+    return render(request, 'error404.html', {})
+
+
 class Forbidden(TemplateView):
     """page interdite"""
     template_name = "error403.html"
@@ -127,7 +131,7 @@ def EtudiantView(request):
             user.is_active = False
             user.save()
             current_site = get_current_site(request)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activer votre compte Ananas.'
             message = render_to_string('login/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
@@ -136,8 +140,9 @@ def EtudiantView(request):
             })
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
-                mail_subject, message, to=[to_email]
+                subject=mail_subject, body=message, to=[to_email]
             )
+            email.content_subtype = "html"
             email.send()
             messages.success(request, 'Le compte a bien été créé ! Il faut maintenant l\'activer')
             return redirect(reverse('connexion'))
@@ -165,8 +170,9 @@ def AutreView(request):
             })
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(
-                mail_subject, message, to=[to_email]
+                subject=mail_subject, body=message, to=[to_email]
             )
+            email.content_subtype = "html"
             email.send()
             messages.success(request, 'Le compte a bien été créé ! Il faut maintenant l\'activer')
             return redirect(reverse('connexion'))
