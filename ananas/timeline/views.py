@@ -23,6 +23,7 @@ def timeline(request):
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
     can_add_article = request.user.has_perm('timeline.add_article')
+    print(can_add_article)
     args = {'posts': posts, 'can_add_article': can_add_article}
     return render(request, 'timeline/timeline.html', args)
 
@@ -36,7 +37,7 @@ def delete_comm(request, id):
     return redirect(reverse('view_article', kwargs={'id': article}))
 
 @login_required
-@permission_required('timeline.add_tag')
+@permission_required('timeline.add_tags')
 def add_tag(request):
     if request.method == 'POST':
         form = AddTags(request.POST)
@@ -84,7 +85,7 @@ def add_article(request):
     else:
         form = ArticleForm()
 
-    args = {'form': form,'can_add_tag':request.user.has_perm('timeline.add_tag')}
+    args = {'form': form,'can_add_tag':request.user.has_perm('timeline.add_tags')}
     return render(request, 'timeline/add.html', args)
 
 
