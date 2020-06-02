@@ -49,10 +49,11 @@ class ProfilForm(forms.Form):
         im = Image.open(image)
         size = 150, 150
         im.thumbnail(size)  # resize image
+        rgb_im = im.convert('RGB')
 
         thumb_io = BytesIO()  # create a BytesIO object
 
-        im.save(thumb_io, 'JPEG', quality=100)  # save image to BytesIO object
+        rgb_im.save(thumb_io, 'JPEG', quality=100)  # save image to BytesIO object
 
         photo = File(thumb_io, name=image.name)  # create a django friendly File object
 
