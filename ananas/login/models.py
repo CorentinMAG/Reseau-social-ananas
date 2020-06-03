@@ -69,7 +69,7 @@ class Etudiant(models.Model):
     # avatar = models.ImageField(upload_to='avatar/',blank=True)
     # avatar = models.URLField(max_length=200)
     # phone = PhoneNumberField(blank=True, verbose_name='numéro de téléphone')
-    majeure = models.ForeignKey(Majeure, on_delete=models.CASCADE)
+    majeure = models.ForeignKey(Majeure, on_delete=models.CASCADE,null=True)
 
     def __str__(self):
         return self.user.first_name + " " + self.user.last_name

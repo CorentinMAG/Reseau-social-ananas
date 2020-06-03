@@ -9,6 +9,7 @@ urlpatterns = [
     path('add', views.add_article,name="add-article"),
     path('<int:id>', views.lire,name="view_article"),
     path('delete/<int:id>',views.delete_comm,name='delete_comm'),
-    path('add_tag',views.add_tag,name="add-tag")
+    path('add_tag',views.add_tag,name="add-tag"),
+    path('delete_article/<int:id>',views.delete_article,name='delete-article')
     #path('<int:id>', LireView.as_view(), name='timeline-lire')
 ]

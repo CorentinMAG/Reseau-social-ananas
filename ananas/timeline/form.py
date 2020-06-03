@@ -4,6 +4,9 @@ from django import forms
 from .models import Commentaires, Article, Tags
 from django import forms
 from pagedown.widgets import PagedownWidget
+from io import BytesIO
+from django.core.files import File
+from PIL import Image
 
 
 class CommentForm(ModelForm):
@@ -36,3 +39,24 @@ class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
         exclude = ('auteur',)
+
+    def clean_photo(self):
+
+        """Makes thumbnails of given size from given image"""
+        image = self.cleaned_data['photo']
+        print(image)
+        if(image):
+            im = Image.open(image)
+            size = 200, 200
+            im.thumbnail(size)  # resize image
+            rgb_im = im.convert('RGB')
+
+            thumb_io = BytesIO()  # create a BytesIO object
+
+            rgb_im.save(thumb_io, 'JPEG', quality=100)  # save image to BytesIO object
+
+            photo = File(thumb_io, name=image.name)  # create a django friendly File object
+
+            return photo
+        else:
+            return image

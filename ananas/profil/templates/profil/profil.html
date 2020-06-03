@@ -6,6 +6,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+        .edit{
+            padding:0 !important;
+        }
+        .edit a{
+            display: block;
+            padding:6px;
+        }
+
+    </style>
 </head>
 
 <hr>
@@ -44,7 +54,7 @@
         <div class="col-sm-9">
             <div class="userData ml-3">
                 {% if UserProfile == request.user %}
-                    <button class="btn btn-outline-danger pull-right btn-lg "><a href="{% url 'update-profil' %}">Editer</a>
+                    <button class="btn btn-outline-danger pull-right btn-lg edit"><a href="{% url 'update-profil' %}">Editer</a>
                     </button>
                 {% endif %}
                 <h2 class="d-block"
@@ -108,7 +118,12 @@
                     {% else %}
                         <label for="majeure"><h4>Majeure</h4></label>
                         <p><i class="fas fa-user" id="majeure"></i>
+                            {% if UserProfile.user_etudiant.majeure %}
                             {{ UserProfile.user_etudiant.majeure }}
+                            {%else%}
+                            Non renseigné
+                            {%endif%}
+
                         </p>
                     {% endif %}
 

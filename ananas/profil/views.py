@@ -35,7 +35,7 @@ def _userdata(user):
     }
     if user.is_autre:
         initial_data['poste'] = user.user_admin.poste
-    elif user.is_etudiant:
+    elif user.is_etudiant and user.is_superuser == False:
         initial_data['majeure'] = user.user_etudiant.majeure
     return initial_data
 
@@ -86,7 +86,16 @@ def profilEdit(request):
                     user.last_name = last_name
                 if birthdate != "":
                     user.Birthdate = birthdate
+                if user.is_superuser:
+                    try:
+                        user.user_etudiant
+                    except:
+                        etudiant = Etudiant(user=user,majeure=None)
+                        etudiant.save()
+                print(form.cleaned_data['majeure'])
+                print(user.user_etudiant.majeure)
                 if form.cleaned_data['majeure'] != user.user_etudiant.majeure:
+
                     user.user_etudiant.majeure = form.cleaned_data['majeure']
                     user.user_etudiant.save()
                 if form.cleaned_data['campus'] != user.campus:

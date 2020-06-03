@@ -23,10 +23,15 @@ def timeline(request):
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
     can_add_article = request.user.has_perm('timeline.add_article')
-    print(can_add_article)
     args = {'posts': posts, 'can_add_article': can_add_article}
     return render(request, 'timeline/timeline.html', args)
 
+
+def delete_article(request,id):
+    article= Article.objects.get(pk=id)
+    if article.auteur == request.user:
+        article.delete()
+    return redirect(reverse('timeline-home'))
 
 @login_required
 def delete_comm(request, id):
@@ -48,7 +53,6 @@ def add_tag(request):
             new_tag.save()
             return redirect(reverse('add-article'))
         else:
-            print('non')
             return render(request, 'timeline/addTag.html')
     else:
         form = AddTags()
