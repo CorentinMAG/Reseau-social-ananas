@@ -22,13 +22,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'xu!k68q$@_*82ja*jgqqv+3)5o(s+gsi()cf47e-^75)sr*dv_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+if os.name == 'nt':
+    DEBUG = True
+else:
+    DEBUG = False
 
 ALLOWED_HOSTS = ['ananas.min.epf.fr', 'localhost', '127.0.0.1']
 
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION = "FR"
 # Application definition
+
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,7 +53,7 @@ INSTALLED_APPS = [
     'pagedown'
 ]
 
-PAGEDOWN_IMAGE_UPLOAD_ENABLED=True
+PAGEDOWN_IMAGE_UPLOAD_ENABLED = True
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -62,6 +66,14 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ananas.urls'
+
+if os.name != 'nt':
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': "127.0.0.1:11211",
+        }
+    }
 
 AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
 
