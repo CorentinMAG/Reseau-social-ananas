@@ -44,7 +44,6 @@ class ArticleForm(forms.ModelForm):
 
         """Makes thumbnails of given size from given image"""
         image = self.cleaned_data['photo']
-        print(image)
         if(image):
             im = Image.open(image)
             size = 200, 200
