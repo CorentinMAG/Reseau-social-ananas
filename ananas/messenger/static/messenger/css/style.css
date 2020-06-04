@@ -69,6 +69,8 @@ a {
 }
 
 #settings{
+  position: absolute;
+  right: 10px;
   color:red;
 }
 /*BUTTON WITH Material Design class*/
@@ -109,6 +111,11 @@ a {
   overflow-y: auto;
   height: 100vh;
   overflow-x: hidden;
+}
+
+.remove_tag{
+  margin-left:20px;
+  cursor: pointer;
 }
 #sidepanel #profile{
   display: flex;
@@ -275,8 +282,10 @@ section{
   border-bottom: 1px solid #000;
   display: flex;
   padding:5px 20px;
-  justify-content: space-between;
   font-size: 1.5em;
+}
+.chat-profile #current_chat_name{
+  margin-right: 20px;
 }
 .chat-profile i{
   line-height: 1.5em;

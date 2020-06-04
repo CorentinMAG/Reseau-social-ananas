@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
-from rest_framework import permissions
+from rest_framework import permissions,authentication
 from rest_framework.generics import (
     ListAPIView,
     RetrieveAPIView,
@@ -9,8 +9,9 @@ from rest_framework.generics import (
     DestroyAPIView,
     UpdateAPIView
 )
-import json
-from messenger.models import Chat,TaggedMessages
+from rest_framework.views import APIView
+from messenger.models import Chat, TaggedMessages,Message
+
 
 from .serializers import ChatSerializer, UserSerializer
 
@@ -20,7 +21,6 @@ User = get_user_model()
 def get_user_contact(email):
     user = get_object_or_404(User, email=email)
     return user
-
 
 
 class ChatListView(ListAPIView):
@@ -54,11 +54,27 @@ class ChatPublic(ListAPIView):
         return queryset
 
 
-
 class ChatDetailView(RetrieveAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
     permission_classes = (permissions.AllowAny,)
+
+
+from rest_framework.decorators import api_view
+
+@api_view(['POST'])
+def delete_tag(request):
+    print(request)
+    user = User.objects.get(email=request.data['user'])
+    print(user,request.user)
+    if user == request.user:
+        c = Chat.objects.get(pk=int(request.data['chat']))
+        t = c.tag.get(pk=int(request.data['tag_id']))
+        t.delete()
+        return Response({"message": "ok"})
+    else:
+        return Response({"message":"Not allowed"})
+
 
 
 class ChatCreateView(CreateAPIView):
@@ -87,9 +103,9 @@ class ChatUpdateView(UpdateAPIView):
             instance.name = request.data['name']
             update_fields.append('name')
         for tag in request.data['tag']:
-            m=instance.messages.get(content=tag)
+            m = instance.messages.get(content=tag)
             try:
-                t = TaggedMessages(author=request.user,content=m)
+                t = TaggedMessages(author=request.user, content=m)
                 t.save()
                 instance.tag.add(t)
                 instance.save()

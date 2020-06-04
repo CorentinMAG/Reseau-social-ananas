@@ -17,7 +17,8 @@ class TagSerializer(serializers.StringRelatedField):
         return {
             'content':value.content.content,
             'timestamp':value.timestamp,
-            'author':value.author.email
+            'author':value.author.email,
+            'tag_id':value.pk
         }
     def to_internal_vlue(self,value):
         return value

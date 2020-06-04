@@ -35,8 +35,11 @@ def _userdata(user):
     }
     if user.is_autre:
         initial_data['poste'] = user.user_admin.poste
-    elif user.is_etudiant and user.is_superuser == False:
-        initial_data['majeure'] = user.user_etudiant.majeure
+    elif user.is_etudiant:
+        try:
+            initial_data['majeure'] = user.user_etudiant.majeure
+        except:
+            pass
     return initial_data
 
 

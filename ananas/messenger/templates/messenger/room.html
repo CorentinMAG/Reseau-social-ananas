@@ -735,7 +735,19 @@ document.querySelector('#user_name').addEventListener('click',(e)=>{
 		last_name=tag['author'].split('.')[1].split('@')[0].toUpperCase();
 		let div = document.createElement('div');
 		div.classList='dropdown-item';
-		div.innerHTML=`<p><small>${first_name} ${last_name}</small><br/>${tag['content']}</p>`;
+		div.innerHTML=`<p><small>${first_name} ${last_name}</small><small class="btn-danger remove_tag">Delete</small><br/>${tag['content']}</p>`;
+		div.querySelector('.remove_tag').addEventListener('click',(e)=>{
+			fetch(`/messenger-api/delete_tag/`,{
+			method:'POST',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+				body:JSON.stringify({'user':tag['author'],tag_id:tag['tag_id'],'chat':document.querySelector('.activeChat').dataset.chat_id,content:tag['content']})
+		}).then(resp=>resp.json()).then((data)=>{
+			if(data['message']==='Not allowed'){
+			swal("Impossible", "Vous ne pouvez pas supprimer un tag d'une autre personne !", "info")
+			}
+		})
+		});
 		dropdown_parent.appendChild(div)
 	}
 
