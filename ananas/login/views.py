@@ -67,6 +67,9 @@ def view_redirection(request):
 def error_404(request, *args, **kwargs):
     return render(request, 'error404.html', {})
 
+def error_500(request,*args,**kwargs):
+    return render(request,'error_500.html',{})
+
 
 class Forbidden(TemplateView):
     """page interdite"""
