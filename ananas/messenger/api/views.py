@@ -64,9 +64,7 @@ from rest_framework.decorators import api_view
 
 @api_view(['POST'])
 def delete_tag(request):
-    print(request)
     user = User.objects.get(email=request.data['user'])
-    print(user,request.user)
     if user == request.user:
         c = Chat.objects.get(pk=int(request.data['chat']))
         t = c.tag.get(pk=int(request.data['tag_id']))
