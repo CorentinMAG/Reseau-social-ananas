@@ -5,6 +5,8 @@ from .forms import ProfilForm
 from login.models import Etudiant
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, reverse, redirect
+from timeline.models import Article, Commentaires
+from messenger.models import Message
 
 User = get_user_model()
 
@@ -13,7 +15,10 @@ User = get_user_model()
 def profil(request, email):
     user = get_object_or_404(User, email=email)
     args = {
-        'UserProfile': user
+        'UserProfile': user,
+        'countMessages': Message.objects.filter(contact=user).count(),
+        'countArticles': Article.objects.filter(auteur=user).count(),
+        'countCommentaires': Commentaires.objects.filter(id_user=user).count()
     }
     return render(request, 'profil/profil.html', args)
 
@@ -93,12 +98,11 @@ def profilEdit(request):
                     try:
                         user.user_etudiant
                     except:
-                        etudiant = Etudiant(user=user,majeure=None)
+                        etudiant = Etudiant(user=user, majeure=None)
                         etudiant.save()
                 print(form.cleaned_data['majeure'])
                 print(user.user_etudiant.majeure)
                 if form.cleaned_data['majeure'] != user.user_etudiant.majeure:
-
                     user.user_etudiant.majeure = form.cleaned_data['majeure']
                     user.user_etudiant.save()
                 if form.cleaned_data['campus'] != user.campus:
@@ -109,5 +113,9 @@ def profilEdit(request):
     else:
         initial_data = _userdata(user)
         form = ProfilForm(initial_data)
-    args = {'form': form, 'UserProfile': user}
+    args = {'form': form,
+            'UserProfile': user,
+            'countMessages': Message.objects.filter(contact=user).count(),
+            'countArticles': Article.objects.filter(auteur=user).count(),
+            'countCommentaires': Commentaires.objects.filter(id_user=user).count()}
     return render(request, 'profil/profiledit.html', args)
