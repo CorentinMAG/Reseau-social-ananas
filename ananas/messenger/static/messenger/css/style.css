@@ -26,8 +26,6 @@ body{
 }
 .lologo{
   height: 65px;
-  margin-left: 15px;
-  margin-top:5px;
 }
 
 #tagtitle{
@@ -110,6 +108,7 @@ a {
   font-size:.8em;
   overflow-y: auto;
   height: 100vh;
+  overflow-x: hidden;
 }
 #sidepanel #profile{
   display: flex;
@@ -266,7 +265,7 @@ a {
 
 /*SECTION*/
 section{
-  width: 60%;
+  width: inherit !important;
   background:#ecf0f1;
   min-height: 100vh;
   position: relative;

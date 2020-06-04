@@ -61,7 +61,7 @@ def deconnexion(request):
 
 @login_required
 def view_redirection(request):
-    return redirect(reverse('room', kwargs={'room_name': 'accueil'}))
+    return redirect(reverse('timeline-home'))
 
 
 def error_404(request, *args, **kwargs):

@@ -1,16 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Timeline</title>
-    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+{% extends "header.html" %}
+{% block title %}Article{%endblock%}
+{%block headerlink %}
+<link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/comment.css">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-    <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
-    {% load static %}
-    <link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/comment.css">
-</head>
-<body>
+
+
+{% endblock%}
+{% block content%}
+<main id="frame" style="overflow-y: auto;max-height: 100vh !important;overflow-x: hidden;">
     <div class="article">
     <h1 style="display:inline-block">{{ post.titre }} <span class="small"> </span></h1><button style="display: inline-block"><a href="{% url 'timeline-home' %}">Retour</a></button>
     <p class="infos">Rédigé par {{ post.auteur.last_name |upper}} {{post.auteur.first_name}}, le {{ post.date|date:"DATE_FORMAT" }}</p>
@@ -96,6 +94,8 @@
             </div>
             {% endfor %} <!-- Fin des commentaires -->
     </div>
+        </div>
+        {%block script%}
         <script>
             $(document).ready(function(){
                 $('.comment-reply-btn').click((e)=>{
@@ -104,5 +104,83 @@
                 })
             })
         </script>
-</body>
-</html>
+        <script>
+            let chat_rooms = document.querySelector('#all_chats').firstElementChild;
+    const token = "{{ request.session.token }}";
+    const email = {{ email }}
+    const username = {{ username }};
+
+    function AppendNewChat(token){
+        fetch(`/messenger-api/?email=${email}`,{
+            method:'GET',
+            credentials:'include',
+            headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+        }).then(resp=>{
+            resp.json().then(data=>{
+                if(data['detail']){console.error('Pas de chat!!')}
+                else{
+                    let current_chat_id=document.querySelectorAll(`li[data-chat_id]`);
+                    console.log(data);
+                    if(current_chat_id.length>0){
+                        let arr=[];
+                        let arr2=[];
+                        current_chat_id.forEach((element)=>arr.push(Number.parseInt(element.dataset.chat_id)));
+                        data.forEach((element)=>arr2.push(Number.parseInt(element.id)));
+                        let AddedChat = arr2.filter(x => !arr.includes(x));
+                        let RemovedChat = arr.filter(x=>!arr2.includes(x));
+                        if(AddedChat.length>0){
+                            AddedChat.forEach((id)=>{createChat(data.pop())})
+                        }
+                        if(RemovedChat.length>0){
+                            RemovedChat.forEach((id)=>removeChat(document.querySelector(`[data-chat_id='${id}']`)))
+                        }
+                    }else{
+                        for(const obj of data){
+                            console.log(obj);
+                            createChat(obj);
+                        }
+                    }
+                }
+            })
+        })
+    }
+
+    function createChat(obj){
+        let c_li=document.createElement('li');
+        c_li.dataset.chat_id=obj.id;
+        c_li.classList="chat";
+        let c_div=document.createElement('div');
+        c_div.classList="wrap";
+        let c_img=document.createElement('img');
+        let c_name=document.createElement('span');
+        c_name.classList="name";
+        let c_pre=document.createElement('p');
+        c_pre.classList="preview";
+        c_li.appendChild(c_div);
+        if(obj['status']==='Private'){
+            c_img.src='/static/messenger/img/logoprive.PNG';
+        }else{
+            c_img.src='/static/messenger/img/logopublic.PNG';
+        }
+
+        c_div.appendChild(c_img);
+        c_name.textContent=obj.name;
+        c_div.appendChild(c_name);
+        c_div.appendChild(c_pre);
+        chat_rooms.appendChild(c_li);
+
+        c_li.addEventListener('click', (e)=>{
+           window.location.href = "/messenger/"
+                            + obj.id
+
+      })
+
+    }
+
+    window.onload = AppendNewChat(token);
+    document.querySelector('#user_name').addEventListener('click',(e)=>{
+	window.location = "/profil"
+});
+        </script>
+        {% endblock%}
+{%endblock%}

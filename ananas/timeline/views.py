@@ -11,7 +11,8 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm, AddTags
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
-
+import json
+from django.utils.safestring import mark_safe
 User = get_user_model()
 
 
@@ -23,7 +24,7 @@ def timeline(request):
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
     can_add_article = request.user.has_perm('timeline.add_article')
-    args = {'posts': posts, 'can_add_article': can_add_article}
+    args = {'posts': posts, 'can_add_article': can_add_article,'username':mark_safe(json.dumps(request.user.first_name)),'email':mark_safe(json.dumps(request.user.email))}
     return render(request, 'timeline/timeline.html', args)
 
 
@@ -123,8 +124,9 @@ def lire(request, id):
         com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc, parent=parent_obj)
         com.save()
         comments = Commentaires.objects.filter(id_post=id, parent=None)  # Actualise liste commentaires
+        form=CommentForm()
 
-    args = {'post': post, 'comments': comments, 'form': form, 'tags': tags}
+    args = {'post': post, 'comments': comments, 'form': form, 'tags': tags,'username':mark_safe(json.dumps(request.user.first_name)),'email':mark_safe(json.dumps(request.user.email)),'article':True}
     return render(request, 'timeline/lire.html', args)
 
 

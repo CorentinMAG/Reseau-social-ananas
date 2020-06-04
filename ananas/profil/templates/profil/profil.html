@@ -143,9 +143,18 @@
                     </p>
                 </div>
             </div>
-            <button class="btn btn-success" onclick="window.location='/'">Retour</button>
+            <button class="btn btn-success" onclick="onBack()">Retour</button>
             <hr>
 
         </div><!--/col-9-->
     </div><!--/row-->
+    <script>
+        function onBack(){
+            if(document.referrer !== 'http://localhost:8000/profil/update/'){
+                history.back()
+            }else{
+                window.location = '/';
+            }
+        }
+    </script>
 </html>

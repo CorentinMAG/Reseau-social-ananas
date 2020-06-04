@@ -11,10 +11,10 @@
         min-width: 100%;
         max-height: 300px;
     }
-    img:not(.card-img-top){
+    .card-text img{
         max-width: 300px;
         max-height: 300px;
-        display: none;
+        display: none !important;
     }
     button{
         padding:0 !important;
@@ -34,6 +34,7 @@
 </style>
 {% endblock %}
 {% block content %}
+<main id="frame" style="display: block !important">
 
     <!--Ajouter un nouvel article-->
 
@@ -75,6 +76,88 @@
     {% endfor %}
                 </div>
     </div>
+</main>
+{% endblock %}
+{% block script%}
+    <script type="text/javascript">
+    let chat_rooms = document.querySelector('#all_chats').firstElementChild;
+    const token = "{{ request.session.token }}";
+    const email = {{ email }}
+    const username = {{ username }};
 
+    function AppendNewChat(token){
+        console.log('TEST FONCTIONNEMENT')
+        fetch(`/messenger-api/?email=${email}`,{
+            method:'GET',
+            credentials:'include',
+            headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+        }).then(resp=>{
+            resp.json().then(data=>{
+                if(data['detail']){console.error('Pas de chat!!')}
+                else{
+                    let current_chat_id=document.querySelectorAll(`li[data-chat_id]`);
+                    console.log(data);
+                    if(current_chat_id.length>0){
+                        let arr=[];
+                        let arr2=[];
+                        current_chat_id.forEach((element)=>arr.push(Number.parseInt(element.dataset.chat_id)));
+                        data.forEach((element)=>arr2.push(Number.parseInt(element.id)));
+                        let AddedChat = arr2.filter(x => !arr.includes(x));
+                        let RemovedChat = arr.filter(x=>!arr2.includes(x));
+                        if(AddedChat.length>0){
+                            AddedChat.forEach((id)=>{createChat(data.pop())})
+                        }
+                        if(RemovedChat.length>0){
+                            RemovedChat.forEach((id)=>removeChat(document.querySelector(`[data-chat_id='${id}']`)))
+                        }
+                    }else{
+                        for(const obj of data){
+                            console.log(obj);
+                            createChat(obj);
+                        }
+                    }
+                }
+            })
+        })
+    }
+
+    function createChat(obj){
+        let c_li=document.createElement('li');
+        c_li.dataset.chat_id=obj.id;
+        c_li.classList="chat";
+        let c_div=document.createElement('div');
+        c_div.classList="wrap";
+        let c_img=document.createElement('img');
+        let c_name=document.createElement('span');
+        c_name.classList="name";
+        let c_pre=document.createElement('p');
+        c_pre.classList="preview";
+        c_li.appendChild(c_div);
+        if(obj['status']==='Private'){
+            c_img.src='/static/messenger/img/logoprive.PNG';
+        }else{
+            c_img.src='/static/messenger/img/logopublic.PNG';
+        }
+
+        c_div.appendChild(c_img);
+        c_name.textContent=obj.name;
+        c_div.appendChild(c_name);
+        c_div.appendChild(c_pre);
+        chat_rooms.appendChild(c_li);
+
+        c_li.addEventListener('click', (e)=>{
+           window.location.href = "/messenger/"
+                            + obj.id
+
+      })
+
+    }
+
+    window.onload = AppendNewChat(token);
+    document.querySelector('#user_name').addEventListener('click',(e)=>{
+	window.location = "/profil"
+});
+
+</script>
 {% endblock %}
 

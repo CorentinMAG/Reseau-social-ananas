@@ -1,4 +1,6 @@
-
+.article{
+  width: inherit;
+}
 
 .post-comments {
   padding-bottom: 9px;
@@ -16,6 +18,7 @@
 }
 
 .post-comments .media {
+  display: block !important;
   border-left: 1px dotted #000;
   border-bottom: 1px dotted #000;
   margin-bottom: 5px;

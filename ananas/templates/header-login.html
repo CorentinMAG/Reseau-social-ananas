@@ -16,80 +16,22 @@
   <script src="https://kit.fontawesome.com/6042c2ff25.js" crossorigin="anonymous"></script>
  <!--  End font awesome -->
 <!--  Bootstrap -->
-	{% if request.path != '/timeline/*'%}
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-	{%endif%}
-	<!-- End Bootstrap -->
+<!-- End Bootstrap -->
 <!-- Favicon -->
   <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
   <!-- end favicon -->
-    <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
   {% block headerlink %}
   {% endblock %}
 </head>
 <body>
-{%load jsonTopy %}
-	<nav id="sidepanel">
-		<a href="/timeline">
-		<div id=logo>
-			<img id="logo-img" class="lologo" src="../../static/messenger/img/epfblanc.png"/>
-		</div>
-			</a>
-        <div id="profile">
-			{% if request.user.photo is not None and request.user.photo != "" %}
-           <img id="profile-img" src="{{request.user.photo.url}}" class="online" alt="" />
-          {% else %}
-          <img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
-          {% endif %}
-			<span id="user_name">{{username|parse}}</span>
-		</div>
-
-
-		<div>
-		<p id="timeline">NEWS</p>
-		</div>
-		<div>
-			<p id="soustimeline">Ecole</p>
-		</div>
-		<div>
-			<p id="soustimeline">Associations</p>
-		</div>
-		<div>
-			<p id="soustimeline">Recherche & Industrie</p>
-		</div>
-		<div>
-			<p id="tagtitle">Tag à la une :</p>
-		</div>
-		<h1><span class="badge badge-secondary">MIN</span><span class="badge badge-secondary">SANTE</span><span class="badge badge-secondary">BDE</span><span class="badge badge-secondary">FAKE</span><span class="badge badge-secondary">JE</span></h1>
-		<p id="messagerie">Messagerie</p>
-
-		<div>
-			{% if request.path != '/timeline/' and article != True  %}
-			<a id="group">Groupes</a><button class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></button>
-			{% endif %}
-		</div>
-
-
-		<div id="all_chats">
-			<ul>
-			</ul>
-		</div>
-		<div id="deconnection">
-			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
-			{% if user.is_superuser %}
-			<a href="/admin" class="btn btn-outline-light">Admin</a>
-			{% endif %}
-		</div>
-
-	</nav>
 	{% block content %}
 
 	{% endblock %}
-{% if request.pah != '/timeline/* '%}
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-{%endif%}
+
 
 	{% block script %}
 	{%endblock%}

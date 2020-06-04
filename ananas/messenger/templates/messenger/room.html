@@ -2,61 +2,9 @@
 {% block title %}Messagerie{%endblock%}
 {%block headerlink %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-sweetalert/1.0.1/sweetalert.min.css">
-<link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
 {% endblock %}
 {% block content %}
 <main id="frame">
-	{%load jsonTopy %}
-	<nav id="sidepanel">
-		<a href="/timeline">
-		<div id=logo>
-			<img id="logo-img" class="lologo" src="../../static/messenger/img/epfblanc.png"/>
-		</div>
-			</a>
-        <div id="profile">
-			{% if request.user.photo is not None and request.user.photo != "" %}
-           <img id="profile-img" src="{{request.user.photo.url}}" class="online" alt="" />
-          {% else %}
-          <img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
-          {% endif %}
-			<span id="user_name">{{username|parse}}</span>
-		</div>
-
-
-		<div>
-		<p id="timeline">NEWS</p>
-		</div>
-		<div>
-			<p id="soustimeline">Ecole</p>
-		</div>
-		<div>
-			<p id="soustimeline">Associations</p>
-		</div>
-		<div>
-			<p id="soustimeline">Recherche & Industrie</p>
-		</div>
-		<div>
-			<p id="tagtitle">Tag à la une :</p>
-		</div>
-		<h1><span class="badge badge-secondary">MIN</span><span class="badge badge-secondary">SANTE</span><span class="badge badge-secondary">BDE</span><span class="badge badge-secondary">FAKE</span><span class="badge badge-secondary">JE</span></h1>
-		<p id="messagerie">Messagerie</p>
-
-		<div>
-			<a id="group">Groupes</a><button class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></button>
-		</div>
-
-		<div id="all_chats">
-			<ul>
-			</ul>
-		</div>
-		<div id="deconnection">
-			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
-			{% if user.is_superuser %}
-			<a href="/admin" class="btn btn-outline-light">Admin</a>
-			{% endif %}
-		</div>
-
-	</nav>
 	<section class="content">
 		<div class="chat-profile">
 			<span id="current_chat_name"></span>
@@ -543,7 +491,7 @@
       authorTag.textContent=author;
       let pTag=document.createElement('p');
       let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
-      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><small class="add-tags btn-info">Ajouter aux tags</small><p>${data.content}</p>`;
+      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><small class="add-tags btn-info">Epingler le message</small><p>${data.content}</p>`;
       if(data['status']){
       	pTag.firstElementChild.style.color="rgb(241, 196, 15)"
 	  }
@@ -567,7 +515,7 @@
 			})
 
 		})
-		})
+		});
       msgListTag.appendChild(imgTag);
       msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
@@ -783,9 +731,11 @@ document.querySelector('#user_name').addEventListener('click',(e)=>{
 		})
 	});
 	function constructTag(tag){
+		first_name=tag['author'].split('.')[0];
+		last_name=tag['author'].split('.')[1].split('@')[0].toUpperCase();
 		let div = document.createElement('div');
 		div.classList='dropdown-item';
-		div.innerHTML=`<p><small>${tag['author']}</small><br/>${tag['content']}</p>`;
+		div.innerHTML=`<p><small>${first_name} ${last_name}</small><br/>${tag['content']}</p>`;
 		dropdown_parent.appendChild(div)
 	}
 
