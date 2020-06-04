@@ -88,10 +88,13 @@ class ChatUpdateView(UpdateAPIView):
             update_fields.append('name')
         for tag in request.data['tag']:
             m=instance.messages.get(content=tag)
-            t = TaggedMessages(author=request.user,content=m)
-            t.save()
-            instance.tag.add(t)
-            instance.save()
+            try:
+                t = TaggedMessages(author=request.user,content=m)
+                t.save()
+                instance.tag.add(t)
+                instance.save()
+            except:
+                pass
 
         instance.save(update_fields=update_fields)
 
