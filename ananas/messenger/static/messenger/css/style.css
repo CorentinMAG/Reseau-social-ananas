@@ -323,6 +323,16 @@ section{
 .sent p small{
   margin-left: 10px;
 }
+
+.add-tags{
+  cursor: pointer;
+}
+.dropdown-menu{
+  max-width: 500px;
+}
+.dropdown-item{
+  white-space: break-spaces !important;
+}
 .message-input{
   position: absolute;
   left:3px;

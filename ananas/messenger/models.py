@@ -16,6 +16,15 @@ class Message(models.Model):
         return self.contact.email
 
 
+class TaggedMessages(models.Model):
+    content = models.OneToOneField(Message, on_delete=models.CASCADE, related_name='tag_content')
+    timestamp = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User,on_delete=models.CASCADE,related_name='tag_author')
+
+    def __str__(self):
+        return self.content.content
+
+
 class Chat(models.Model):
     name = models.CharField(max_length=100, blank=True)
     participants = models.ManyToManyField(User, related_name="chats", blank=True)
@@ -23,6 +32,7 @@ class Chat(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=7, blank=True)
     admin = models.ManyToManyField(User, related_name='admin', blank=True)
+    tag = models.ManyToManyField(TaggedMessages, related_name='tag', blank=True)
 
     def __str__(self):
         return "{}".format(self.pk)

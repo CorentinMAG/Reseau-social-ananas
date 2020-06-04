@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from messenger.models import Chat
+from messenger.models import Chat, TaggedMessages
 from messenger.views import get_user_contact, verify_participants, add_all_users
 from django.contrib.auth import get_user_model
 
@@ -10,6 +10,17 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         exclude = ['password', 'is_superuser', 'is_staff', 'groups', 'user_permissions']
+
+
+class TagSerializer(serializers.StringRelatedField):
+    def to_representation(self,value):
+        return {
+            'content':value.content.content,
+            'timestamp':value.timestamp,
+            'author':value.author.email
+        }
+    def to_internal_vlue(self,value):
+        return value
 
 
 class ContactSerializer(serializers.StringRelatedField):
@@ -26,10 +37,11 @@ class ContactSerializer(serializers.StringRelatedField):
 
 class ChatSerializer(serializers.ModelSerializer):
     participants = ContactSerializer(many=True)
+    tag = TagSerializer(many=True)
 
     class Meta:
         model = Chat
-        fields = ('id', 'participants', 'name', 'status', 'admin')
+        fields = ('id', 'participants', 'name', 'status', 'admin','tag')
 
     def create(self, validated_data):
         admin = self.context['request'].user

@@ -19,5 +19,5 @@ urlpatterns = [
     path('<pk>', ChatDetailView.as_view()),
     path('<pk>/update/', ChatUpdateView.as_view()),
     path('<pk>/delete/', ChatDeleteView.as_view()),
-    path('users/', AllUser.as_view())
+    path('users/', AllUser.as_view()),
 ]

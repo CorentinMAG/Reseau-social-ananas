@@ -60,7 +60,9 @@
 	<section class="content">
 		<div class="chat-profile">
 			<span id="current_chat_name"></span>
-			<i class="fas fa-thumbtack"></i>
+			<i class="fas fa-thumbtack" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
+			<div class="dropdown-menu" style="max-height: 300px;overflow: auto;">
+  </div>
 		</div>
 		<div class="messages">
 			<ul id="chat-log"></ul>
@@ -222,7 +224,7 @@
 						for(const obj of data){
 							createChat(obj)
 						}
-						if(id){
+						if(id && document.querySelector(`[data-chat_id='${id}']`)){
 							document.querySelector(`[data-chat_id='${id}']`).click()
 						}else{
 							document.querySelector(`[data-chat_id]`).click()
@@ -362,17 +364,18 @@
 						fetchUsers(token)
 
 					};
-					if(document.querySelector(".chat-profile").children[2]===undefined){
+					if(document.querySelector(".chat-profile").children[3]===undefined){
 						document.querySelector(".chat-profile").appendChild(settingBtn)
 					}
 					for(const participant of document.querySelector('#all_participants').children){
-						if(participant.querySelector('.wrap p')===null){
-							let deleteBtn=document.createElement('p');
-							deleteBtn.classList='mdc-button mdc-button--raised';
-							deleteBtn.innerHTML='<span class="mdc-button__ripple"></span><i class="fas fa-skull-crossbones"></i>';
+						if(participant.querySelector('.wrap p')===null) {
+							let deleteBtn = document.createElement('p');
+							deleteBtn.classList = 'mdc-button mdc-button--raised';
+							deleteBtn.innerHTML = '<span class="mdc-button__ripple"></span><i class="fas fa-skull-crossbones"></i>';
 							participant.firstElementChild.appendChild(deleteBtn);
-							deleteBtn.onclick=(e)=>{
-								e.stopPropagation()
+						}
+							participant.querySelector('.wrap p').onclick=(e)=>{
+								e.stopPropagation();
 								let removed=e.currentTarget.parentElement.parentElement.dataset.email;
 								if(!data['admin'].includes(removed)){
 									swal({
@@ -401,7 +404,8 @@
 												participants:new_participants.concat(data['admin']),
 												name:data['name'],
 												status:data['status'],
-												admin:data['admin']
+												admin:data['admin'],
+												tag:[]
 											})
 										}).then((res)=>firstSocket.send(JSON.stringify({
 											'command':'update',
@@ -416,10 +420,9 @@
 									swal("Impossible", "Vous ne pouvez pas supprimer un administrateur du chat !", "info")
 								}
 							}
-						}
 					}
 						}else{
-					if(document.querySelector(".chat-profile").children[2]!==undefined){
+					if(document.querySelector(".chat-profile").children[3]!==undefined){
 						document.querySelector(".chat-profile").removeChild(document.querySelector('#settings'))
 					}
 					if(document.querySelectorAll("#all_participants .wrap p").length>0){
@@ -492,11 +495,13 @@
 		     	document.querySelector('#chat-log').innerHTML!=="" ? document.querySelector('#chat-log').innerHTML="" :"";
 		        for(let i=data['messages'].length-1;i>=0;i--){
 		         createMessage(data['messages'][i])
+
 		       }
 
 		       document.querySelector('.messages').scrollTop=document.querySelector('.messages').scrollHeight;
 		      }else if(data['command']==='new_message'){
 		          createMessage(data['message']);
+		          btn_add_tags=document.querySelectorAll('.add-tags');
 		          document.querySelector('.messages').scrollTop=document.querySelector('.messages').scrollHeight;
 		        }
 		  };
@@ -538,7 +543,7 @@
       authorTag.textContent=author;
       let pTag=document.createElement('p');
       let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
-      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><p>${data.content}</p>`;
+      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><small class="add-tags btn-info">Ajouter aux tags</small><p>${data.content}</p>`;
       if(data['status']){
       	pTag.firstElementChild.style.color="rgb(241, 196, 15)"
 	  }
@@ -548,7 +553,21 @@
 	  }else{
       	imgTag.src=data['avatar'];
 	  }
-      console.log(data)
+      pTag.children[2].addEventListener('click',(e)=>{
+			id=document.querySelector('.activeChat').dataset.chat_id;
+				fetch(`/messenger-api/${id}/update/`,{
+			method:'PATCH',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'},
+			body:JSON.stringify({
+				name:"",
+				participants:[],
+				admin:[],
+				tag:[e.currentTarget.nextElementSibling.textContent]
+			})
+
+		})
+		})
       msgListTag.appendChild(imgTag);
       msgListTag.appendChild(pTag);
       document.querySelector('#chat-log').appendChild(msgListTag);
@@ -601,7 +620,8 @@ input.onkeyup = function(e) {
 				 messages: [],
 				 participants: ['all'],
 				 name: document.querySelector('#chat_name').value,
-				 status:'Public'
+				 status:'Public',
+				 tag:[]
 			 })
 		 })
 				 .then((response) => {
@@ -639,7 +659,8 @@ input.onkeyup = function(e) {
 				messages:[],
 				participants:participants,
 				name:document.querySelector('#chat_name').value,
-				status:'Private'
+				status:'Private',
+				tag:[]
 			})
 		}).then((response)=>{
 			if(response.ok){
@@ -718,7 +739,8 @@ input.onkeyup = function(e) {
 			body:JSON.stringify({
 				name:name,
 				participants:add_participants,
-				admin:add_admins
+				admin:add_admins,
+				tag:[]
 			})
 		}).then((resp)=>{
 			$('#staticBackdrop').modal('hide');
@@ -743,8 +765,29 @@ input.onkeyup = function(e) {
   }
   return result;
 }
+let dropdown_parent=document.querySelector('.dropdown-menu');
 document.querySelector('#user_name').addEventListener('click',(e)=>{
 	window.location = "/profil"
-})
+});
+	document.querySelector(".fa-thumbtack").addEventListener('click',(e)=>{
+		dropdown_parent.children.length>0 ? dropdown_parent.innerHTML="":"";
+		id = document.querySelector('.activeChat').dataset.chat_id;
+		fetch(`/messenger-api/${id}`,{
+			method:'GET',
+			credentials:'include',
+			headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
+		}).then(resp=>resp.json()).then((data)=>{
+			for (const tag of data['tag']){
+				constructTag(tag)
+			}
+		})
+	});
+	function constructTag(tag){
+		let div = document.createElement('div');
+		div.classList='dropdown-item';
+		div.innerHTML=`<p><small>${tag['author']}</small><br/>${tag['content']}</p>`;
+		dropdown_parent.appendChild(div)
+	}
+
 </script>
 {%endblock%}

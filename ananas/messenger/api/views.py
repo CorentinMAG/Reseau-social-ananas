@@ -10,7 +10,8 @@ from rest_framework.generics import (
     UpdateAPIView
 )
 import json
-from messenger.models import Chat
+from messenger.models import Chat,TaggedMessages
+
 from .serializers import ChatSerializer, UserSerializer
 
 User = get_user_model()
@@ -19,6 +20,7 @@ User = get_user_model()
 def get_user_contact(email):
     user = get_object_or_404(User, email=email)
     return user
+
 
 
 class ChatListView(ListAPIView):
@@ -52,6 +54,7 @@ class ChatPublic(ListAPIView):
         return queryset
 
 
+
 class ChatDetailView(RetrieveAPIView):
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
@@ -83,6 +86,12 @@ class ChatUpdateView(UpdateAPIView):
         if request.data['name'] != '':
             instance.name = request.data['name']
             update_fields.append('name')
+        for tag in request.data['tag']:
+            m=instance.messages.get(content=tag)
+            t = TaggedMessages(author=request.user,content=m)
+            t.save()
+            instance.tag.add(t)
+            instance.save()
 
         instance.save(update_fields=update_fields)
 
