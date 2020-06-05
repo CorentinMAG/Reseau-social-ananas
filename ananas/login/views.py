@@ -26,7 +26,7 @@ def connexion(request):
         if not request.session.get('token'):
             token, _ = Token.objects.get_or_create(user=request.user)
             request.session['token'] = token.key
-        return redirect(reverse('room', kwargs={'room_name': 'accueil'}))
+        return redirect(reverse('timeline-home'))
     else:
         error = False
 
