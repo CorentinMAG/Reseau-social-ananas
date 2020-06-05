@@ -68,9 +68,6 @@
                   {{ post.get_markdown|truncatechars_html:20}}
               </div>
             </div>
-              {% if user == post.auteur %}
-               <button class="btn btn-danger" style="width: 30%;margin:5px;"><a href="{% url "delete-article" post.pk %}">DELETE</a></button>
-              {% endif %}
           </div>
         </div>
 
