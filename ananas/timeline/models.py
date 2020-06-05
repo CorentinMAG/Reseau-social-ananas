@@ -34,7 +34,7 @@ class Article(models.Model):
     auteur = models.ForeignKey(User,on_delete=models.CASCADE)
     contenu_post = models.TextField()
     tags = models.ManyToManyField(Tags, related_name='tag')
-
+    slug = models.SlugField(max_length=100)
     photo = models.ImageField(upload_to="photos/")
 
     def __str__(self):

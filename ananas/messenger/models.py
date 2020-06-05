@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.dispatch import receiver
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete, pre_save
 
 User = get_user_model()
 
@@ -19,14 +19,14 @@ class Message(models.Model):
 class TaggedMessages(models.Model):
     content = models.OneToOneField(Message, on_delete=models.CASCADE, related_name='tag_content')
     timestamp = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User,on_delete=models.CASCADE,related_name='tag_author')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tag_author')
 
     def __str__(self):
         return self.content.content
 
 
 class Chat(models.Model):
-    name = models.CharField(max_length=100, blank=True)
+    name = models.CharField(max_length=100)
     participants = models.ManyToManyField(User, related_name="chats", blank=True)
     messages = models.ManyToManyField(Message, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -37,13 +37,12 @@ class Chat(models.Model):
     def __str__(self):
         return "{}".format(self.pk)
 
-
-@receiver(post_save, sender=User)
-def Connect_user_to_public_chat(sender, instance, **kwargs):
+@receiver(pre_save, sender=Chat)
+def control_public_name(sender, instance, **kwargs):
     try:
-        PublicChat = Chat.objects.filter(status='Public')
-        for chat in PublicChat:
-            chat.participants.add(instance)
+        chats = sender.objects.filter(status='Public', name=instance.name)
+        if chats:
+            raise NameError('Il ne peut pas y avoir plusieurs chats public avec le même nom')
     except:
         return
 

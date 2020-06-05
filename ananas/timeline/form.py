@@ -38,7 +38,7 @@ class ArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ('auteur',)
+        exclude = ('auteur','slug')
 
     def clean_photo(self):
 

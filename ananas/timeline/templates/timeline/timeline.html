@@ -51,10 +51,10 @@
 
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100">
-            <a href={{ post.id }} class="img-container"><img class="card-img-top" src="/media/{{post.photo}}" alt=""></a>
+            <a href="{% url 'view_article' id=post.pk slug=post.slug %}" class="img-container"><img class="card-img-top" src="/media/{{post.photo}}" alt=""></a>
             <div class="card-body">
               <h4 class="card-title">
-                <a href={{ post.id }}>{{ post.titre }}</a>
+                <a href="{% url 'view_article' id=post.pk slug=post.slug %}">{{ post.titre }}</a>
               </h4>
                 <h6>
                     {% for tag in post.tags.all %}

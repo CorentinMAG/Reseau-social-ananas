@@ -13,6 +13,8 @@ from .form import CommentForm, ArticleForm, AddTags
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 import json
 from django.utils.safestring import mark_safe
+from django.utils.text import slugify
+
 User = get_user_model()
 
 
@@ -24,15 +26,18 @@ def timeline(request):
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
     can_add_article = request.user.has_perm('timeline.add_article')
-    args = {'posts': posts, 'can_add_article': can_add_article,'username':mark_safe(json.dumps(request.user.first_name)),'email':mark_safe(json.dumps(request.user.email))}
+    args = {'posts': posts, 'can_add_article': can_add_article,
+            'username': mark_safe(json.dumps(request.user.first_name)),
+            'email': mark_safe(json.dumps(request.user.email))}
     return render(request, 'timeline/timeline.html', args)
 
 
-def delete_article(request,id):
-    article= Article.objects.get(pk=id)
+def delete_article(request, id):
+    article = Article.objects.get(pk=id)
     if article.auteur == request.user:
         article.delete()
     return redirect(reverse('timeline-home'))
+
 
 @login_required
 def delete_comm(request, id):
@@ -41,6 +46,7 @@ def delete_comm(request, id):
     if comm.id_user == request.user:
         comm.delete()
     return redirect(reverse('view_article', kwargs={'id': article}))
+
 
 @login_required
 @permission_required('timeline.add_tags')
@@ -78,7 +84,8 @@ def add_article(request):
             new_article = Article.objects.create(titre=new_titre,
                                                  auteur=new_auteur,
                                                  contenu_post=new_post,
-                                                 photo=new_photo)
+                                                 photo=new_photo,
+                                                 slug=slugify(new_titre))
             new_article.save()
             for tag in new_tags:
                 new_article.tags.add(tag)
@@ -90,18 +97,18 @@ def add_article(request):
     else:
         form = ArticleForm()
 
-    args = {'form': form,'can_add_tag':request.user.has_perm('timeline.add_tags')}
+    args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags')}
     return render(request, 'timeline/add.html', args)
 
 
 @login_required
-def lire(request, id):
+def lire(request, id, slug):
     """
     Permet de lire un post en particulier en fonction de son ID. Accès via timeline/timeline.html
     """
 
     try:
-        post = Article.objects.get(id=id)
+        post = Article.objects.get(id=id, slug=slug)
         tags = post.tags.all()
         comments = Commentaires.objects.filter(id_post=id)
     except post.DoesNotExist:
@@ -124,9 +131,11 @@ def lire(request, id):
         com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc, parent=parent_obj)
         com.save()
         comments = Commentaires.objects.filter(id_post=id, parent=None)  # Actualise liste commentaires
-        form=CommentForm()
+        form = CommentForm()
 
-    args = {'post': post, 'comments': comments, 'form': form, 'tags': tags,'username':mark_safe(json.dumps(request.user.first_name)),'email':mark_safe(json.dumps(request.user.email)),'article':True}
+    args = {'post': post, 'comments': comments, 'form': form, 'tags': tags,
+            'username': mark_safe(json.dumps(request.user.first_name)),
+            'email': mark_safe(json.dumps(request.user.email)), 'article': True}
     return render(request, 'timeline/lire.html', args)
 
 
