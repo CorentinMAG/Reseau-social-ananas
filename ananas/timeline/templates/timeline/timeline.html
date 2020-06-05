@@ -34,20 +34,24 @@
 </style>
 {% endblock %}
 {% block content %}
-<main id="frame" style="display: block !important">
+<main id="frame" style="display: block !important;overflow-y: auto;max-height: 100vh;">
 
     <!--Ajouter un nouvel article-->
 
     {% if can_add_article %}
     <a href="add" >Nouveau post</a>
     {% endif %}
-
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Filter">
+    </form>
     <div> <!--Liste des posts-->
     <!--For comment in comments-->
-        <!--TODO: Finir d'intégrer le bootsnip-->
         <div class="container">
             <div class="row">
-    {% for post in posts %}<!--TODO: Redimentionner les images-->
+
+    {% for post in posts %}
 
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100">

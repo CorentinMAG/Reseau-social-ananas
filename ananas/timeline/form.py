@@ -28,6 +28,15 @@ class AddTags(forms.ModelForm):
         fields = '__all__'
 
 
+class SearchTag(forms.ModelForm):
+    text_tag = forms.ModelChoiceField(initial=Tags.objects.first(), queryset=Tags.objects.all(), label="",
+                                  widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
+
+    class Meta:
+        model = Tags
+        fields = ('text_tag',)
+
+
 class ArticleForm(forms.ModelForm):
     titre = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre', 'id': 'titre_article'}))
@@ -38,13 +47,13 @@ class ArticleForm(forms.ModelForm):
 
     class Meta:
         model = Article
-        exclude = ('auteur','slug')
+        exclude = ('auteur', 'slug')
 
     def clean_photo(self):
 
         """Makes thumbnails of given size from given image"""
         image = self.cleaned_data['photo']
-        if(image):
+        if (image):
             im = Image.open(image)
             size = 200, 200
             im.thumbnail(size)  # resize image

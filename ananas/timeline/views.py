@@ -9,7 +9,7 @@ from django.views.generic import TemplateView
 from .models import Article, Commentaires
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from .models import Article, Commentaires, Tags
-from .form import CommentForm, ArticleForm, AddTags
+from .form import CommentForm, ArticleForm, AddTags, SearchTag
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 import json
 from django.utils.safestring import mark_safe
@@ -24,11 +24,33 @@ def timeline(request):
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
-    posts = Article.objects.all()
+    form = SearchTag()
+    if request.method == 'GET':
+        posts = Article.objects.all()
+        can_add_article = request.user.has_perm('timeline.add_article')
+        args = {'posts': posts,'form':form ,'can_add_article': can_add_article,
+                'username': mark_safe(json.dumps(request.user.first_name)),
+                'email': mark_safe(json.dumps(request.user.email))}
+        return render(request, 'timeline/timeline.html', args)
+    elif request.method == 'POST':
+        form = SearchTag(request.POST)
+        id_tag_search = int(form['text_tag'].value())
+        return search(request, id_tag_search, form)
+
+
+def search(request, int, form):
+    """
+    recherche en fonction d'un tag ==> Go timeline filtrée
+    """
+    print("SEARCH", int)
+    posts = Article.objects.filter(tags=int)
     can_add_article = request.user.has_perm('timeline.add_article')
-    args = {'posts': posts, 'can_add_article': can_add_article,
-            'username': mark_safe(json.dumps(request.user.first_name)),
-            'email': mark_safe(json.dumps(request.user.email))}
+    args = {'posts': posts,
+            'can_add_article': can_add_article,
+            'form': form,
+            'username':mark_safe(json.dumps(request.user.first_name)),
+            'email':mark_safe(json.dumps(request.user.email))
+    }
     return render(request, 'timeline/timeline.html', args)
 
 
@@ -96,7 +118,6 @@ def add_article(request):
 
     else:
         form = ArticleForm()
-
     args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags')}
     return render(request, 'timeline/add.html', args)
 
