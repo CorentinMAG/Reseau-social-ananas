@@ -9,11 +9,10 @@ from django.views.generic import TemplateView
 from .models import Article, Commentaires
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from .models import Article, Commentaires, Tags
-from .form import CommentForm, ArticleForm, AddTags
+from .form import CommentForm, ArticleForm, AddTags, SearchTag
 from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
 
 User = get_user_model()
-
 
 @login_required
 def timeline(request):
@@ -23,9 +22,32 @@ def timeline(request):
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.all()
     can_add_article = request.user.has_perm('timeline.add_article')
-    args = {'posts': posts, 'can_add_article': can_add_article}
+    form = SearchTag()
+    if request.method == "POST":
+        form = SearchTag(request.POST)
+        id_tag_search = int(form['tags'].value())
+        print(int(form['tags'].value()))
+        return search(request, id_tag_search, form)
+    args = {'posts': posts, 'can_add_article': can_add_article, 'form': form}
     return render(request, 'timeline/timeline.html', args)
 
+
+def search(request, int, form):
+    """
+    recherche en fonction d'un tag ==> Go timeline filtrée
+    """
+    print("SEARCH", int)
+    posts = Article.objects.filter(tags = int)
+    can_add_article = request.user.has_perm('timeline.add_article')
+    args = {'posts': posts, 'can_add_article': can_add_article, 'form': form}
+    return render(request, 'timeline/timeline.html', args)
+
+
+def delete_article(request,id):
+    article= Article.objects.get(pk=id)
+    if article.auteur == request.user:
+        article.delete()
+    return redirect(reverse('timeline-home'))
 
 @login_required
 def delete_comm(request, id):
@@ -36,7 +58,7 @@ def delete_comm(request, id):
     return redirect(reverse('view_article', kwargs={'id': article}))
 
 @login_required
-@permission_required('timeline.add_tag')
+@permission_required('timeline.add_tags')
 def add_tag(request):
     if request.method == 'POST':
         form = AddTags(request.POST)
@@ -47,7 +69,6 @@ def add_tag(request):
             new_tag.save()
             return redirect(reverse('add-article'))
         else:
-            print('non')
             return render(request, 'timeline/addTag.html')
     else:
         form = AddTags()
@@ -84,7 +105,7 @@ def add_article(request):
     else:
         form = ArticleForm()
 
-    args = {'form': form,'can_add_tag':request.user.has_perm('timeline.add_tag')}
+    args = {'form': form,'can_add_tag':request.user.has_perm('timeline.add_tags')}
     return render(request, 'timeline/add.html', args)
 
 

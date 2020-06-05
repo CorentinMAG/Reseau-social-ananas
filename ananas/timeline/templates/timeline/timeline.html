@@ -1,23 +1,60 @@
 {% extends "header.html" %}
 {% block title %}Timeline{% endblock %}
+{% block headerlink%}
+<style>
+
+    .img-container{
+        display: block;
+    }
+    .card-img-top{
+        object-fit: cover;
+        min-width: 100%;
+        max-height: 300px;
+    }
+    img:not(.card-img-top){
+        max-width: 300px;
+        max-height: 300px;
+        display: none;
+    }
+    button{
+        padding:0 !important;
+    }
+    button a{
+        color:#FFFFFF;
+        display: block;
+        padding:6px;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+    }
+    button a:hover{
+        color:#FFFFFF;
+        text-decoration: none;
+    }
+</style>
+{% endblock %}
 {% block content %}
 
     <!--Ajouter un nouvel article-->
 
     {% if can_add_article %}
-    <a href=add>Nouveau post</a>
+    <a href="add" >Nouveau post</a>
     {% endif %}
-
+    <form method="post" class="form-inline">
+        {% csrf_token %}
+        {{ form.tags }}
+        <input type="submit" value="Filter">
+    </form>
     <div> <!--Liste des posts-->
     <!--For comment in comments-->
-        <!--TODO: Finir d'intégrer le bootsnip-->
         <div class="container">
             <div class="row">
-    {% for post in posts %}<!--TODO: Redimentionner les images-->
+
+    {% for post in posts %}
 
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100">
-            <a href={{ post.id }}><img class="card-img-top" src="/media/{{post.photo}}" alt=""></a>
+            <a href={{ post.id }} class="img-container"><img class="card-img-top" src="/media/{{post.photo}}" alt=""></a>
             <div class="card-body">
               <h4 class="card-title">
                 <a href={{ post.id }}>{{ post.titre }}</a>
@@ -31,6 +68,9 @@
                   {{ post.get_markdown|truncatechars_html:20}}
               </div>
             </div>
+              {% if user == post.auteur %}
+               <button class="btn btn-danger" style="width: 30%;margin:5px;"><a href="{% url "delete-article" post.pk %}">DELETE</a></button>
+              {% endif %}
           </div>
         </div>
 
