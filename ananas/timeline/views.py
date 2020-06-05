@@ -1,16 +1,9 @@
 from django.contrib.auth import get_user_model
 from django.http import Http404
-from django.shortcuts import render, get_object_or_404, redirect, reverse
-
-# Create your views here.
-from django.utils import timezone
-from django.views.generic import TemplateView
-
-from .models import Article, Commentaires
-from django.shortcuts import render, get_object_or_404, redirect, reverse
+from django.shortcuts import render, redirect, reverse
 from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm, AddTags, SearchTag
-from django.contrib.auth.decorators import login_required, user_passes_test, permission_required
+from django.contrib.auth.decorators import login_required, permission_required
 import json
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
@@ -42,7 +35,6 @@ def search(request, int, form):
     """
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
-    print("SEARCH", int)
     posts = Article.objects.filter(tags=int)
     can_add_article = request.user.has_perm('timeline.add_article')
     args = {'posts': posts,
@@ -165,6 +157,5 @@ def search_timeline(request):  # TODO : Chercher selon les tags
     """
     Selectionne les articles correspondant aux champs de recherche
     """
-    # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     posts = Article.objects.filter(id_post=id)
     return render(request, 'timeline/timeline.html', {'posts': posts})

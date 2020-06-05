@@ -1,9 +1,6 @@
-# chat/urls.py
 from django.urls import path
 
 from . import views
-
-# from .views import LireView
 
 urlpatterns = [
     path('', views.timeline, name='timeline-home'),
@@ -12,5 +9,4 @@ urlpatterns = [
     path('delete/<int:id>', views.delete_comm, name='delete_comm'),
     path('add_tag', views.add_tag, name="add-tag"),
     path('delete_article/<int:id>', views.delete_article, name='delete-article')
-    # path('<int:id>', LireView.as_view(), name='timeline-lire')
 ]

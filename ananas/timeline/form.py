@@ -1,6 +1,4 @@
-from django.forms import ModelForm, CharField
-from .models import Commentaires, Article
-from django import forms
+from django.forms import ModelForm
 from .models import Commentaires, Article, Tags
 from django import forms
 from pagedown.widgets import PagedownWidget

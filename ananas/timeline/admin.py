@@ -27,10 +27,8 @@ class CommentairesAdmin(admin.ModelAdmin):
 
     list_filter = ('date_comm',)
     date_hierarchy = 'date_comm'
-    # ordering = ('date',)
 
 
-# Ajoute la fonctionnalité ajouter un Article/Tag dans http://localhost:8000/admin/
 admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tags)
 admin.site.register(Commentaires, CommentairesAdmin)

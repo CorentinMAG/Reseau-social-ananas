@@ -46,7 +46,6 @@ class Article(models.Model):
         return mark_safe(markdown_content)
 
     class Meta:
-        # Change l'affichage du nom dans l'interface admin
         verbose_name = "Article"
         verbose_name_plural = "Articles"
         ordering = ["-date"]
@@ -78,7 +77,6 @@ class Pieces_jointes_post(models.Model):
     """
     id_pj = models.AutoField(primary_key=True)
     lien_pj = models.URLField()
-    # type_pj = titre_post = models.CharField(max_length=30)
     id_post = models.ForeignKey(Article, on_delete=models.CASCADE)
 
     def __str__(self):
