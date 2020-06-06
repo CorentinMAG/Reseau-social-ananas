@@ -27,7 +27,7 @@ class AddTags(forms.ModelForm):
 
 
 class SearchTag(forms.ModelForm):
-    text_tag = forms.ModelChoiceField(initial=Tags.objects.first(), queryset=Tags.objects.all(), label="",
+    text_tag = forms.ModelChoiceField(initial=Tags.objects.get(text_tag='All'), queryset=Tags.objects.all(), label="",
                                   widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
 
     class Meta:
@@ -39,7 +39,7 @@ class ArticleForm(forms.ModelForm):
     titre = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre', 'id': 'titre_article'}))
     contenu_post = forms.CharField(widget=PagedownWidget)
-    tags = forms.ModelMultipleChoiceField(queryset=Tags.objects.all(), widget=forms.SelectMultiple(
+    tags = forms.ModelMultipleChoiceField(queryset=Tags.objects.exclude(type_tag='invisible'), widget=forms.SelectMultiple(
         attrs={'class': 'form-control', 'id': 'tags_article'}))
     photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control-file', 'id': 'file_article'}))
 

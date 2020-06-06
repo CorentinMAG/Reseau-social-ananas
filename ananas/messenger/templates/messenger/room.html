@@ -226,6 +226,7 @@
 		let c_div=document.createElement('div');
 		c_div.classList="wrap";
 		let c_img=document.createElement('img');
+		c_img.style.objectFit='cover';
 		let c_name=document.createElement('span');
 		c_name.classList="name";
 		if(participant['photo']){
@@ -487,6 +488,7 @@
       let author=data['author'];
       let msgListTag=document.createElement('li');
       let imgTag=document.createElement('img');
+      imgTag.style.objectFit='cover';
       let authorTag=document.createElement('span');
       authorTag.textContent=author;
       let pTag=document.createElement('p');

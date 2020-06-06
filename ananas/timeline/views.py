@@ -17,32 +17,41 @@ def timeline(request):
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
+    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
     form = SearchTag()
     if request.method == 'GET':
         posts = Article.objects.all()
         can_add_article = request.user.has_perm('timeline.add_article')
-        args = {'posts': posts,'form':form ,'can_add_article': can_add_article,
+        args = {'posts': posts, 'form': form, 'can_add_article': can_add_article,
                 'username': mark_safe(json.dumps(request.user.first_name)),
+                'tags':tags,
                 'email': mark_safe(json.dumps(request.user.email))}
         return render(request, 'timeline/timeline.html', args)
     elif request.method == 'POST':
         form = SearchTag(request.POST)
         id_tag_search = int(form['text_tag'].value())
-        return search(request, id_tag_search, form)
+        return search(request, id_tag_search)
 
 
-def search(request, int, form):
+def search(request, int):
     """
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
-    posts = Article.objects.filter(tags=int)
+    tag = Tags.objects.get(pk=int)
+    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
+    if tag.text_tag == 'All':
+        posts = Article.objects.all()
+    else:
+        posts = Article.objects.filter(tags=int)
     can_add_article = request.user.has_perm('timeline.add_article')
+    form = SearchTag()
     args = {'posts': posts,
             'can_add_article': can_add_article,
             'form': form,
-            'username':mark_safe(json.dumps(request.user.first_name)),
-            'email':mark_safe(json.dumps(request.user.email))
-    }
+            'tags':tags,
+            'username': mark_safe(json.dumps(request.user.first_name)),
+            'email': mark_safe(json.dumps(request.user.email))
+            }
     return render(request, 'timeline/timeline.html', args)
 
 
@@ -120,9 +129,10 @@ def lire(request, id, slug):
     Permet de lire un post en particulier en fonction de son ID. Accès via timeline/timeline.html
     """
 
+    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
     try:
         post = Article.objects.get(id=id, slug=slug)
-        tags = post.tags.all()
+        tagsArticle = post.tags.all()
         comments = Commentaires.objects.filter(id_post=id)
     except post.DoesNotExist:
         raise Http404
@@ -146,16 +156,7 @@ def lire(request, id, slug):
         comments = Commentaires.objects.filter(id_post=id, parent=None)  # Actualise liste commentaires
         form = CommentForm()
 
-    args = {'post': post, 'comments': comments, 'form': form, 'tags': tags,
+    args = {'post': post, 'comments': comments, 'form': form,'tags':tags ,'tagsArticle': tagsArticle,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email)), 'article': True}
     return render(request, 'timeline/lire.html', args)
-
-
-@login_required
-def search_timeline(request):  # TODO : Chercher selon les tags
-    """
-    Selectionne les articles correspondant aux champs de recherche
-    """
-    posts = Article.objects.filter(id_post=id)
-    return render(request, 'timeline/timeline.html', {'posts': posts})

@@ -37,9 +37,9 @@
 			</a>
         <div id="profile">
 			{% if request.user.photo is not None and request.user.photo != "" %}
-           <img id="profile-img" src="{{request.user.photo.url}}" class="online" alt="" />
+           <img id="profile-img" style="object-fit: cover" src="{{request.user.photo.url}}" class="online" alt="" />
           {% else %}
-          <img id="profile-img" src="{{request.user.avatar}}" class="online" alt="" />
+          <img id="profile-img"  style="object-fit: cover" src="{{request.user.avatar}}" class="online" alt="" />
           {% endif %}
 			<span id="user_name">{{username|parse}}</span>
 		</div>
@@ -60,7 +60,11 @@
 		<div>
 			<p id="tagtitle">Tag à la une :</p>
 		</div>
-		<h1><span class="badge badge-secondary">MIN</span><span class="badge badge-secondary">SANTE</span><span class="badge badge-secondary">BDE</span><span class="badge badge-secondary">FAKE</span><span class="badge badge-secondary">JE</span></h1>
+		<h1>
+			{% for tag in tags %}
+			<a class="badge badge-secondary" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
+			{%endfor%}
+		</h1>
 		<p id="messagerie" style="cursor: pointer;">Messagerie</p>
 
 		<div>

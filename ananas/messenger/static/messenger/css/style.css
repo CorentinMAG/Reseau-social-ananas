@@ -150,6 +150,7 @@ a {
 }
 #sidepanel #all_chats ul{
   list-style-type: none;
+  font-size: 1.3em;
 }
 #messagerie{
   margin:10px 0 10px 0;
@@ -203,13 +204,9 @@ a {
   justify-content: center;
   align-content: center;
 }
-.badge-secondary {
-  border-style: solid;
-  border-radius: 40%;
-  background-color: #DA0813;
-  color: #FFFFFF;
-  font-size: 0.36em;
-  margin-left: 5px;
+.badge-secondary{
+  font-size: .4em;
+  font-weight: normal !important;
 }
 
 .h1, h1 {
