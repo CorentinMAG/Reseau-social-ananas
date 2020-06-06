@@ -16,6 +16,14 @@
         max-height: 300px;
         display: none !important;
     }
+    .card-title a{
+        background: #FFFFFF;
+        color:#000000;
+        text-decoration: none;
+    }
+    .card-title a:hover{
+        color: #5b80b2;
+    }
     button{
         padding:0 !important;
     }
@@ -39,7 +47,7 @@
     <!--Ajouter un nouvel article-->
 
     {% if can_add_article %}
-    <a href="add" >Nouveau post</a>
+    <a href="{% url 'add-article' %}" >Nouveau post</a>
     {% endif %}
     <form method="post" class="form-inline">
         {% csrf_token %}
@@ -70,7 +78,7 @@
               </div>
             </div>
               {% if user == post.auteur %}
-               <button class="btn btn-danger" style="width: 30%;margin:5px;"><a href="{% url "delete-article" post.pk %}">DELETE</a></button>
+               <button class="btn btn-danger" style="width: 30%;margin:5px;"><a href="{% url "delete-article" post.pk %}">Supprimer</a></button>
               {% endif %}
           </div>
         </div>

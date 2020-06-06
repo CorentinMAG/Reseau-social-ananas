@@ -113,6 +113,12 @@ a {
   overflow-x: hidden;
 }
 
+#sidepanel #tag-list{
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+
+}
 .remove_tag{
   margin-left:20px;
   cursor: pointer;
@@ -206,6 +212,7 @@ a {
 }
 .badge-secondary{
   font-size: .4em;
+  margin:3px;
   font-weight: normal !important;
 }
 
