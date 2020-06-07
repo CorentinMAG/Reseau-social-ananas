@@ -17,8 +17,8 @@
 		</div>
 		<div class="message-input">
 			<div class="wrap">
-			<input type="text" id="chat-message-input" placeholder="Ecrivez votre message..." />
-			<button class="submit" id="chat-message-submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
+			<input type="text" id="chat-message-input" class="form-control" placeholder="Ecrivez votre message..." />
+			<button class="submit btn btn-info" id="chat-message-submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
 			</div>
 		</div>
 	</section>
@@ -319,8 +319,8 @@
 					for(const participant of document.querySelector('#all_participants').children){
 						if(participant.querySelector('.wrap p')===null) {
 							let deleteBtn = document.createElement('p');
-							deleteBtn.classList = 'mdc-button mdc-button--raised';
-							deleteBtn.innerHTML = '<span class="mdc-button__ripple"></span><i class="fas fa-skull-crossbones"></i>';
+							deleteBtn.classList = 'btn btn-danger btn-sm';
+							deleteBtn.innerHTML = '<span></span><i class="fas fa-skull-crossbones"></i>';
 							participant.firstElementChild.appendChild(deleteBtn);
 						}
 							participant.querySelector('.wrap p').onclick=(e)=>{
@@ -493,7 +493,7 @@
       authorTag.textContent=author;
       let pTag=document.createElement('p');
       let schedule=moment((new Date(data.timestamp).getTime())).fromNow();
-      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><small class="add-tags btn-info">Epingler le message</small><p>${data.content}</p>`;
+      pTag.innerHTML=`<span>${author}</span><small>${schedule}</small><small class=" add-tags btn btn-outline-info btn-sm"><i class="fas fa-thumbtack"></i></small><p>${data.content}</p>`;
       if(data['status']){
       	pTag.firstElementChild.style.color="rgb(241, 196, 15)"
 	  }
@@ -737,7 +737,7 @@ document.querySelector('#user_name').addEventListener('click',(e)=>{
 		last_name=tag['author'].split('.')[1].split('@')[0].toUpperCase();
 		let div = document.createElement('div');
 		div.classList='dropdown-item';
-		div.innerHTML=`<p><small>${first_name} ${last_name}</small><small class="btn-danger remove_tag">Delete</small><br/>${tag['content']}</p>`;
+		div.innerHTML=`<p><small>${first_name} ${last_name}</small><small class="btn btn-danger btn-sm remove_tag">Delete</small><br/>${tag['content']}</p>`;
 		div.querySelector('.remove_tag').addEventListener('click',(e)=>{
 			fetch(`/messenger-api/delete_tag/`,{
 			method:'POST',

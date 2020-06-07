@@ -52,23 +52,19 @@
 
 
 		<div>
-		<p id="timeline">NEWS</p>
+			<span id="timeline">NEWS</span>
+			<ul class="list-typeTag">
+				<li><a href="{% url 'search-type' 'Ecole' %}">Ecole</a></li>
+				<li><a href="{% url 'search-type' 'Associations' %}">Associations</a></li>
+				<li><a href="{% url 'search-type' 'Recherche & Industrie' %}">Recherche & Industrie</a></li>
+			</ul>
 		</div>
 		<div>
-			<a id="soustimeline" href="{% url 'search-type' 'Ecole' %}">Ecole</a>
-		</div>
-		<div>
-			<a id="soustimeline" href="{% url 'search-type' 'Associations' %}">Associations</a>
-		</div>
-		<div>
-			<a id="soustimeline" href="{% url 'search-type' 'Recherche & Industrie' %}">Recherche & Industrie</a>
-		</div>
-		<div>
-			<p id="tagtitle">Tag à la une :</p>
+			<span id="tagtitle">Tag à la une :</span>
 		</div>
 		<h2 id="tag-list">
 			{% for tag in tags %}
-			<a class="badge badge-secondary" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
+			<a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
 			{%endfor%}
 		</h2>
 		<p id="messagerie" style="cursor: pointer;">Messagerie</p>
@@ -94,8 +90,12 @@
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
 <script>
-	window.location.pathname.includes('timeline') ? document.querySelector('#group').style.display='none':"";
-	window.location.pathname.includes('timeline') ? document.querySelector('#btn-add-c').style.display='none':"";
+	if(window.location.pathname.includes('timeline')){
+		if(document.querySelector('#group')){
+			document.querySelector('#group').style.display='none';
+			document.querySelector('#btn-add-c').style.display='none'
+		}
+	}
 	document.querySelector('#messagerie').addEventListener('click',(e)=>{
 
 		window.location.pathname !=='/messenger/accueil/' ? window.location = '/messenger/accueil' : "";

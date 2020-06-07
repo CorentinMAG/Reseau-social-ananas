@@ -12,8 +12,8 @@ class CommentForm(ModelForm):
     Créer un nouveau commentaire sur un Article,
     lié à timeline/x, x = id article
     """
-    contenu_comm = forms.CharField(label='', widget=forms.TextInput(
-        attrs={'class': 'form-control', 'placeholder': 'Entrer votre commentaire...'}))
+    contenu_comm = forms.CharField(label='', widget=forms.Textarea(
+        attrs={'class': 'form-control', 'placeholder': 'Entrer votre commentaire...','rows':'3'}))
 
     class Meta:
         model = Commentaires
@@ -53,7 +53,7 @@ class ArticleForm(forms.ModelForm):
         image = self.cleaned_data['photo']
         if (image):
             im = Image.open(image)
-            size = 200, 200
+            size = 900, 300
             im.thumbnail(size)  # resize image
             rgb_im = im.convert('RGB')
 

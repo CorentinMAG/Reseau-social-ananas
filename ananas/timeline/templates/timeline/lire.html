@@ -5,44 +5,91 @@
 
 {% endblock%}
 {% block content %}
-<main id="frame" style="overflow-y: auto;max-height: 100vh !important;overflow-x: hidden;padding:30px">
+<main id="frame" style="overflow-y: auto;max-height: 100vh !important;overflow-x: hidden;padding:30px;background:#ECF0F1;">
     <div class="article">
-    <h1 style="display:inline-block">{{ post.titre }} <span class="small"> </span></h1><button style="display: inline-block"><a href="{% url 'timeline-home' %}">Retour</a></button>
-    <p class="infos">Rédigé par {{ post.auteur.last_name |upper}} {{post.auteur.first_name}}, le {{ post.date|date:"DATE_FORMAT" }}</p>
-    {% for tag in tagsArticle %}
-        <a class="tag" href="{% url 'search' tag.pk %}">{{tag}}</a>
-        {% endfor %}
-        <div class="photos">
-            <img src="/media/{{post.photo}}"/>
-        </div>
-        <div class="contenu">{{ post.get_markdown}}</div>
+        <div class="container">
+
+    <div class="row">
+
+      <!-- Post Content Column -->
+      <div class="col-lg-12">
+
+        <!-- Title -->
+        <h1 class="mt-4" style="line-height: 0.8;">{{post.titre}}</h1>
+
+        <!-- Author -->
+        <p class="lead">
+          par
+          <a class="author-article" href="{% url 'profile-home' post.auteur.email %}">{{ post.auteur.last_name |upper}} {{post.auteur.first_name}}</a>
+        </p>
+          <div>
+              {% for tag in tagsArticle %}
+    <a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag}}</a>
+       {% endfor %}
+          </div>
+
+        <hr>
+
+        <!-- Date/Time -->
+        <p>Rédigé le {{ post.date|date:"DATE_FORMAT" }}</p>
+
+        <hr>
+
+        <!-- Preview Image -->
+        <img class="img-fluid rounded img-top" src="{{post.photo.url}}" alt="" style="margin:auto;display: block">
+
+        <hr>
+
+        <!-- Post Content -->
+        {{post.get_markdown}}
+        <hr>
     <div class="container">
         <div class="post-comments">
             <!--Partie commentaire-->
-            <form method="post" class="form-inline">
+            <div class="card my-4">
+          <h5 class="card-header">Laisser un commentaire : </h5>
+          <div class="card-body">
+              <form id="post-comment-form" method="post">
                 {% csrf_token %}
-                {{ form }}
-                <input type="submit" value="Publier">
+                  <div class="form-group">
+                {{ form.contenu_comm }}
+                      </div>
+                  <button type="submit" class="btn btn-success">Publier</button>
             </form>
+          </div>
+        </div>
+
             {% for comment in comments %}
              <!-- Comment Row -->
             <div class="media">
                 <div class="d-flex flex-row comment-row m-t-0 comment-parent">
-                    <div class="p-2"><img src="{{comment.id_user.photo.url}}" alt="user" width="50" class="rounded-circle"></div>
+                    <div class="p-2">
+                        {% if comment.id_user.photo is not None and comment.id_user.photo != "" %}
+                    <img src="{{ comment.id_user.photo.url }}" alt="user" width="50" class="rounded-circle">
+                {% else %}
+                    <img src="{{ comment.id_user.avatar }}" alt="user" width="50" class="rounded-circle">
+                {% endif %}
+                    </div>
                     <div class="comment-text w-100 media-body">
-                        <h6 class="font-medium">{{comment.id_user.last_name|upper}} {{comment.id_user.first_name}}</h6> {% if comment.children.count > 0 %} | <span>{{comment.children.count}} repl{{comment.children.count|pluralize:"y,ies"}} </span> {% endif %}<span class="m-b-15 d-block">{{ comment }} </span>
+                        <h6 class="font-medium">{{comment.id_user.last_name|upper}} {{comment.id_user.first_name}} {% if comment.children.count > 0 %} | <small>{{comment.children.count}} répons{{comment.children.count|pluralize:"e,es"}} </small> {% endif %}</h6> <span class="m-b-15 d-block">{{ comment }} </span>
                         <div class="comment-footer"> <span class="text-muted float-right">il y a {{comment.date_comm |timesince}}</span> <button type="button" class="btn btn-info btn-sm comment-reply-btn">répondre</button><a class="btn btn-danger btn-sm" href="{% url 'delete_comm' comment.pk %}">Supprimer</a></div>
 
                     <div class="comment-reply toggle_children" >
-                      <form method="post" class="form-inline">
+                      <form method="post" class="form-inline comment-form">
                         {% csrf_token %}
                         {{ form }}
                         <input type="hidden" name="parent_id" value="{{comment.pk}}">
-                        <input type="submit" value="Répondre">
+                        <input type="submit" value="Répondre" class="btn btn-info btn-post-child-comment">
                         </form>
                         {% for child_comment in comment.children %}
-                         <div class="d-flex flex-row comment-row m-t-0 media mt-3">
-                    <div class="p-2"><img src="{{child_comment.id_user.photo.url}}" alt="user" width="50" class="rounded-circle"></div>
+                         <div class="d-flex flex-row comment-row m-t-0 media mt-3 comment-child">
+                    <div class="p-2">
+                        {% if child_comment.id_user.photo is not None and child_comment.id_user.photo != "" %}
+                    <img src="{{ child_comment.id_user.photo.url }}" alt="user" width="50" class="rounded-circle">
+                {% else %}
+                    <img src="{{ child_comment.id_user.avatar }}" alt="user" width="50" class="rounded-circle">
+                {% endif %}
+                    </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{child_comment.id_user.last_name|upper}} {{child_comment.id_user.first_name}}</h6> </span><span class="m-b-15 d-block">{{ child_comment }} </span>
                         <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span><a class="btn btn-danger btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a></div>
@@ -102,7 +149,6 @@
                         }
                     }else{
                         for(const obj of data){
-                            console.log(obj);
                             createChat(obj);
                         }
                     }
