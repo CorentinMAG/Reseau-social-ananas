@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.http import Http404
 from django.shortcuts import render, redirect, reverse
 from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm, AddTags, SearchTag
@@ -7,7 +6,6 @@ from django.contrib.auth.decorators import login_required, permission_required
 import json
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
-from itertools import chain
 
 User = get_user_model()
 
@@ -60,12 +58,9 @@ def searchType(request, type_tag):
     """
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
-    tags = Tags.objects.filter(type_tag=type_tag).exclude(type_tag='invisible')
     formTri = SearchTag()
-    posts = []
-    for tag in tags:
-        articles = tag.tag.all()
-        posts = list(chain(posts, articles))
+    posts = Article.objects.filter(tags__type_tag=type_tag).distinct()
+
     tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
 
     can_add_article = request.user.has_perm('timeline.add_article')
