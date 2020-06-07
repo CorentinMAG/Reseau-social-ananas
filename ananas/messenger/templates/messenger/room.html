@@ -680,8 +680,8 @@ input.onkeyup = function(e) {
 		let chat=document.querySelector('.activeChat').dataset.chat_id;
 		let name=document.querySelector('#new_name').value;
 		let selects = document.querySelectorAll('select');
-		let add_participants = getSelectValues(selects[0]);
-		let add_admins = getSelectValues(selects[1]);
+		let add_participants = getSelectValues(selects[1]);
+		let add_admins = getSelectValues(selects[2]);
 		fetch(`/messenger-api/${chat}/update/`,{
 			method:'PATCH',
 			credentials:'include',
