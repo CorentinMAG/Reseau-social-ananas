@@ -59,6 +59,13 @@ input[type='text']{
   padding: 10px;
   background:#2980b9;
 }
+#frame a:not(.badge-info){
+  color: #3498db;
+  background: #ECF0F1;
+}
+#frame a:hover:not(.badge-info){
+  color: #2980b9;
+}
 .img-top{
   min-height: 300px;
   max-height: 300px;

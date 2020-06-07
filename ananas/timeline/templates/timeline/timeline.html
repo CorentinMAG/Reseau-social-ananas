@@ -36,6 +36,7 @@
         height: 100%;
         text-decoration: none;
     }
+
     button a:hover{
         color:#FFFFFF;
         text-decoration: none;
@@ -53,8 +54,24 @@
         margin-bottom: 7px;
         border:none;
     }
+
     .shadow-sm{
         padding: 0.6rem !important;
+    }
+    .card a:not(.btn-danger){
+        color: #3498db;
+        background: #FFFFFF;
+    }
+    .title-article{
+        color: #000 !important;
+    }
+    .title-article:hover{
+        color: #3498db !important;
+    }
+
+
+    .tags-article{
+        margin-bottom:2px;
     }
 </style>
 {% endblock %}
@@ -79,11 +96,11 @@
             <p class="img-container"><img class="card-img-top" src="{{post.photo.url}}" alt=""></p>
             <div class="card-body">
               <h4 class="card-title">
-                <a href="{% url 'view_article' id=post.pk slug=post.slug %}">{{ post.titre }}</a>
+                <a href="{% url 'view_article' id=post.pk slug=post.slug %}" class="title-article">{{ post.titre }}</a>
               </h4>
-                <h6>
+                <h6 class="tags-article">
                     {% for tag in post.tags.all %}
-                    <span class="badge badge-info">{{tag}}</span>
+                    <span class="badge badge-info tags-article">{{tag}}</span>
                     {% endfor %}
                 </h6>
               <div class="card-text content-markdown">
