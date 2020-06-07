@@ -129,6 +129,7 @@ a {
   display: flex;
   justify-content: flex-start;
   flex-wrap: wrap;
+  margin-left:10px;
 
 }
 .remove_tag{
@@ -214,6 +215,22 @@ a {
   border-radius: 50%;
   border:none;
 }
+.form-filtre{
+        justify-content: center;
+        margin:10px;
+}
+.form-filtre .btn-info{
+  margin-left: 5px;
+  height: 100%;
+  padding:5px !important;
+  background: #2980b9;
+  border:none;
+}
+.form-filtre .fa-search{
+  color:#FFF;
+}
+
+
 
 .chat .wrap{
   display: flex;

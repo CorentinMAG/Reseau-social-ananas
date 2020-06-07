@@ -28,6 +28,9 @@ input[type='text']{
     position: relative;
     margin-bottom: 10px
 }
+.errorlist{
+  display: none;
+}
 .toggle_children{
   display: none;
 }

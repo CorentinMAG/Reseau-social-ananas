@@ -19,18 +19,18 @@ def timeline(request):
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
-    form = SearchTag()
+    formTri = SearchTag()
     if request.method == 'GET':
         posts = Article.objects.all()
         can_add_article = request.user.has_perm('timeline.add_article')
-        args = {'posts': posts, 'form': form, 'can_add_article': can_add_article,
+        args = {'posts': posts, 'formTri': formTri, 'can_add_article': can_add_article,
                 'username': mark_safe(json.dumps(request.user.first_name)),
                 'tags': tags,
                 'email': mark_safe(json.dumps(request.user.email))}
         return render(request, 'timeline/timeline.html', args)
     elif request.method == 'POST':
-        form = SearchTag(request.POST)
-        id_tag_search = int(form['text_tag'].value())
+        formTri = SearchTag(request.POST)
+        id_tag_search = int(formTri['text_tag'].value())
         return search(request, id_tag_search)
 
 
@@ -45,10 +45,10 @@ def search(request, int):
     else:
         posts = Article.objects.filter(tags=int)
     can_add_article = request.user.has_perm('timeline.add_article')
-    form = SearchTag()
+    formTri = SearchTag()
     args = {'posts': posts,
             'can_add_article': can_add_article,
-            'form': form,
+            'formTri': formTri,
             'tags': tags,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email))
@@ -61,6 +61,7 @@ def searchType(request, type_tag):
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
     tags = Tags.objects.filter(type_tag=type_tag).exclude(type_tag='invisible')
+    formTri = SearchTag()
     posts = []
     for tag in tags:
         articles = tag.tag.all()
@@ -68,14 +69,17 @@ def searchType(request, type_tag):
     tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
 
     can_add_article = request.user.has_perm('timeline.add_article')
-    form = SearchTag()
     args = {'posts': posts,
             'can_add_article': can_add_article,
-            'form': form,
+            'formTri': formTri,
             'tags': tags,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email))
             }
+    if request.method == 'POST':
+        formTri = SearchTag(request.POST)
+        id_tag_search = int(formTri['text_tag'].value())
+        return search(request, id_tag_search)
     return render(request, 'timeline/timeline.html', args)
 
 
@@ -155,6 +159,7 @@ def lire(request, id, slug):
     """
 
     tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
+    formTri = SearchTag()
     post = Article.objects.get(id=id, slug=slug)
     tagsArticle = post.tags.all()
     comments = Commentaires.objects.filter(id_post=id, parent=None)
@@ -162,6 +167,11 @@ def lire(request, id, slug):
     # COMMENTAIRES
     if request.method == 'POST':
         form = CommentForm(request.POST)
+        formTri = SearchTag(request.POST)
+        if formTri.is_valid():
+            id_tag_search = int(formTri['text_tag'].value())
+            return search(request, id_tag_search)
+
         if form.is_valid():
             new_comment = form.cleaned_data['contenu_comm']
             truc = request.user
@@ -182,6 +192,7 @@ def lire(request, id, slug):
         form = CommentForm()
 
     args = {'post': post, 'comments': comments, 'form': form, 'tags': tags, 'tagsArticle': tagsArticle,
+            'formTri': formTri,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email)), 'article': True}
     return render(request, 'timeline/lire.html', args)

@@ -47,33 +47,26 @@
         font-size: 0.9em;
         background: #2980b9;
     }
-    .form-filtre{
-        justify-content: center;
-        margin:10px;
-    }
-    .form-filtre .btn-success{
-        margin-left: 5px;
-    }
     .add-article{
         background:#2980B9;
-        position: absolute;
         left:5px;
+        margin-bottom: 7px;
         border:none;
+    }
+    .shadow-sm{
+        padding: 0.6rem !important;
     }
 </style>
 {% endblock %}
 {% block content %}
-<main id="frame" style="display: block !important;overflow-y: auto;max-height: 100vh;position: relative;background:#ECF0F1;">
+<main id="frame" style="display: block !important;overflow-y: auto;max-height: 100vh;position: relative;background:#ECF0F1;padding: 15px;">
 
     <!--Ajouter un nouvel article-->
-    <form method="post" class="form-inline form-filtre">
-        {% if can_add_article %}
-    <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
+      {% if can_add_article %}
+   <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
     {% endif %}
-        {% csrf_token %}
-        {{ form }}
-        <input type="submit" value="Filter" class="btn btn-success">
-    </form>
+
+
     <div> <!--Liste des posts-->
     <!--For comment in comments-->
         <div class="container">
@@ -98,7 +91,7 @@
               </div>
             </div>
               {% if user == post.auteur %}
-               <a class="btn btn-danger" style="width: 35%;margin:5px;" href="{% url "delete-article" post.pk %}">Supprimer</a>
+               <a class="btn btn-danger" style="width: 40%;margin:5px;" href="{% url "delete-article" post.pk %}">Supprimer</a>
               {% endif %}
           </div>
         </div>

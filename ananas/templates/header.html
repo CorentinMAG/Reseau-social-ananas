@@ -49,6 +49,11 @@
           {% endif %}
 			<span id="user_name">{{username|parse}}</span>
 		</div>
+		    <form method="post" class="form-inline form-filtre">
+        {% csrf_token %}
+        {{ formTri }}
+				<button type="submit" class="btn btn-info"><i class="fas fa-search"></i></button>
+    </form>
 
 
 		<div>
