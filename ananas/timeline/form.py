@@ -21,13 +21,15 @@ class CommentForm(ModelForm):
 
 
 class AddTags(forms.ModelForm):
+    text_tag = forms.CharField(label='',widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du tag...'}))
+    type_tag = forms.CharField(label='',widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type du tag...'}))
     class Meta:
         model = Tags
         fields = '__all__'
 
 
 class SearchTag(forms.ModelForm):
-    text_tag = forms.ModelChoiceField(initial=Tags.objects.get(text_tag='All'), queryset=Tags.objects.all(), label="",
+    text_tag = forms.ModelChoiceField(initial=Tags.objects.get(text_tag='Tous les tags'), queryset=Tags.objects.all(), label="",
                                   widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
 
     class Meta:

@@ -18,7 +18,7 @@ def timeline(request):
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
     # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
-    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
     formTri = SearchTag()
     if request.method == 'GET':
         posts = Article.objects.all()
@@ -39,8 +39,8 @@ def search(request, int):
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
     tag = Tags.objects.get(pk=int)
-    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
-    if tag.text_tag == 'All':
+    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    if tag.text_tag == 'Tous les tags':
         posts = Article.objects.all()
     else:
         posts = Article.objects.filter(tags=int)
@@ -66,7 +66,7 @@ def searchType(request, type_tag):
     for tag in tags:
         articles = tag.tag.all()
         posts = list(chain(posts, articles))
-    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
 
     can_add_article = request.user.has_perm('timeline.add_article')
     args = {'posts': posts,
@@ -126,6 +126,7 @@ def add_article(request):
     """
     if request.method == "POST":
         form = ArticleForm(request.POST, request.FILES)
+        formTag = AddTags(request.POST)
         if form.is_valid():
             new_titre = form.cleaned_data['titre']
             new_auteur = request.user
@@ -143,12 +144,19 @@ def add_article(request):
                 new_article.tags.add(tag)
                 new_article.save()
             return redirect(reverse('timeline-home'))
+        elif formTag.is_valid():
+            new_tag_text = formTag.cleaned_data['text_tag']
+            new_type_tag = formTag.cleaned_data['type_tag']
+            new_tag = Tags.objects.create(type_tag=new_type_tag, text_tag=new_tag_text)
+            new_tag.save()
+            return redirect(reverse('add-article'))
         else:
             return render(request, 'timeline/add.html')
 
     else:
         form = ArticleForm()
-    args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags')}
+        formTag = AddTags()
+    args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags'),'formTag':formTag}
     return render(request, 'timeline/add.html', args)
 
 
@@ -158,7 +166,7 @@ def lire(request, id, slug):
     Permet de lire un post en particulier en fonction de son ID. Accès via timeline/timeline.html
     """
 
-    tags = Tags.objects.exclude(text_tag='All').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
     formTri = SearchTag()
     post = Article.objects.get(id=id, slug=slug)
     tagsArticle = post.tags.all()

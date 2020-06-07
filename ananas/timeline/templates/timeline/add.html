@@ -8,27 +8,71 @@
 {% block content %}
 <div id="sample">
     <!-- multipart/form-data : pour accepter les photos -->
-    <form method="post" enctype="multipart/form-data">
+    <form method="post" enctype="multipart/form-data" class="shadow-lg p-3 mb-5 bg-white rounded">
         {% csrf_token %}
         <div id="header_zone">
             <div class="form-group" id="title_zone">
                 {{form.titre}}
             </div>
-            <div class="form-group" id="photo_zone">
-                {{form.photo}}
-            </div>
         </div>
         <div class="form-group" id="tag_zone">
             {% if can_add_tag %}
-            <a href="{% url 'add-tag' %}">Ajouter tag</a>
+            <span class="btn btn-link" data-toggle="modal" data-target="#exampleModal">Ajouter tag</span>
+            {% else %}
+            <span style="color:#00a8ff">Choisissez un ou plusieurs tags :</span>
             {% endif %}
             {{form.tags}}
         </div>
         <div class="form-group" id="contenu_zone">
             {{form.contenu_post}}
         </div>
-        <input type="submit" value="Publier">
-        <button><a href="{% url 'timeline-home' %}">Retour</a></button>
+        <div class="form-group" id="button_zone">
+            <label for="file_article" class="btn btn-info">Choisir un fichier</label>
+                {{form.photo}}
+
+        <input type="submit" class="btn btn-success" value="Publier">
+        <a href="{% url 'timeline-home' %}" class="btn btn-danger">Retour</a>
+            </div>
+        <small id="nom_fichier" class="alert alert-success" role="alert" style="opacity: 0"></small>
     </form>
 </div>
+ {% if can_add_tag %}
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Ajouter un tag</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+        <form method="post" id="form-tag">
+      <div class="modal-body">
+          {% csrf_token %}
+            {{formTag.text_tag}}
+              {{formTag.type_tag}}
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+      </div>
+            </form>
+    </div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
+
+{%block script%}
+<script>
+    const file_input = document.querySelector('#file_article');
+    const nom_fichier = document.querySelector('#nom_fichier');
+    file_input.addEventListener('change',(e)=>{
+        const fichier = e.target.files[0];
+        const fichier_name = fichier.name;
+        nom_fichier.textContent = fichier_name;
+        nom_fichier.style.opacity='1';
+    })
+</script>
+{% endblock%}
