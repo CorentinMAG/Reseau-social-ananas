@@ -37,14 +37,15 @@ class Chat(models.Model):
     def __str__(self):
         return "{}".format(self.pk)
 
-@receiver(pre_save, sender=Chat)
-def control_public_name(sender, instance, **kwargs):
+@receiver(post_save, sender=User)
+def Connect_user_to_public_chat(sender, instance, **kwargs):
     try:
-        chats = sender.objects.filter(status='Public', name=instance.name)
-        if chats:
-            raise NameError('Il ne peut pas y avoir plusieurs chats public avec le même nom')
+        PublicChat = Chat.objects.filter(status='Public')
+        for chat in PublicChat:
+            chat.participants.add(instance)
     except:
         return
+
 
 
 @receiver(pre_delete, sender=User)
