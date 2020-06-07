@@ -59,11 +59,11 @@ input[type='text']{
   padding: 10px;
   background:#2980b9;
 }
-#frame a:not(.badge-info){
+.content a:{
   color: #3498db;
   background: #ECF0F1;
 }
-#frame a:hover:not(.badge-info){
+.content a:hover{
   color: #2980b9;
 }
 .img-top{

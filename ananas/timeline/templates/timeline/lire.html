@@ -41,7 +41,10 @@
         <hr>
 
         <!-- Post Content -->
-        {{post.get_markdown}}
+          <div class="content">
+              {{post.get_markdown}}
+          </div>
+
         <hr>
     <div class="container">
         <div class="post-comments">
@@ -92,7 +95,7 @@
                     </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{child_comment.id_user.last_name|upper}} {{child_comment.id_user.first_name}}</h6> </span><span class="m-b-15 d-block">{{ child_comment }} </span>
-                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span><a class="btn btn-danger btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a></div>
+                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span><a class="btn btn-link btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a></div>
                     </div>
                 </div>
                         {% endfor%}
