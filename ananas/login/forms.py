@@ -69,7 +69,7 @@ class ConnexionForm(forms.Form):
 class AutreForm(forms.Form):
     """Formulaire pour enregistrer les membres
     de l'administration et les profs"""
-    campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
+    campus = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
                                     widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_autre'}))
     email = forms.EmailField(label="", widget=forms.EmailInput(
         attrs={'class': 'form-control', 'placeholder': 'prenom.nom@epf.fr', 'id': 'autre_email'}))
@@ -82,9 +82,13 @@ class AutreForm(forms.Form):
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom_autre'}))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['campus'].queryset = Campus.objects.all()
+
     class Meta:
         model = Administration
-        fields = ('prenom','nom','password1','password2','email','campus')
+        fields = ('prenom', 'nom', 'password1', 'password2', 'email', 'campus')
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -102,7 +106,7 @@ class AutreForm(forms.Form):
         email = self.cleaned_data['email']
         password = self.cleaned_data['password1']
         campus = self.cleaned_data['campus']
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,campus=campus)
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password, campus=campus)
         user.is_active = False
         user.is_etudiant = False
         user.is_autre = True
@@ -121,18 +125,25 @@ class EtudiantForm(UserCreationForm):
                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom', 'id': 'nom'}))
     prenom = forms.CharField(label="", widget=forms.TextInput(
         attrs={'class': 'form-control', 'placeholder': 'Prénom', 'id': 'prenom'}))
-    campus = forms.ModelChoiceField(initial=Campus.objects.first(), queryset=Campus.objects.all(), label="",
-                                    widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_etudiant'}))
+    campus = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
+                                    widget=forms.Select(
+                                        attrs={'class': 'form-control', 'id': 'select_campus_etudiant'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Vérification du mot de passe', 'id': 'password2'}))
-    majeure = forms.ModelChoiceField(initial=Majeure.objects.first(), queryset=Majeure.objects.all(), label="",
+    majeure = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['campus'].queryset = Campus.objects.all()
+        self.fields['majeure'].queryset = Majeure.objects.all()
+
     class Meta:
-        model=User
-        fields =('majeure','password1','password2','nom','prenom','email','campus')
+        model = User
+        fields = ('majeure', 'password1', 'password2', 'nom', 'prenom', 'email', 'campus')
+
     def clean_email(self):
         email = self.cleaned_data['email']
         if '@epfedu.fr' not in email:
@@ -148,8 +159,8 @@ class EtudiantForm(UserCreationForm):
         password = self.cleaned_data["password1"]
         nom = self.cleaned_data["nom"]
         email = self.cleaned_data["email"]
-        campus=self.cleaned_data['campus']
-        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password,campus=campus)
+        campus = self.cleaned_data['campus']
+        user = User.objects.create_user(email=email, last_name=nom, first_name=prenom, password=password, campus=campus)
         user.is_active = False
 
         majeure = self.cleaned_data['majeure']

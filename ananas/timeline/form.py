@@ -13,7 +13,7 @@ class CommentForm(ModelForm):
     lié à timeline/x, x = id article
     """
     contenu_comm = forms.CharField(label='', widget=forms.Textarea(
-        attrs={'class': 'form-control', 'placeholder': 'Entrer votre commentaire...','rows':'3'}))
+        attrs={'class': 'form-control', 'placeholder': 'Entrer votre commentaire...', 'rows': '3'}))
 
     class Meta:
         model = Commentaires
@@ -21,16 +21,24 @@ class CommentForm(ModelForm):
 
 
 class AddTags(forms.ModelForm):
-    text_tag = forms.CharField(label='',widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du tag...'}))
-    type_tag = forms.CharField(label='',widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type du tag...'}))
+    text_tag = forms.CharField(label='',
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom du tag...'}))
+    type_tag = forms.CharField(label='',
+                               widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Type du tag...'}))
+
     class Meta:
         model = Tags
         fields = '__all__'
 
 
 class SearchTag(forms.ModelForm):
-    text_tag = forms.ModelChoiceField(initial=Tags.objects.get(text_tag='Tous les tags'), queryset=Tags.objects.all(), label="",
-                                  widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
+    text_tag = forms.ModelChoiceField(initial=Tags.objects.filter(text_tag='Tous les tags'),
+                                      queryset=None, label="",empty_label=None,
+                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['text_tag'].queryset = Tags.objects.all()
 
     class Meta:
         model = Tags
@@ -41,9 +49,14 @@ class ArticleForm(forms.ModelForm):
     titre = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre', 'id': 'titre_article'}))
     contenu_post = forms.CharField(widget=PagedownWidget)
-    tags = forms.ModelMultipleChoiceField(queryset=Tags.objects.exclude(type_tag='invisible'), widget=forms.SelectMultiple(
-        attrs={'class': 'form-control', 'id': 'tags_article'}))
+    tags = forms.ModelMultipleChoiceField(queryset=None,
+                                          widget=forms.SelectMultiple(
+                                              attrs={'class': 'form-control', 'id': 'tags_article'}))
     photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control-file', 'id': 'file_article'}))
+
+    def __init__(self,*args,**kwargs):
+        super().__init__(*args,**kwargs)
+        self.fields['tags'].queryset = Tags.objects.exclude(type_tag='invisible')
 
     class Meta:
         model = Article
