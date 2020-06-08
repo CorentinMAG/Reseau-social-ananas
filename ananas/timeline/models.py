@@ -11,8 +11,7 @@ User = get_user_model()
 
 class Tags(models.Model):
     """Tag lié à l'article, en facilite sa recherche."""
-    id_tag = models.AutoField(primary_key=True)
-    text_tag = models.CharField(max_length=100)
+    text_tag = models.CharField(max_length=50)
     type_tag = models.CharField(max_length=50)
 
     def __str__(self):
@@ -62,13 +61,6 @@ def delete_article(sender, instance, **kwargs):
     (inutile de la garder)"""
     if instance.photo:
         _delete_file(instance.photo.path)
-
-
-class Tags_article(models.Model):
-    """Liaison 1-n entre article et tags"""
-    id_tag_article = models.AutoField(primary_key=True)
-    tag = models.ForeignKey(Tags, on_delete=models.CASCADE)
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
 
 
 class Pieces_jointes_post(models.Model):

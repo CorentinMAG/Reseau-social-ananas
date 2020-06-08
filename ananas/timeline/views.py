@@ -15,7 +15,6 @@ def timeline(request):
     """
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
-    # Article.objects.create(titre="Mon premier article", contenu_post="La dure vie d'un étudiant confiné, tome 1")
     tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
     formTri = SearchTag()
     if request.method == 'GET':

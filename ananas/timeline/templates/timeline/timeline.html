@@ -73,24 +73,24 @@
     .tags-article{
         margin-bottom:2px;
     }
+    .jumbotron{
+        position: absolute;
+        top: 50%;
+        left:50%;
+        transform: translate(-50%,-50%);
+    }
 </style>
 {% endblock %}
 {% block content %}
 <main id="frame" style="display: block !important;overflow-y: auto;max-height: 100vh;position: relative;background:#ECF0F1;padding: 15px;">
-
-    <!--Ajouter un nouvel article-->
-      {% if can_add_article %}
+    {%if posts.count > 0 %}
+    {% if can_add_article %}
    <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
     {% endif %}
-
-
-    <div> <!--Liste des posts-->
-    <!--For comment in comments-->
+    {% endif %}
         <div class="container">
             <div class="row">
-
     {% for post in posts %}
-
         <div class="col-lg-4 col-sm-6 mb-4">
           <div class="card h-100 shadow-sm p-3 mb-5 bg-white rounded">
             <p class="img-container"><img class="card-img-top" src="{{post.photo.url}}" alt=""></p>
@@ -104,7 +104,7 @@
                     {% endfor %}
                 </h6>
                 <hr/>
-              <div class="card-text content-markdown">
+                <div class="card-text content-markdown">
                   {{ post.get_markdown|truncatechars_html:200}}
               </div>
             </div>
@@ -115,10 +115,18 @@
         </div>
 
         {% empty %}
-        <p>Aucun article sur la timeline.</p>
+        <div class="jumbotron">
+            <h1 class="display-4">Aucun article !</h1>
+            <p class="lead">Il n'y a aucun article sur la timeline, il est temps d'en créer !</p>
+            <hr class="my-4">
+            <p>Votre timeline parait désespérément vide.... :(</p>
+            {% if can_add_article %}
+                <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
+            {% endif %}
+        </div>
     {% endfor %}
-                </div>
-    </div>
+            </div>
+        </div>
 </main>
 {% endblock %}
 {% block script%}
