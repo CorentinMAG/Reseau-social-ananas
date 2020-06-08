@@ -75,7 +75,7 @@
                     </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{comment.id_user.last_name|upper}} {{comment.id_user.first_name}} {% if comment.children.count > 0 %} | <small>{{comment.children.count}} répons{{comment.children.count|pluralize:"e,es"}} </small> {% endif %}</h6> <span class="m-b-15 d-block" style="font-size: 1.1em;padding-left:5px;">{{ comment }} </span>
-                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{comment.date_comm |timesince}}</span> <button type="button" class="btn btn-link btn-sm comment-reply-btn">répondre</button><a class="btn btn-link btn-sm" href="{% url 'delete_comm' comment.pk %}">Supprimer</a></div>
+                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{comment.date_comm |timesince}}</span> <button type="button" class="btn btn-link btn-sm comment-reply-btn">répondre</button>{% if request.user == comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'delete_comm' comment.pk %}">Supprimer</a>{%endif%}</div>
 
                     <div class="comment-reply toggle_children" >
                       <form method="post" class="form-inline comment-form">
@@ -95,7 +95,7 @@
                     </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{child_comment.id_user.last_name|upper}} {{child_comment.id_user.first_name}}</h6> </span><span class="m-b-15 d-block">{{ child_comment }} </span>
-                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span><a class="btn btn-link btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a></div>
+                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span>{% if request.user == child_comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a>{% endif %}</div>
                     </div>
                 </div>
                         {% endfor%}
