@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <title>Ananas</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <style>
@@ -17,7 +18,7 @@
 
     </style>
 </head>
-
+<body>
 <hr>
 <div class="container bootstrap snippet">
 
@@ -148,9 +149,11 @@
 
         </div><!--/col-9-->
     </div><!--/row-->
+</div>
+</body>
     <script>
         function onBack(){
-            if(document.referrer !== 'http://localhost:8000/profil/update/'){
+            if(document.referrer !== `${location.protocol}//${location.host}/profil/update/`){
                 history.back()
             }else{
                 window.location = '/';
