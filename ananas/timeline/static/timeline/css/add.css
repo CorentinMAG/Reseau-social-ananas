@@ -46,7 +46,7 @@ form:not(#form-tag){
     margin-right: 5px;
 }
 
-label{
+#button_zone label{
     position: absolute;
     left: 5px;
     margin: 0;
