@@ -43,3 +43,12 @@ Maintenant un git push production master enverra toutes les modifications direct
 Avant il faut bien sûr envoyer une clé public sur le server (la copier dans ~/.ssh/authorized_keys)
 
 **Attention de ne pas push n'importe quoi sur le serveur de prod**
+
+# La base de données
+Il s'agit d'une base de données Mysql 
+
+Afin de faire bien fonctionner l'application, il est impératif de créer un Tag.
+
+text_tag = Tous les tags
+
+type_tag = invisible
