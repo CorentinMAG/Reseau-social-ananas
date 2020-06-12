@@ -15,7 +15,7 @@ def timeline(request):
     """
     Afficher tous les articles de notre blog, link à timeline/timeline.html
     """
-    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags')
     formTri = SearchTag()
     if request.method == 'GET':
         posts = Article.objects.all()
@@ -36,7 +36,7 @@ def search(request, int):
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
     tag = Tags.objects.get(pk=int)
-    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags')
     if tag.text_tag == 'Tous les tags':
         posts = Article.objects.all()
     else:
@@ -47,6 +47,7 @@ def search(request, int):
             'can_add_article': can_add_article,
             'formTri': formTri,
             'tags': tags,
+            'article':True,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email))
             }
@@ -60,7 +61,7 @@ def searchType(request, type_tag):
     formTri = SearchTag()
     posts = Article.objects.filter(tags__type_tag=type_tag).distinct()
 
-    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags')
 
     can_add_article = request.user.has_perm('timeline.add_article')
     args = {'posts': posts,
@@ -79,7 +80,7 @@ def searchType(request, type_tag):
 
 def delete_article(request, id):
     article = Article.objects.get(pk=id)
-    if article.auteur == request.user:
+    if article.auteur == request.user or request.user.is_superuser:
         article.delete()
     return redirect(reverse('timeline-home'))
 
@@ -160,7 +161,7 @@ def lire(request, id, slug):
     Permet de lire un post en particulier en fonction de son ID. Accès via timeline/timeline.html
     """
 
-    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags')
     formTri = SearchTag()
     post = Article.objects.get(id=id, slug=slug)
     tagsArticle = post.tags.all()

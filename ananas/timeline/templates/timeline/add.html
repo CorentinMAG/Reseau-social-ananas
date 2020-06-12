@@ -10,18 +10,17 @@
     <!-- multipart/form-data : pour accepter les photos -->
     <form method="post" enctype="multipart/form-data" class="shadow-lg p-3 mb-5 bg-white rounded">
         {% csrf_token %}
-        <div id="header_zone">
-            <div class="form-group" id="title_zone">
-                {{form.titre}}
-            </div>
+        <div class="form-group">
+            {{form.titre}}
         </div>
-        <div class="form-group" id="tag_zone">
+        <div class="form-group">
             {% if can_add_tag %}
             <span class="btn btn-link" data-toggle="modal" data-target="#exampleModal">Ajouter tag</span>
             {% else %}
             <span style="color:#00a8ff">Choisissez un ou plusieurs tags :</span>
             {% endif %}
             {{form.tags}}
+
         </div>
         <div class="form-group" id="contenu_zone">
             {{form.contenu_post}}

@@ -13,7 +13,7 @@ User = get_user_model()
 
 @login_required
 def room(request, room_name):
-    tags = Tags.objects.exclude(text_tag='Tous les tags').order_by('text_tag')[:6]
+    tags = Tags.objects.exclude(text_tag='Tous les tags')
     formTri = SearchTag()
     if request.method == 'GET':
         return render(request, 'messenger/room.html', {

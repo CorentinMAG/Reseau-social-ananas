@@ -1,0 +1,68 @@
+{%load jsonTopy %}
+<div id="navbar_small"><i class="fas fa-bars"></i></div>
+	<nav id="sidepanel">
+
+		<div id=logo>
+			<a href="/timeline">
+			<img id="logo-img" src="../../static/messenger/img/epfblanc.png"/>
+				</a>
+		</div>
+
+		<div id="deconnection">
+			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
+			{% if user.is_superuser %}
+			<a href="/admin" class="btn btn-outline-light">Admin</a>
+			{% endif %}
+		</div>
+        <div id="profile">
+			{% if request.user.photo is not None and request.user.photo != "" %}
+           <img id="profile-img" style="object-fit: cover" src="{{request.user.photo.url}}" class="online" alt="" />
+          {% else %}
+          <img id="profile-img"  style="object-fit: cover" src="{{request.user.avatar}}" class="online" alt="" />
+          {% endif %}
+			<span id="user_name">{{username|parse}}</span>
+		</div>
+		    <form method="post" class="form-inline form-filtre">
+        {% csrf_token %}
+        {{ formTri }}
+				<button type="submit" class="btn btn-info"><i class="fas fa-search"></i></button>
+    </form>
+	<div id="timeline">
+		<span id="news">NEWS</span>
+		<ul>
+			{% regroup tags by type_tag as list_tag%}
+			{% for type in list_tag%}
+			<li><a class="btn-link" href="{% url 'search-type' type.grouper %}">{{type.grouper}}</a></li>
+			{% endfor %}
+
+		</ul>
+
+		<span id="tag_list_name">Tags à la une : </span>
+		<div id="tag_list">
+			{% for tag in tags %}
+			<a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
+			{%endfor%}
+		</div>
+
+
+	</div>
+
+		<div class="ajout_chat">
+			<span id="messagerie" style="cursor: pointer;">Messagerie</span>
+
+
+			{% if request.path != '/timeline/' and article != True  %}
+			<span id="btn-add-c" class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></span>
+			{% endif %}
+
+		</div>
+
+
+
+
+		<div id="all_chats">
+			<ul>
+			</ul>
+		</div>
+
+	</nav>

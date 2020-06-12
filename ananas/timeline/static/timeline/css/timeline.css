@@ -1,0 +1,104 @@
+* {
+    box-sizing: border-box;
+}
+
+#main-block{
+    min-height: 100%;
+    height: 100%;
+    position: relative;
+    background:#ECF0F1;
+    padding: 15px;
+}
+
+#main-block .img-container {
+    display: block;
+}
+
+#main-block .card-img-top {
+    object-fit: contain;
+    min-width: 100%;
+    max-height: 160px;
+    padding: 5px;
+}
+
+#main-block .card-text img {
+    max-width: 300px;
+    max-height: 300px;
+    display: none !important;
+}
+
+#main-block .card-title a {
+    background: #FFFFFF;
+    color: #000000;
+    text-decoration: none;
+    line-height: 1 !important;
+}
+
+#main-block .card-title a:hover {
+    color: #5b80b2;
+}
+
+#main-block button {
+    padding: 0 !important;
+}
+
+#main-block button a {
+    color: #FFFFFF;
+    display: block;
+    padding: 6px;
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+}
+
+#main-block button a:hover {
+    color: #FFFFFF;
+    text-decoration: none;
+}
+
+#main-block .card-title a {
+    font-size: 1.3em;
+}
+
+#main-block .badge-info {
+    font-size: 0.9em;
+    background: #2980b9;
+}
+
+#main-block .add-article {
+    background: #2980b9;
+    left: 5px;
+    margin-bottom: 7px;
+    border: none;
+}
+#main-block .add-article:hover{
+    background: #3498db !important;
+}
+
+#main-block .shadow-sm {
+    padding: 0.6rem !important;
+}
+
+#main-block .card a:not(.btn-danger) {
+    color: #3498db;
+    background: #FFFFFF;
+}
+
+#main-block .title-article {
+    color: #000 !important;
+}
+
+#main-block .title-article:hover {
+    color: #3498db !important;
+}
+
+#main-block .tags-article {
+    margin-bottom: 2px;
+}
+
+#main-block .jumbotron {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}

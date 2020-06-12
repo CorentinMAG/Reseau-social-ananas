@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
      <title>{% block title %}Titre de votre page{% endblock %}</title>
      <!--  Material design -->
+
     <link href="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.css" rel="stylesheet">
   <script src="https://unpkg.com/material-components-web@v4.0.0/dist/material-components-web.min.js"></script>
   <!-- End material design -->
@@ -21,75 +22,20 @@
 	{%endif%}
 	<!-- End Bootstrap -->
 <!-- Favicon -->
+    <link rel="stylesheet" href="{{STATIC_URL}}/static/css/navbar.css">
   <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
   <!-- end favicon -->
-    <link rel="stylesheet" href="{{STATIC_URL}}/static/messenger/css/style.css">
   {% block headerlink %}
   {% endblock %}
 </head>
 <body>
-{%load jsonTopy %}
-	<nav id="sidepanel">
-		<a href="/timeline">
-		<div id=logo>
-			<img id="logo-img" class="lologo" src="../../static/messenger/img/epfblanc.png"/>
-		</div>
-			</a>
-		<div id="deconnection" style="margin-top: 15px;">
-			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
-			{% if user.is_superuser %}
-			<a href="/admin" class="btn btn-outline-light">Admin</a>
-			{% endif %}
-		</div>
-        <div id="profile">
-			{% if request.user.photo is not None and request.user.photo != "" %}
-           <img id="profile-img" style="object-fit: cover" src="{{request.user.photo.url}}" class="online" alt="" />
-          {% else %}
-          <img id="profile-img"  style="object-fit: cover" src="{{request.user.avatar}}" class="online" alt="" />
-          {% endif %}
-			<span id="user_name">{{username|parse}}</span>
-		</div>
-		    <form method="post" class="form-inline form-filtre">
-        {% csrf_token %}
-        {{ formTri }}
-				<button type="submit" class="btn btn-info"><i class="fas fa-search"></i></button>
-    </form>
-
-
-		<div>
-			<span id="timeline">NEWS</span>
-			<ul class="list-typeTag">
-				<li><a href="{% url 'search-type' 'Ecole' %}">Ecole</a></li>
-				<li><a href="{% url 'search-type' 'Associations' %}">Associations</a></li>
-				<li><a href="{% url 'search-type' 'Recherche & Industrie' %}">Recherche & Industrie</a></li>
-			</ul>
-		</div>
-		<div>
-			<span id="tagtitle">Tag à la une :</span>
-		</div>
-		<h2 id="tag-list">
-			{% for tag in tags %}
-			<a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
-			{%endfor%}
-		</h2>
-		<p id="messagerie" style="cursor: pointer;">Messagerie</p>
-
-		<div>
-			{% if request.path != '/timeline/' and article != True  %}
-			<a id="group">Groupes</a><button id="btn-add-c" class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></button>
-			{% endif %}
-		</div>
-
-
-		<div id="all_chats">
-			<ul>
-			</ul>
-		</div>
-
-	</nav>
-	{% block content %}
+{% include 'navbar.html' %}
+<main id="main-block">
+    {% block content %}
 
 	{% endblock %}
+</main>
+
 {% if request.pah != '/timeline/* '%}
     <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
@@ -104,7 +50,12 @@
 	document.querySelector('#messagerie').addEventListener('click',(e)=>{
 
 		window.location.pathname !=='/messenger/accueil/' ? window.location = '/messenger/accueil' : "";
-	})
+	});
+
+    document.querySelector('#navbar_small').addEventListener('click',(e)=>{
+        document.querySelector('#sidepanel').classList.toggle('active_sidepanel');
+        e.target.parentElement.classList.toggle('active_small');
+    })
 </script>
 {%endif%}
 

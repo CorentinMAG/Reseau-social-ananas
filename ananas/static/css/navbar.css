@@ -1,0 +1,222 @@
+*{
+  box-sizing: border-box;
+}
+
+body{
+  display: flex;
+  flex-direction: row;
+  font-family: Helvetica, sans-serif;
+}
+
+/*SIDEPANNEL*/
+#sidepanel{
+  position: fixed;
+  background: #DA0713;
+  display: flex;
+  scrollbar-width:thin;
+  flex-direction: column;
+  color:#FFFFFF;
+  width: 17rem;
+  min-width: 17rem;
+  font-size:1em;
+  overflow-y: auto;
+  height: 100%;
+  min-height: 100%;
+  overflow-x: hidden;
+  transition-duration: 0.5s;
+}
+
+#sidepanel #logo a{
+  display: block;
+}
+
+#sidepanel #logo img{
+  width: 100%;
+  object-fit: cover;
+}
+#sidepanel #deconnection{
+  margin-top:15px;
+  text-align: center;
+}
+
+#sidepanel #profile{
+  display: flex;
+  flex-direction: row;
+  padding:20px 5px;
+}
+#sidepanel #profile img{
+  margin:0 0 0 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid #FFF;
+}
+#sidepanel #profile span{
+  margin: 0;
+  text-align: left;
+  width: 100%;
+  line-height: 50px;
+  font-size: 2em;
+}
+
+#sidepanel #user_name{
+  font-size: 2rem !important;
+  text-align: left !important;
+  padding-left: 20px;
+  cursor: pointer;
+}
+
+#sidepanel .form-filtre{
+  justify-content: center;
+  margin:10px;
+}
+#sidepanel .form-filtre .btn-info{
+  margin-left: 5px;
+  height: 100%;
+  padding:5px 10px !important;
+  background: #2980b9;
+  border:none;
+}
+#sidepanel .form-filtre .fa-search{
+  color:#FFF;
+}
+#sidepanel #timeline #news{
+  margin-left: 15px;
+  font-weight: bold;
+  font-size: 1.3rem;
+}
+#sidepanel #timeline ul{
+  list-style-type: none;
+}
+#sidepanel #timeline ul a{
+  cursor: pointer;
+   color: #FFFFFF !important;
+}
+#sidepanel #timeline ul a:hover{
+  color:#3498DB !important;
+}
+
+#sidepanel #timeline #tag_list_name,
+#sidepanel #timeline #tag_list{
+  margin-left: 15px;
+}
+#sidepanel .badge-info{
+  font-size: 0.9em;
+  background: #2980b9;
+}
+#sidepanel .badge-info:hover,
+#sidepanel .btn-info:hover{
+  background: #3498db !important;
+
+}
+
+#sidepanel .ajout_chat{
+  margin:10px 0 10px 0;
+  text-align: left;
+  margin-left: 25px;
+  font-size: 1.3rem;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+#sidepanel #all_chats ul{
+  list-style-type: none;
+}
+
+#sidepanel .chat{
+  width: 90%;
+  margin:5px 0 5px 0;
+  cursor: pointer;
+}
+
+#sidepanel .chat:hover{
+  background:#BDC3C7;
+  color: #000000;
+}
+#sidepanel .chat img{
+  width:20px;
+  height: 20px;
+  margin:0 10px 0 0;
+  border-radius: 50%;
+  border:none;
+}
+
+#sidepanel .chat .wrap{
+  display: flex;
+}
+
+#main-block{
+  width: 100%;
+  margin-left: 17rem;
+  transition-duration: 0.5s;
+}
+
+
+
+
+/*SCROLLBAR FOR CHROME & SAFARI*/
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5);
+}
+#navbar_small{
+  position: fixed;
+  width:40px;
+  height: 40px;
+  display: none;
+  background: #DA0713;
+  color:#FFF;
+  top:20px;
+  left:20px;
+  z-index: 1;
+  transition-duration: 0.5s;
+}
+#navbar_small i{
+  display: block;
+  font-size: 2rem;
+  height: 100%;
+  padding:5px;
+  cursor: pointer;
+  transition-duration: 0.5s;
+}
+.active_sidepanel{
+  transform: translateX(0) !important;
+  transition-duration: 0.5s;
+  z-index: 1;
+}
+.active_small{
+   transform: translateX(17rem) !important;
+  transition-duration: 0.5s;
+}
+
+@media screen and (max-width:900px) {
+    #sidepanel {
+        transform: translateX(-17rem);
+        transition-duration: 0.5s;
+    }
+  #navbar_small{
+    display: block;
+    transition-duration: 0.5s;
+  }
+    #main-block{
+      margin-left: 0;
+      transition-duration: 0.5s;
+    }
+    #logo{
+      display: none;
+    }
+
+    #sidepanel select{
+      width: 80%;
+    }
+
+}

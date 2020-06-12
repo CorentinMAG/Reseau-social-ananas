@@ -1,79 +1,80 @@
-.article{
+*{
+  box-sizing: border-box;
+}
+#main-block{
+  overflow-y: auto;
+  max-height: 100vh !important;
+  overflow-x: hidden;
+  padding:30px;
+  background:#ECF0F1;"
+}
+#main-block .article{
   width: inherit;
 }
 
-.post-comments {
+#main-block .post-comments {
   padding-bottom: 9px;
   margin: 5px 0 5px;
 }
 
-.tag{
-  font-size: 1.4em;
-  border: 1px solid #000;
-  padding:10px;
-  border-radius: 40%;
-  font-weight: 800;
-}
-input[type='text']{
-  font-size: 1em !important;
-}
-.comment-row:hover {
+#main-block .comment-row:hover {
     background: rgba(0, 0, 0, 0.05)
 }
-.author-article{
-  background: #ECF0F1;
+#main-block .author-article{
   color:#0056B3;
-}
-.comment-widgets {
-    position: relative;
-    margin-bottom: 10px
 }
 .errorlist{
   display: none;
 }
-.toggle_children{
+#main-block .toggle_children{
   display: none;
 }
-.comment-reply-btn{
+#main-block .comment-reply-btn{
   margin-right: 5px;
 }
 
-.btn-post-child-comment{
+#main-block .btn-post-child-comment{
   margin-left: 5px;
 }
 
-.btn-success{
+#main-block .btn-success{
   margin-left: 5px;
 }
 
-.media .comment-parent{
+#main-block .media .comment-parent{
   padding:10px;
   width: 100%;
 }
-.comment-child{
+#main-block .comment-child{
   padding:10px;
 }
 
-#frame .badge-info{
+#main-block .badge-info{
   font-size: 1em;
   padding: 10px;
   background:#2980b9;
 }
-.content a{
+#main-block .badge-info:hover{
+  background: #3498db !important;
+}
+#main-block .content{
+  text-align: justify;
+}
+#main-block .content a{
   color: #3498db;
   background: #ECF0F1;
 }
-.content a:hover{
+#main-block .content a:hover{
   color: #2980b9;
 }
-.content img{
+#main-block .content img{
   max-width: 900px;
   display: block;
   max-height: 300px;
   object-fit: contain;
   margin: auto;
 }
-.img-top{
+#main-block .img-top{
   min-height: 300px;
   max-height: 300px;
   min-width: 900px;
@@ -81,15 +82,23 @@ input[type='text']{
   object-fit: contain;
   border:none;
 }
-#post-comment-form{
+#main-block #post-comment-form{
   justify-content: center;
   margin-bottom: 20px;
 }
+#main-block .img_user{
+  border: 1px solid #FFF;
+}
 
-.comment-form{
+#main-block .comment-form{
   margin:10px;
 }
 
-input[type='text']{
+#main-block .comment_text{
+  font-size: 1rem !important;
+  word-break: break-word;
+}
+
+#main-block input[type='text']{
   width: 50% !important;
 }

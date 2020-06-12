@@ -113,24 +113,24 @@ CHANNEL_LAYERS = {
 
 # if os.name == 'nt':
 #
-#     DATABASES = {
-#         'default': {
-#             'ENGINE': 'django.db.backends.sqlite3',
-#             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-#         }
-#     }
-# else:
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django_ananas',
-        'USER': 'corentin',
-        'PASSWORD': 'vlgklm91',
-        'HOST': '127.0.0.1',
-        'PORT': 3306
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+# else:
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django_ananas',
+#         'USER': 'corentin',
+#         'PASSWORD': 'vlgklm91',
+#         'HOST': '127.0.0.1',
+#         'PORT': 3306
+#     }
+# }
 
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticated',),
