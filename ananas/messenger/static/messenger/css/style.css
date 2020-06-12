@@ -191,7 +191,6 @@
   color:#FFFFFF;
 }
 #main-block #participants{
-  font-size: 1.3rem;
   font-weight: 800;
   color:#000;
   text-align: center;
@@ -206,14 +205,27 @@
 #main-block #all_participants img{
   border-radius: 50%;
   border:1px solid #FFF;
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   margin-right: 5px;
 }
 #main-block #all_participants li{
+  font-size: .8rem;
   padding:3px;
   cursor: pointer;
 }
+#main-block #all_participants li p{
+  margin: 0 0 0 5px;
+}
 #main-block #all_participants li:hover{
   background: #bdc3c7;
+}
+@media screen and (max-width:900px) {
+  #main-block #all_participants li .name{
+    display: none;
+  }
+  #sidepannel2{
+    width: 8rem !important;
+  }
+
 }
