@@ -94,25 +94,6 @@ def delete_comm(request, id):
         comm.delete()
     return redirect(reverse('view_article', kwargs={'id': article, 'slug': slug}))
 
-
-@login_required
-@permission_required('timeline.add_tags')
-def add_tag(request):
-    if request.method == 'POST':
-        form = AddTags(request.POST)
-        if form.is_valid():
-            new_tag_text = form.cleaned_data['text_tag']
-            new_type_tag = form.cleaned_data['type_tag']
-            new_tag = Tags.objects.create(type_tag=new_type_tag, text_tag=new_tag_text)
-            new_tag.save()
-            return redirect(reverse('add-article'))
-        else:
-            return render(request, 'timeline/addTag.html')
-    else:
-        form = AddTags()
-        return render(request, 'timeline/addTag.html', {'form': form})
-
-
 @login_required
 @permission_required('timeline.add_article')
 def add_article(request):

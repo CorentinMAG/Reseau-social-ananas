@@ -56,6 +56,11 @@
         document.querySelector('#sidepanel').classList.toggle('active_sidepanel');
         e.target.parentElement.classList.toggle('active_small');
     })
+
+    document.querySelector('#navbar_sm').addEventListener('click',(e)=>{
+        document.querySelector('#sidepanel').classList.toggle('active_side');
+        document.querySelector('#main-block').classList.toggle('active_sm');
+    })
 </script>
 {%endif%}
 

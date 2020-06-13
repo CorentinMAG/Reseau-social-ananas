@@ -2,6 +2,7 @@
 {% block title %}Article{%endblock%}
 {%block headerlink %}
 <link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/comment.css">
+<link href="{{STATIC_URL}}/static/timeline/ZoomBox/css/zoom.css" rel="stylesheet" type="text/css" />
 
 {% endblock%}
 {% block content %}
@@ -35,7 +36,7 @@
         <hr>
 
         <!-- Preview Image -->
-        <img class="img-fluid" src="{{post.photo.url}}" alt="" style="margin:auto;display: block">
+        <img class="img-fluid" data-action="zoom" src="{{post.photo.url}}" alt="" style="margin:auto;display: block">
 
         <hr>
 
@@ -134,7 +135,6 @@
                 if(data['detail']){console.error('Pas de chat!!')}
                 else{
                     let current_chat_id=document.querySelectorAll(`li[data-chat_id]`);
-                    console.log(data);
                     if(current_chat_id.length>0){
                         let arr=[];
                         let arr2=[];
@@ -195,4 +195,11 @@
 	window.location = "/profil"
 });
         </script>
+        <script src="{{STATIC_URL}}/static/timeline/ZoomBox/js/zoom.js"></script>
+        <script>
+            document.querySelectorAll('.content img').forEach((img)=>{
+                img.setAttribute('data-action','zoom');
+            })
+        </script>
+
         {%endblock%}

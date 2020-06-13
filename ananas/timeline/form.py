@@ -66,18 +66,18 @@ class ArticleForm(forms.ModelForm):
 
         """Makes thumbnails of given size from given image"""
         image = self.cleaned_data['photo']
-        if (image):
-            im = Image.open(image)
-            size = 900, 300
-            im.thumbnail(size)  # resize image
-            rgb_im = im.convert('RGB')
-
-            thumb_io = BytesIO()  # create a BytesIO object
-
-            rgb_im.save(thumb_io, 'JPEG', quality=100)  # save image to BytesIO object
-
-            photo = File(thumb_io, name=image.name)  # create a django friendly File object
-
-            return photo
-        else:
-            return image
+        # if (image):
+        #     im = Image.open(image)
+        #     size = 900, 300
+        #     im.thumbnail(size)  # resize image
+        #     rgb_im = im.convert('RGB')
+        #
+        #     thumb_io = BytesIO()  # create a BytesIO object
+        #
+        #     rgb_im.save(thumb_io, 'JPEG', quality=100)  # save image to BytesIO object
+        #
+        #     photo = File(thumb_io, name=image.name)  # create a django friendly File object
+        #
+        #     return photo
+        # else:
+        return image

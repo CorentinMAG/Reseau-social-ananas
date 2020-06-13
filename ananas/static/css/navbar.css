@@ -173,14 +173,15 @@ body{
   width:40px;
   height: 40px;
   display: none;
-  background: #DA0713;
+  background: transparent;
   color:#FFF;
   top:20px;
   left:20px;
   z-index: 1;
   transition-duration: 0.5s;
 }
-#navbar_small i{
+#navbar_small i,
+#navbar_sm i{
   display: block;
   font-size: 2rem;
   height: 100%;
@@ -188,8 +189,28 @@ body{
   cursor: pointer;
   transition-duration: 0.5s;
 }
+#navbar_sm{
+  position: fixed;
+  width:40px;
+  height: 40px;
+  background: transparent;
+  color:#FFF;
+  top:10px;
+  right:20px;
+  z-index: 1;
+  transition-duration: 0.5s;
+}
+#navbar_small:hover,
+#navbar_sm:hover{
+  background: rgba(0,0,0,0.2);
+}
 .active_sidepanel{
   transform: translateX(0) !important;
+  transition-duration: 0.5s;
+  z-index: 1;
+}
+.active_side{
+  transform: translateX(-17rem) !important;
   transition-duration: 0.5s;
   z-index: 1;
 }
@@ -197,12 +218,18 @@ body{
    transform: translateX(17rem) !important;
   transition-duration: 0.5s;
 }
+.active_sm{
+   margin-left:0 !important;
+}
 
 @media screen and (max-width:900px) {
     #sidepanel {
         transform: translateX(-17rem);
         transition-duration: 0.5s;
     }
+  #navbar_sm{
+    display: none;
+  }
   #navbar_small{
     display: block;
     transition-duration: 0.5s;

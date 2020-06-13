@@ -102,3 +102,6 @@
 #main-block input[type='text']{
   width: 50% !important;
 }
+#main-block .img-fluid{
+  max-height: 300px !important;
+}
