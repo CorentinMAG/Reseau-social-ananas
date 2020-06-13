@@ -5,6 +5,29 @@ from django.dispatch import receiver
 import os
 from markdown_deux import markdown
 from django.utils.safestring import mark_safe
+from markdown_it import MarkdownIt
+from markdown_it.extensions.front_matter import front_matter_plugin
+from markdown_it.extensions.footnote import footnote_plugin
+
+def render_blank_link(self, tokens, idx, options, env):
+    aIndex = tokens[idx].attrIndex('target')
+    if (aIndex < 0):
+        tokens[idx].attrPush(['target', '_blank']) # add new attribute
+    else:
+        tokens[idx].attrs[aIndex][1] = '_blank'  # replace value of existing attr
+
+    # pass token to default renderer.
+    return self.renderToken(tokens, idx, options, env)
+
+
+md = (
+    MarkdownIt("default")
+    .use(front_matter_plugin)
+    .use(footnote_plugin)
+    .enable('table')
+)
+
+md.add_render_rule("link_open", render_blank_link)
 
 User = get_user_model()
 
@@ -41,7 +64,7 @@ class Article(models.Model):
 
     def get_markdown(self):
         content = self.contenu_post
-        markdown_content =markdown(content)
+        markdown_content =md.render(content)
         return mark_safe(markdown_content)
 
     class Meta:
