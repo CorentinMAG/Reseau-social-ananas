@@ -38,6 +38,8 @@
 
         <!-- Date/Time -->
         <p>Rédigé le {{ post.date|date:"DATE_FORMAT" }}</p>
+           {% if post.modified%}
+          <small>Dernière modification : {{post.modified}}</small>{%endif%}
 
         <hr>
 

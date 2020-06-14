@@ -9,10 +9,11 @@ from markdown_it.extensions.front_matter import front_matter_plugin
 from markdown_it.extensions.footnote import footnote_plugin
 from mdeditor.fields import MDTextField
 
+
 def render_blank_link(self, tokens, idx, options, env):
     aIndex = tokens[idx].attrIndex('target')
     if (aIndex < 0):
-        tokens[idx].attrPush(['target', '_blank']) # add new attribute
+        tokens[idx].attrPush(['target', '_blank'])  # add new attribute
     else:
         tokens[idx].attrs[aIndex][1] = '_blank'  # replace value of existing attr
 
@@ -22,9 +23,9 @@ def render_blank_link(self, tokens, idx, options, env):
 
 md = (
     MarkdownIt("default")
-    .use(front_matter_plugin)
-    .use(footnote_plugin)
-    .enable('table')
+        .use(front_matter_plugin)
+        .use(footnote_plugin)
+        .enable('table')
 )
 
 md.add_render_rule("link_open", render_blank_link)
@@ -53,18 +54,19 @@ class Article(models.Model):
     date = models.DateTimeField(auto_now_add=True,
                                 verbose_name="Date de parution")
     titre = models.CharField(max_length=100)
-    auteur = models.ForeignKey(User,on_delete=models.CASCADE)
+    auteur = models.ForeignKey(User, on_delete=models.CASCADE)
     contenu_post = MDTextField()
     tags = models.ManyToManyField(Tags, related_name='tag')
     slug = models.SlugField(max_length=100)
     photo = models.ImageField(upload_to="photos/")
+    modified = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.titre
 
     def get_markdown(self):
         content = self.contenu_post
-        markdown_content =md.render(content)
+        markdown_content = md.render(content)
         return mark_safe(markdown_content)
 
     class Meta:
@@ -108,7 +110,7 @@ class Commentaires(models.Model):
     id_user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_comm = models.DateTimeField(auto_now_add=True,
                                      verbose_name="Date de commentaire", blank=True, null=True)
-    parent= models.ForeignKey('self',blank=True,null=True,on_delete=models.CASCADE)
+    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
 
     def children(self):
         return Commentaires.objects.filter(parent=self)
@@ -119,9 +121,6 @@ class Commentaires(models.Model):
             return False
         else:
             return True
-
-
-
 
     def approve(self):
         self.approved_comment = True

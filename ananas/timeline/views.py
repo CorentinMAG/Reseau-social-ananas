@@ -1,4 +1,7 @@
+import datetime
+
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
 
@@ -196,6 +199,13 @@ class ArticleUpdate(UpdateView):
         form = super().get_form(form_class)
         form.fields['photo'].required = None
         return form
+
+    def form_valid(self, form):
+        self.object.modified = datetime.datetime.now()
+        self.object.save()
+        self.object = form.save()
+        return HttpResponseRedirect(self.get_success_url())
+
 
     def get_success_url(self):
         return reverse_lazy(lire, kwargs={'id': self.object.pk, 'slug': self.object.slug})
