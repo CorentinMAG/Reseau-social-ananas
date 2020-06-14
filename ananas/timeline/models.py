@@ -3,11 +3,11 @@ from django.contrib.auth import get_user_model
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 import os
-from markdown_deux import markdown
 from django.utils.safestring import mark_safe
 from markdown_it import MarkdownIt
 from markdown_it.extensions.front_matter import front_matter_plugin
 from markdown_it.extensions.footnote import footnote_plugin
+from mdeditor.fields import MDTextField
 
 def render_blank_link(self, tokens, idx, options, env):
     aIndex = tokens[idx].attrIndex('target')
@@ -54,7 +54,7 @@ class Article(models.Model):
                                 verbose_name="Date de parution")
     titre = models.CharField(max_length=100)
     auteur = models.ForeignKey(User,on_delete=models.CASCADE)
-    contenu_post = models.TextField()
+    contenu_post = MDTextField()
     tags = models.ManyToManyField(Tags, related_name='tag')
     slug = models.SlugField(max_length=100)
     photo = models.ImageField(upload_to="photos/")

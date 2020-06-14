@@ -1,6 +1,5 @@
 *{
     box-sizing: border-box;
-    scroll-behavior: smooth;
 }
 .bg-white{
     background: #ECF0F1 !important;
@@ -15,15 +14,6 @@ form:not(#form-tag){
     margin-bottom: 5px !important;
 }
 
-#contenu_zone{
-    width: 1000px;
-}
-#sample{
-    background: #da0813;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-}
 #wmd-button-bar-id_contenu_post{
     background: #FFF;
 }
@@ -53,29 +43,4 @@ form:not(#form-tag){
 }
 #file_article{
     display: none;
-}
-#tag_zone{
-}
-.wmd-wrapper{
-    display: flex;
-    justify-content: space-evenly;
-}
-.wmd-input-id_contenu_post{
-    width: 45%;
-}
-.wmd-panel{
-    margin: 0 !important;
-    width: 52% !important;
-}
-.wmd-preview{
-    border: 1px solid darkgrey;
-    background: #DCDCDC !important;
-    width: 45%;
-    max-height: 341px;
-    min-height: 341px;
-    overflow-y: auto;
-}
-
-img{
-    width: 100px;
 }

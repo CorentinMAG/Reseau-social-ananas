@@ -13,6 +13,7 @@ class ArticleAdmin(admin.ModelAdmin):
     date_hierarchy = 'date'
     ordering = ('date',)
     search_fields = ('titre',)
+    prepopulated_fields = {'slug': ('titre',), }
 
     def apercu_contenu(self, article):
         """

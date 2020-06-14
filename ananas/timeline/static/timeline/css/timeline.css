@@ -102,3 +102,7 @@
     left: 50%;
     transform: translate(-50%, -50%);
 }
+#main-block .pagination{
+    display: flex;
+    justify-content: center;
+}

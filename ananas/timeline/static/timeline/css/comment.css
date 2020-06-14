@@ -99,6 +99,10 @@
   word-break: break-word;
 }
 
+#update{
+  float: right;
+}
+
 #main-block input[type='text']{
   width: 50% !important;
 }

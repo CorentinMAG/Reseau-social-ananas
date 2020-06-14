@@ -3,6 +3,11 @@
 {%block headerlink %}
 <link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/comment.css">
 <link href="{{STATIC_URL}}/static/timeline/ZoomBox/css/zoom.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet"
+      href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
 
 {% endblock%}
 {% block content %}
@@ -21,10 +26,11 @@
         <p class="lead">
           par
           <a class="author-article" href="{% url 'profile-home' post.auteur.email %}">{{ post.auteur.last_name |upper}} {{post.auteur.first_name}}</a>
+           {% if user == post.auteur%} <a id="update" href="{% url 'update-article' post.pk %}" class="btn btn-success">Modifier</a> {% endif %}
         </p>
           <div>
               {% for tag in tagsArticle %}
-    <a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag}}</a>
+    <a class="badge badge-info" href="{% url 'search' tag.text_tag%}">{{tag.text_tag}}</a>
        {% endfor %}
           </div>
 
@@ -206,5 +212,4 @@
                 table.classList.add('table','table-striped')
             })
         </script>
-
         {%endblock%}

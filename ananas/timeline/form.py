@@ -2,6 +2,7 @@ from django.forms import ModelForm
 from .models import Commentaires, Article, Tags
 from django import forms
 from pagedown.widgets import PagedownWidget
+from mdeditor.fields import MDTextFormField
 from io import BytesIO
 from django.core.files import File
 from PIL import Image
@@ -33,6 +34,7 @@ class AddTags(forms.ModelForm):
 
 class SearchTag(forms.ModelForm):
     text_tag = forms.ModelChoiceField(initial=Tags.objects.filter(text_tag='Tous les tags'),
+                                      to_field_name='text_tag',
                                       queryset=None, label="",empty_label=None,
                                       widget=forms.Select(attrs={'class': 'form-control', 'id': 'tags'}))
 
@@ -48,7 +50,7 @@ class SearchTag(forms.ModelForm):
 class ArticleForm(forms.ModelForm):
     titre = forms.CharField(
         widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre', 'id': 'titre_article'}))
-    contenu_post = forms.CharField(widget=PagedownWidget)
+    contenu_post = MDTextFormField()
     tags = forms.ModelMultipleChoiceField(queryset=None,
                                           widget=forms.SelectMultiple(
                                               attrs={'class': 'form-control', 'id': 'tags_article'}))

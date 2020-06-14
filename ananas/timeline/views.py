@@ -1,53 +1,55 @@
 from django.contrib.auth import get_user_model
-from django.shortcuts import render, redirect, reverse
+from django.shortcuts import render, redirect, reverse, get_object_or_404
+from django.urls import reverse_lazy
+
 from .models import Article, Commentaires, Tags
 from .form import CommentForm, ArticleForm, AddTags, SearchTag
 from django.contrib.auth.decorators import login_required, permission_required
 import json
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
+from django.views.generic import CreateView, UpdateView, ListView, DetailView
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 User = get_user_model()
 
 
-@login_required
-def timeline(request):
-    """
-    Afficher tous les articles de notre blog, link à timeline/timeline.html
-    """
-    tags = Tags.objects.exclude(text_tag='Tous les tags')
-    formTri = SearchTag()
-    if request.method == 'GET':
-        posts = Article.objects.all()
-        can_add_article = request.user.has_perm('timeline.add_article')
-        args = {'posts': posts, 'formTri': formTri, 'can_add_article': can_add_article,
-                'username': mark_safe(json.dumps(request.user.first_name)),
-                'tags': tags,
-                'email': mark_safe(json.dumps(request.user.email))}
-        return render(request, 'timeline/timeline.html', args)
-    elif request.method == 'POST':
+class Timeline(LoginRequiredMixin, ListView):
+    model = Article
+    context_object_name = 'posts'
+    template_name = 'timeline/timeline.html'
+    paginate_by = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(Timeline, self).get_context_data(**kwargs)
+
+        context['username'] = mark_safe(json.dumps(self.request.user.first_name))
+        context['tags'] = Tags.objects.exclude(text_tag='Tous les tags')
+        context['email'] = mark_safe(json.dumps(self.request.user.email))
+        context['formTri'] = SearchTag()
+        context['can_add_article'] = self.request.user.has_perm('timeline.add_article')
+        return context
+
+    def post(self, request, *args, **kwargs):
         formTri = SearchTag(request.POST)
-        id_tag_search = int(formTri['text_tag'].value())
-        return search(request, id_tag_search)
+        if formTri.is_valid():
+            tag_value = formTri['text_tag'].value()
+            return search(request, tag_value)
 
 
-def search(request, int):
+def search(request, tag):
     """
     recherche en fonction d'un tag ==> Go timeline filtrée
     """
-    tag = Tags.objects.get(pk=int)
     tags = Tags.objects.exclude(text_tag='Tous les tags')
-    if tag.text_tag == 'Tous les tags':
-        posts = Article.objects.all()
-    else:
-        posts = Article.objects.filter(tags=int)
+    posts = Article.objects.filter(tags__text_tag=tag)
     can_add_article = request.user.has_perm('timeline.add_article')
     formTri = SearchTag()
     args = {'posts': posts,
             'can_add_article': can_add_article,
             'formTri': formTri,
             'tags': tags,
-            'article':True,
+            'article': True,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email))
             }
@@ -68,13 +70,15 @@ def searchType(request, type_tag):
             'can_add_article': can_add_article,
             'formTri': formTri,
             'tags': tags,
+            'article': True,
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email))
             }
     if request.method == 'POST':
         formTri = SearchTag(request.POST)
-        id_tag_search = int(formTri['text_tag'].value())
-        return search(request, id_tag_search)
+        if formTri.is_valid():
+            tag_value = formTri['text_tag'].value()
+            return search(request, tag_value)
     return render(request, 'timeline/timeline.html', args)
 
 
@@ -93,6 +97,7 @@ def delete_comm(request, id):
     if comm.id_user == request.user:
         comm.delete()
     return redirect(reverse('view_article', kwargs={'id': article, 'slug': slug}))
+
 
 @login_required
 @permission_required('timeline.add_article')
@@ -132,7 +137,7 @@ def add_article(request):
     else:
         form = ArticleForm()
         formTag = AddTags()
-    args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags'),'formTag':formTag}
+    args = {'form': form, 'can_add_tag': request.user.has_perm('timeline.add_tags'), 'formTag': formTag}
     return render(request, 'timeline/add.html', args)
 
 
@@ -153,8 +158,8 @@ def lire(request, id, slug):
         form = CommentForm(request.POST)
         formTri = SearchTag(request.POST)
         if formTri.is_valid():
-            id_tag_search = int(formTri['text_tag'].value())
-            return search(request, id_tag_search)
+            tag_value = formTri['text_tag'].value()
+            return search(request, tag_value)
 
         if form.is_valid():
             new_comment = form.cleaned_data['contenu_comm']
@@ -180,3 +185,13 @@ def lire(request, id, slug):
             'username': mark_safe(json.dumps(request.user.first_name)),
             'email': mark_safe(json.dumps(request.user.email)), 'article': True}
     return render(request, 'timeline/lire.html', args)
+
+
+class ArticleUpdate(UpdateView):
+    model = Article
+    template_name = 'timeline/add.html'
+    form_class = ArticleForm
+
+    def get_success_url(self):
+        return reverse_lazy(lire, kwargs={'id': self.object.pk, 'slug': self.object.slug})
+
