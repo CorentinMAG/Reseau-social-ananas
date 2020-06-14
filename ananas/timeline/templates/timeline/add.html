@@ -26,14 +26,18 @@
             {{form.media}}
             {{form.contenu_post}}
         </div>
+        {% if file %}
+        <small> Actuellement : <a href="{{file}}">{{file}}</a></small>
+        {% endif %}
         <div class="form-group" id="button_zone">
             <label for="file_article" class="btn btn-info">Choisir un fichier</label>
                 {{form.photo}}
 
         <input type="submit" class="btn btn-success" value="Publier">
-        <a href="{% url 'timeline-home' %}" class="btn btn-danger">Retour</a>
+        <a href="javascript:history.back()" class="btn btn-danger">Retour</a>
             </div>
-        <small id="nom_fichier" class="alert alert-success" role="alert" style="opacity: 0"></small>
+        <small id="nom_fichier" class="alert alert-success" role="alert" style="opacity: 0">
+        </small>
     </form>
 </div>
  {% if can_add_tag %}

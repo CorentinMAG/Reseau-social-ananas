@@ -26,7 +26,7 @@
         <p class="lead">
           par
           <a class="author-article" href="{% url 'profile-home' post.auteur.email %}">{{ post.auteur.last_name |upper}} {{post.auteur.first_name}}</a>
-           {% if user == post.auteur%} <a id="update" href="{% url 'update-article' post.pk %}" class="btn btn-success">Modifier</a> {% endif %}
+           {% if user == post.auteur or user.is_superuser %} <a id="update" href="{% url 'update-article' post.pk post.slug %}" class="btn btn-success">Modifier</a> {% endif %}
         </p>
           <div>
               {% for tag in tagsArticle %}

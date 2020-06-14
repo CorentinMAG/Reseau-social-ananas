@@ -10,5 +10,5 @@ urlpatterns = [
     path('delete_article/<int:id>', views.delete_article, name='delete-article'),
     path('search/<str:tag>', views.search, name='search'),
     path('<str:type_tag>', views.searchType, name='search-type'),
-path(r'^edition/(?P<pk>\d)$', views.ArticleUpdate.as_view(), name='update-article'),
+    path('edition/<int:id>-<slug:slug>', views.ArticleUpdate.as_view(), name='update-article'),
 ]

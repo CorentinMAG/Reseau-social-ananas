@@ -192,6 +192,20 @@ class ArticleUpdate(UpdateView):
     template_name = 'timeline/add.html'
     form_class = ArticleForm
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['photo'].required = None
+        return form
+
     def get_success_url(self):
         return reverse_lazy(lire, kwargs={'id': self.object.pk, 'slug': self.object.slug})
 
+    def get_queryset(self):
+        return Article.objects.filter(pk=self.kwargs['id'], slug=self.kwargs['slug'])
+
+    def get_context_data(self, **kwargs):
+        context = super(ArticleUpdate, self).get_context_data(**kwargs)
+
+        obj = super(ArticleUpdate, self).get_object()
+        context['file'] = obj.photo.url
+        return context
