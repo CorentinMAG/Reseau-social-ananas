@@ -115,6 +115,11 @@ class Commentaires(models.Model):
     def children(self):
         return Commentaires.objects.filter(parent=self)
 
+    def get_markdown(self):
+        content = self.contenu_comm
+        markdown_content = md.render(content)
+        return mark_safe(markdown_content)
+
     @property
     def is_parent(self):
         if self.parent is not None:
