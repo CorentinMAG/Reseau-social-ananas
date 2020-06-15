@@ -101,7 +101,6 @@ def delete_comm(request, id):
         comm.delete()
     return redirect(reverse('view_article', kwargs={'id': article, 'slug': slug}))
 
-
 @login_required
 @permission_required('timeline.add_article')
 def add_article(request):
@@ -190,7 +189,7 @@ def lire(request, id, slug):
     return render(request, 'timeline/lire.html', args)
 
 
-class ArticleUpdate(UpdateView):
+class ArticleUpdate(LoginRequiredMixin,UpdateView):
     model = Article
     template_name = 'timeline/add.html'
     form_class = ArticleForm

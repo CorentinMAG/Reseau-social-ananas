@@ -41,7 +41,7 @@
 		<span id="tag_list_name">Tags à la une : </span>
 		<div id="tag_list">
 			{% for tag in tags %}
-			<a class="badge badge-info" href="{% url 'search' tag.pk %}">{{tag.text_tag}}</a>
+			<a class="badge badge-info" href="{% url 'search' tag.text_tag %}">{{tag.text_tag}}</a>
 			{%endfor%}
 		</div>
 
