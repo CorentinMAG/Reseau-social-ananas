@@ -140,30 +140,3 @@ class Commentaires(models.Model):
         ordering = ["-date_comm"]
 
 
-class Likes(models.Model):
-    """
-    Likes posés par un User sur un post
-    """
-    id_like = models.AutoField(primary_key=True)
-    id_post = models.ForeignKey(Article, on_delete=models.CASCADE)
-    # id_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_like = models.DateTimeField()
-
-    class Meta:
-        verbose_name = 'Like'
-        verbose_name_plural = "Likes"
-
-
-class Pieces_jointes_comm(models.Model):
-    """
-    Pièces jointes dans les comms
-    """
-    id_pj = models.AutoField(primary_key=True)
-    # lien_pj = models.URLField()
-    # type_pj = models.CharField(max_length=30)
-    id_comm = models.ForeignKey(Commentaires, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.lien_pj
-
-

@@ -101,6 +101,7 @@ def delete_comm(request, id):
         comm.delete()
     return redirect(reverse('view_article', kwargs={'id': article, 'slug': slug}))
 
+
 @login_required
 @permission_required('timeline.add_article')
 def add_article(request):
@@ -122,10 +123,8 @@ def add_article(request):
                                                  contenu_post=new_post,
                                                  photo=new_photo,
                                                  slug=slugify(new_titre))
-            new_article.save()
             for tag in new_tags:
                 new_article.tags.add(tag)
-                new_article.save()
             return redirect(reverse('timeline-home'))
         elif formTag.is_valid():
             new_tag_text = formTag.cleaned_data['text_tag']
@@ -189,7 +188,7 @@ def lire(request, id, slug):
     return render(request, 'timeline/lire.html', args)
 
 
-class ArticleUpdate(LoginRequiredMixin,UpdateView):
+class ArticleUpdate(LoginRequiredMixin, UpdateView):
     model = Article
     template_name = 'timeline/add.html'
     form_class = ArticleForm
@@ -204,7 +203,6 @@ class ArticleUpdate(LoginRequiredMixin,UpdateView):
         self.object.save()
         self.object = form.save()
         return HttpResponseRedirect(self.get_success_url())
-
 
     def get_success_url(self):
         return reverse_lazy(lire, kwargs={'id': self.object.pk, 'slug': self.object.slug})
