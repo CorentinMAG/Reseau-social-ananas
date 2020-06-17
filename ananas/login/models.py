@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.dispatch import receiver
 from django.db.models.signals import post_save
+from actstream import action
 
 from .Manager import CustomUserManager
 
@@ -89,9 +90,12 @@ class Administration(models.Model):
 
 
 @receiver(post_save, sender=CustomUser)
-def Create_user_avatar(sender, instance, **kwargs):
-    md5_email = hashlib.md5()
-    md5_email.update(instance.email.encode('utf8'))
-    avatar = "https://www.gravatar.com/avatar/{}?d=identicon".format(md5_email.hexdigest())
-    sender.objects.filter(email=instance.email).update(avatar=avatar)
+def Create_user_avatar(sender, instance, created,**kwargs):
+    if created:
+        md5_email = hashlib.md5()
+        md5_email.update(instance.email.encode('utf8'))
+        avatar = "https://www.gravatar.com/avatar/{}?d=identicon".format(md5_email.hexdigest())
+        sender.objects.filter(email=instance.email).update(avatar=avatar)
+        action.send(instance,verb="création de compte")
+
 

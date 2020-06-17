@@ -37,6 +37,7 @@ PHONENUMBER_DEFAULT_REGION = "FR"
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
+'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -49,8 +50,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'profil',
-    'mdeditor'
+    'mdeditor',
+    'actstream'
 ]
+
+SITE_ID=1
+
+ACTSTREAM_SETTINGS = {
+    'FETCH_RELATIONS': True,
+    'USE_JSONFIELD': True,
+}
 
 X_FRAME_OPTIONS = 'SAMEORIGIN'
 

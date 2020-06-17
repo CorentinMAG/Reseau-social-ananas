@@ -25,6 +25,7 @@
 {% block content%}
 <hr>
 <div class="container">
+    {% load activity_tags %}
 
     <div class="row">
         <div class="col-sm-3"><!--left col-->
@@ -44,6 +45,13 @@
                 <div class="card-header">Date d'inscription </div>
                 <div class="card-body">
                     <p class="card-text"> {{ UserProfile.date_joined }} </p>
+                </div>
+
+            </div>
+            <div class="card mb-3">
+                <div class="card-header">Dernière connexion </div>
+                <div class="card-body">
+                    <p class="card-text"> {{ UserProfile.last_login }} </p>
                 </div>
 
             </div>
@@ -76,7 +84,15 @@
             </div>
 
             <hr>
-            <div class="profil" style="display: grid;grid-template-columns: 1fr 1fr;padding:10px" >
+            <nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Profil</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Activités</a>
+  </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+  <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <div class="profil" style="display: grid;grid-template-columns: 1fr 1fr;padding:10px" >
                 <div class="form-group">
 
                 <div class="col-xs-6">
@@ -139,8 +155,6 @@
                             Non renseigné
                             {%endif%}
                             </span>
-
-
                         </p>
                     {% endif %}
 
@@ -164,6 +178,22 @@
                 </div>
             </div>
             </div>
+
+  </div>
+  <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+      {% activity_stream 'actor' UserProfile %}
+      <ul style="padding: 20px">
+          {% for action in stream %}
+    <li>{% display_action action %}</li>
+          {% empty %}
+          <div style="padding:20px">{{UserProfile.las_name|upper}} {{UserProfile.first_name}} n'est pas actif... :(</div>
+{% endfor %}
+
+      </ul>
+
+  </div>
+</div>
+
 
             <button class="btn btn-success btn-lg" onclick="onBack()">Retour</button>
             <hr>

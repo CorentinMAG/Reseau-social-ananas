@@ -7,6 +7,8 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, reverse, redirect
 from timeline.models import Article, Commentaires
 from messenger.models import Message
+from actstream import action
+from actstream.models import user_stream
 
 User = get_user_model()
 
@@ -36,7 +38,7 @@ def _userdata(user):
         'campus': user.campus,
         'email': user.email,
         'naissance': user.Birthdate,
-        'avatar': user.avatar
+        'avatar': user.avatar,
     }
     if user.is_autre:
         initial_data['poste'] = user.user_admin.poste
@@ -100,14 +102,13 @@ def profilEdit(request):
                     except:
                         etudiant = Etudiant(user=user, majeure=None)
                         etudiant.save()
-                print(form.cleaned_data['majeure'])
-                print(user.user_etudiant.majeure)
                 if form.cleaned_data['majeure'] != user.user_etudiant.majeure:
                     user.user_etudiant.majeure = form.cleaned_data['majeure']
                     user.user_etudiant.save()
                 if form.cleaned_data['campus'] != user.campus:
                     user.campus = form.cleaned_data['campus']
                 user.save()
+                action.send(request.user, verb="mise à jour du profil", action_object=user)
 
             return redirect(reverse('profile-home', kwargs={'email': user.email}))
     else:

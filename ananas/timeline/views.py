@@ -13,6 +13,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from django.views.generic import CreateView, UpdateView, ListView, DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from actstream import action
 
 User = get_user_model()
 
@@ -110,6 +111,7 @@ def add_article(request):
     """
     if request.method == "POST":
         form = ArticleForm(request.POST, request.FILES)
+
         formTag = AddTags(request.POST)
         if form.is_valid():
             new_titre = form.cleaned_data['titre']
@@ -125,6 +127,7 @@ def add_article(request):
                                                  slug=slugify(new_titre))
             for tag in new_tags:
                 new_article.tags.add(tag)
+            action.send(request.user, verb="creation de l'article", action_object=new_article)
             return redirect(reverse('timeline-home'))
         elif formTag.is_valid():
             new_tag_text = formTag.cleaned_data['text_tag']
@@ -176,6 +179,7 @@ def lire(request, id, slug):
                     parent_obj = parent_qs.first()
             com = Commentaires.objects.create(contenu_comm=new_comment, id_post=post, id_user=truc, parent=parent_obj)
             com.save()
+            action.send(request.user, verb="creation d'un commentaire", action_object=com)
             comments = Commentaires.objects.filter(id_post=id, parent=None)  # Actualise liste commentaires
             form = CommentForm()
     else:
@@ -202,6 +206,7 @@ class ArticleUpdate(LoginRequiredMixin, UpdateView):
         self.object.modified = datetime.datetime.now()
         self.object.save()
         self.object = form.save()
+        action.send(self.request.user, verb="update de l'article", action_object=self.object)
         return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):

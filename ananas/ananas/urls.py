@@ -32,6 +32,7 @@ urlpatterns = [
     path('mdeditor/', include('mdeditor.urls')),
 path('', include('pagedown.urls')),
     path('',lambda r: HttpResponseRedirect('account/connexion')),
+    path('activity/', include('actstream.urls'))
 ]+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
