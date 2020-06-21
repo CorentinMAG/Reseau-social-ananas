@@ -1,54 +1,80 @@
 # Projet Ananas ! [Work in progress]
 
-Ce guide récapitule nos principales étapes.
+Ce guide récapitule les principales étapes pour faire fonctionner le projet.
 
-## Se connecter depuis chez soi au gitlab de l'epf
+## Requirements
 
-Il faut tout d'abord installer git for windows (https://gitforwindows.org/). Une fois que c'est fait il faut lancer le git bash et taper ssh-keygen -t rsa -b 4096 -C "prenom.nom@epfedu.fr". Faire tout le temps entré quand on demande de remplir des champs.
-Une fois que les clés sont générés, elles devraient apparaitre dans le dossier C:\Users\votreutilisateur\.ssh
-Il faut ensuite ouvrir la clé publique (avec l'extension .pub) et copier son contenu.
-Se rendre ensuite sur le gitlab de l'epf (https://gitlab.min.epf.fr/users/sign_in), se connecter, cliquer sur l'icone de notre avatar puis settings et enfin ssh keys. Copier la clé dans le champs dédié.
-Ensuite dans le git bash on se rend la ou on veux faire le projet puis on fait:
-- git init
-- git config --local user.name prenom
-- git config --local user.email prenom.nom@epfedu.fr
-- git remote add origin ssh://git@gitlab.min.epf.fr:2217/ananas/projet-ananas.git
+* base de données mysql / mariadb
 
-On fait nos modification en local puis une fois qu'on a fini:
-- git add .
-- git commit -m "votre message"
--git push origin nom_de_la_branche
+## Mise en marche du projet
 
-Pour récupérer les modifications qu'on n'a pas en local:
-- git fetch origin nom_de_la_branche
-- git pull origin nom_de_la_branche (merge avec le depot local)
+* git clone https://github.com/CorentinMAG/Reseau-social-ananas.git
+* sudo apt update
+* sudo apt upgrade
+* sudo apt install python3-pip
+* pip3 install virtualenvwrapper
+* export WORKON_HOME=~/envs
+* export VIRTUALENVWRAPPER_PYTHON=/usr/bin/python3
+* mkdir -p $WORKON_HOME
+* source ~/.local/bin/virtualenvwrapper.sh
+* mkvirtualenv ananasenv
+* add2virtualenv Reseau-social-ananas
+* cd Reseau-social-ananas
+* pip install -r requirements.txt
+* sudo apt install supervisor
+* sudo vim /etc/supervisor/conf.d/ananas-daphne.conf
 
-**A la place de faire le git init et tout ce qui suit on peut faire un git clone ssh://git@gitlab.min.epf.fr:2217/ananas/projet-ananas.git pour récupérer le projet distant**
+```bash
+[program:ananas-daphne]
+command=~/envs/ananasenv/bin/daphne -p 8080 ananas.asgi:application
+user=YOUR_USER
+autostart=true
+autorestart=true
+```
+* sudo systemctl restart supervisor
+* sudo supervisorctl start ananas-daphne
+* sudo apt install nginx
+* sudo apt-get install certbot python-certbot-nginx
+* sudo vim /etc/nginx/default
 
-## Intégration continue des fichiers sur le serveur
+```bash
+upstream channels-backend {
+        server localhost:8080;
+}
+server {
+        server_name SERVER_NAME;
+        root /home/YOUR_USER/Reseau-social-ananas; # on peut également faire un lien symbolique dans /var/www
+        location / {
+                try_files $uri @proxy_to_app;
+        }
+        location @proxy_to_app {
+                proxy_pass http://channels-backend;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection "upgrade";
 
-A chaque fois qu'un commit est effectué, le serveur pull les changements. 
-Pour cela il faut créer des clés ssh sur le serveur et copier la clé public dans la section deploy key de gitlab. On fait un git clone puis on crée un fichier github-sync.py avec os.system('git pull') à l'intérieur (on peut également faire un bash).
-Dans gitlab, dans la partie intégration on copie l'url d'accès à ce fichier et on coche:
-- push event 
-- merge request events 
-- enable SSL verification.
+                proxy_redirect off;
+                proxy_set_header Host $host;
+                proxy_set_header X-Real-IP $remote_addr;
+                proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                proxy_set_header X-Forwarded-Host $server_name;
+        }
+        location /static/ {
+                alias /home/YOUR_USER/Reseau-social-ananas/static;
+        }
+}
+```
+* sudo certbot --nginx (pour obtenir un certificat let's encrypt)
+* sudo systemctl reload nginx
+* python manage.py collectstatic
+* python manage.py makemigrations
+* python manage.py migrate
 
-## comment push sur le serveur de production
+---
+**NOTE**
 
-Pour cela il faut définir une autre url dans notre dépot local:
-* git remote add production ssh://min@ananas.min.epf.fr:2248/home/min/ananas.min.epf.fr/projet-ananas.git
+Il faut modifier le fichier settings.py
+Ne pas oublier de rajouter son nom de domaine dans ALLOWED_HOSTS
+et de modifier STATIC_ROOT (qui devrait pointer vers /home/YOUR_USER/Reseau-social-ananas/static)
 
-Maintenant un git push production master enverra toutes les modifications directement sur le serveur
-Avant il faut bien sûr envoyer une clé public sur le server (la copier dans ~/.ssh/authorized_keys)
-
-**Attention de ne pas push n'importe quoi sur le serveur de prod**
-
-# La base de données
-Il s'agit d'une base de données Mysql 
-
-Afin de faire bien fonctionner l'application, il est impératif de créer un Tag.
-
-text_tag = Tous les tags
-
-type_tag = invisible
+---
