@@ -1,12 +1,14 @@
 # Projet Ananas ! [Work in progress]
 
-Ce guide récapitule les principales étapes pour faire fonctionner le projet.
+This file is a tutorial to set up the project.
 
 ## Requirements
 
-* base de données mysql / mariadb
+* database mysql / mariadb
+* memcached:11211
+* redis:6379
 
-## Mise en marche du projet
+## Set up
 
 * git clone https://github.com/CorentinMAG/Reseau-social-ananas.git
 * sudo apt update
@@ -43,7 +45,9 @@ upstream channels-backend {
 }
 server {
         server_name SERVER_NAME;
-        root /home/YOUR_USER/Reseau-social-ananas; # on peut également faire un lien symbolique dans /var/www
+
+        # you can also create a symbolic link in /var/www
+        root /home/YOUR_USER/Reseau-social-ananas; 
         location / {
                 try_files $uri @proxy_to_app;
         }
@@ -64,7 +68,7 @@ server {
         }
 }
 ```
-* sudo certbot --nginx (pour obtenir un certificat let's encrypt)
+* sudo certbot --nginx (to get a let's encrypt certificate)
 * sudo systemctl reload nginx
 * python manage.py collectstatic
 * python manage.py makemigrations
@@ -73,8 +77,7 @@ server {
 ---
 **NOTE**
 
-Il faut modifier le fichier settings.py
-Ne pas oublier de rajouter son nom de domaine dans ALLOWED_HOSTS
-et de modifier STATIC_ROOT (qui devrait pointer vers /home/YOUR_USER/Reseau-social-ananas/static)
-
+You have to modify the settings.py file  
+* add your domain name in ALLOWED_HOST
+* STATIC_ROOT must point to /home/YOUR_USER/Reseau-social-ananas/static
 ---
