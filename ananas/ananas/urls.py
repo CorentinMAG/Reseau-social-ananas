@@ -1,8 +1,9 @@
 from django.contrib import admin
-from django.urls import path,include
+from django.urls import path,include,re_path
 from django.http import HttpResponseRedirect
 from django.conf.urls.static import static
 from django.conf import settings
+import debug_toolbar
 
 handler404 = 'login.views.error_404'
 handler500 = 'login.views.error_500'
@@ -23,5 +24,6 @@ urlpatterns = [
     path('mdeditor/', include('mdeditor.urls')),
 	path('', include('pagedown.urls')),
     path('', lambda r: HttpResponseRedirect('account/connexion')),
-    path('activity/', include('actstream.urls'))
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path('activity/', include('actstream.urls')),
+    path('__debug__/', include(debug_toolbar.urls))
+] + static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

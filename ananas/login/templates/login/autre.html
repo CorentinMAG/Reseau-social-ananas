@@ -28,15 +28,15 @@
 				{% csrf_token %}
 				<fieldset>
 					<legend id="informatif" style="width: 130px;">Administration</legend>
-					<p><i class="fas fa-user"></i>{{form.nom}}</p>
-					{% if form.nom.errors %}
-					{% for error in form.nom.errors %}
+					<p><i class="fas fa-user"></i>{{form.last_name}}</p>
+					{% if form.last_name.errors %}
+					{% for error in form.last_name.errors %}
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-					<p><i class="fas fa-user"></i>{{form.prenom}}</p>
-					{% if form.prenom.errors %}
-					{%for error in form.prenom.errors%}
+					<p><i class="fas fa-user"></i>{{form.first_name}}</p>
+					{% if form.first_name.errors %}
+					{%for error in form.first_name.errors%}
 
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
 			{% endfor %}

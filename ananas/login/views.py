@@ -185,7 +185,7 @@ def RegisterView(request):
     return render(request, "login/choosebetweenadminorstudent.html")
 
 
-def _handleRegistration(request,form):
+def _handleRegistration(request,form,template_name):
 
     """
     handle registration form
@@ -227,7 +227,7 @@ def _handleRegistration(request,form):
 
         _form = form()
 
-    return render(request, 'login/register.html', {'form': _form})
+    return render(request, template_name, {'form': _form})
 
 
 def EtudiantView(request):
@@ -237,7 +237,7 @@ def EtudiantView(request):
     """
 
     form = EtudiantForm
-    return _handleRegistration(request,form)
+    return _handleRegistration(request,form,'login/register.html')
 
 
 
@@ -247,7 +247,7 @@ def AutreView(request):
     handle the registration form, similar to the EtudantView
     """
     form = AutreForm
-    return _handleRegistration(request,form)
+    return _handleRegistration(request,form,'login/autre.html')
 
 
 def activate(request, uidb64, token):
