@@ -1,12 +1,8 @@
 from django.shortcuts import render, redirect, reverse
-from .forms import ConnexionForm, EtudiantForm, AutreForm, Custom_password_reset_form, \
-    Custom_password_reset_form_confirm
+from .forms import ConnexionForm, EtudiantForm, AutreForm, Custom_password_reset_form, Custom_password_reset_form_confirm
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth import views as auth_views
-from django.views.generic import TemplateView
 from django.contrib import messages
-from django.contrib.auth.mixins import UserPassesTestMixin
 from rest_framework.authtoken.models import Token
 from .token import account_activation_token
 from django.contrib.sites.shortcuts import get_current_site
@@ -16,187 +12,266 @@ from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
+from django.core.exceptions import PermissionDenied
 
 User = get_user_model()
 
 
 def connexion(request):
-    """vue pour connecter l'utilisateur"""
+
+    """
+    connexion view
+    """
+
     if request.user.is_authenticated:
+
+        # if the user is connected (meaning there is still an active session)
+        # we create or retrieve his token
+        # then we directly redirect to the timeline page, the user doesn't have to
+        # re-enter his credentials
         if not request.session.get('token'):
             token, _ = Token.objects.get_or_create(user=request.user)
             request.session['token'] = token.key
+
         return redirect(reverse('timeline-home'))
+
     else:
         error = False
 
+        # handle POST request in the login page
         if request.method == "POST":
+
             form = ConnexionForm(request.POST)
+
             if form.is_valid():
+
                 email = form.cleaned_data["email"]
                 password = form.cleaned_data["password"]
                 stay_connected = form.cleaned_data["stay_connected"]
+
+                # we authenticate the user whith the provided information
                 user = authenticate(email=email, password=password)
+
                 if user:
                     if user.is_active:
+
                         token, _ = Token.objects.get_or_create(user=user)
                         request.session['token'] = token.key
+
                         if not stay_connected:
                             request.session.set_expiry(0)
+
+                        # we register the user into the current session
                         login(request, user)
-                        return redirect(view_redirection)
+
+                        return redirect(reverse('timeline-home'))
                 else:
                     error = True
         else:
+            # if the request method is not POST we only provide the connexion form to the template
             form = ConnexionForm()
 
         return render(request, 'login/connexion.html', locals())
 
 
 def deconnexion(request):
-    """vue de déconnexion"""
+
+    """
+    deconnexion view
+    """
+
+    # the current session is wiped out
     logout(request)
+
     return redirect(reverse(connexion))
 
-
-@login_required
-def view_redirection(request):
-    return redirect(reverse('timeline-home'))
-
-
 def error_404(request, *args, **kwargs):
+
+    """
+    view when error404
+    """
+
     return render(request, 'error404.html', {})
 
 def error_500(request,*args,**kwargs):
-    return render(request,'error_500.html',{})
 
+    """
+    view when error500
+    """
 
-class Forbidden(TemplateView):
-    """page interdite"""
-    template_name = "error403.html"
+    return render(request, 'error_500.html', {})
 
+def error_403(request,*arg,**kwargs):
 
-class test_reset_password_mail(UserPassesTestMixin):
-    login_url = '/account/error/forbidden'
+    """
+    view when error 403
+    """
 
-    def test_func(self):
-        if not self.request.session.get('entered_mail'):
-            return False
-        else:
-            return True
-
-    raise_exception = False
+    return render(request,'error403.html',{})
 
 
 class MyPasswordResetView(auth_views.PasswordResetView):
-    """vue qui gère l'envoie d'email lors d'une demande
-    de mot de passe perdu"""
+
+    """
+    this view send an email to recover password
+    """
+
     template_name = "login/password_reset.html"
     form_class = Custom_password_reset_form
     html_email_template_name = "login/password_reset_mail.html"
     subject_template_name = "login/password_reset_subject.txt"
-    success_url = '/account/password_reset/done'
+    success_url = "/account/password_reset/done"
 
     def form_valid(self, form):
-        self.request.session['entered_mail'] = form.cleaned_data['email']
+        self.request.session['provided_email'] = form.cleaned_data['email']
         return super().form_valid(form)
 
 
-class MyPasswordResetDoneView(test_reset_password_mail, auth_views.PasswordResetDoneView):
+class MyPasswordResetDoneView(auth_views.PasswordResetDoneView):
+
+    def get(self,request,*args,**kwargs):
+        # we check if there is the variable 'entered_mail' in the current session
+        # if not, it means that the user isn't resetting his password 
+        # and so this url shouldn't be accessed
+        if not request.session.get('provided_email'):
+            # raise 403 error and so the error_403 view is triggered
+            raise PermissionDenied()
+        else:
+            # otherwise we just render the template
+            return self.render_to_response({})
+
+
     template_name = "login/password_reset_done.html"
 
 
 class MyPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
-    """Vue qui affiche un formulaire permettant de changer de mot de passe"""
+
+    """
+    form to change the user password
+    """
+
+
     template_name = "login/password_reset_confirm.html"
     form_class = Custom_password_reset_form_confirm
 
 
 class MyPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    """Vue qui est appelé une fois qu'on a fait la
-    demande de réinitialisation de mot de passe"""
+
+    """
+    call when the user has set up his new password
+    """
+
+    def get(self,request,*args,**kwargs):
+        if not request.session.get('provided_email'):
+            raise PermissionDenied()
+        else:
+            # we remove the 'provided_email' key from the session
+            try:
+                del request.session['provided_email']
+            except KeyError:
+                pass
+            return self.render_to_response({})
+
+
     template_name = "login/password_reset_complete.html"
 
 
 def RegisterView(request):
-    """simple vue qui va permettre à l'utilisateur
-    de créer un compte administration ou étudiant"""
+
+    """
+    view when we hit the 'enregistrer' button of the login page
+    """
+
     return render(request, "login/choosebetweenadminorstudent.html")
 
 
-def EtudiantView(request):
-    """Vue qui se charge d'afficher le formulaire
-    d'inscription pour les étudiants"""
+def _handleRegistration(request,form):
+
+    """
+    handle registration form
+    """
+
     if request.method == 'POST':
-        form = EtudiantForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
+
+        _form = form(request.POST)
+        
+        if _form.is_valid():
+
+            # we create the user by calling the save method of the form
+            user = _form.save(commit=False)
             user.is_active = False
             user.save()
+
+            # we send email to the user to activate his account
             current_site = get_current_site(request)
-            mail_subject = 'Activer votre compte Ananas.'
+            mail_subject = 'Activate your Ananas account'
             message = render_to_string('login/acc_active_email.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            to_email = form.cleaned_data.get('email')
+            to_email = _form.cleaned_data.get('email')
             email = EmailMessage(
-                subject=mail_subject, body=message, to=[to_email]
+                subject = mail_subject, body = message, to = [to_email]
             )
             email.content_subtype = "html"
             email.send()
-            messages.success(request, 'Le compte a bien été créé ! Il faut maintenant l\'activer')
+
+            # the message is save on the session, then we call the connexion view which put retrieve all context
+            # variables and display them in the template
+            messages.success(request, 'Your account has been created ! Now you need to activate it')
+            
             return redirect(reverse('connexion'))
     else:
-        form = EtudiantForm()
-    return render(request, 'login/register.html', {'form': form})
+
+        _form = form()
+
+    return render(request, 'login/register.html', {'form': _form})
+
+
+def EtudiantView(request):
+
+    """
+    handle registration for students
+    """
+
+    form = EtudiantForm
+    return _handleRegistration(request,form)
+
 
 
 def AutreView(request):
-    """Vue qui va afficher le formulaire
-    d'inscription pour l'administration"""
-    if request.method == 'POST':
-        form = AutreForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            mail_subject = 'Activer votre compte Ananas'
-            message = render_to_string('login/acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(
-                subject=mail_subject, body=message, to=[to_email]
-            )
-            email.content_subtype = "html"
-            email.send()
-            messages.success(request, 'Le compte a bien été créé ! Il faut maintenant l\'activer')
-            return redirect(reverse('connexion'))
-    else:
-        form = AutreForm()
-    return render(request, 'login/autre.html', {'form': form})
+
+    """
+    handle the registration form, similar to the EtudantView
+    """
+    form = AutreForm
+    return _handleRegistration(request,form)
 
 
 def activate(request, uidb64, token):
-    """activation du compte,
-    donc on gère l'envoi de l'email ici
-    avec le token"""
+
+    """
+    activation of the user account
+    """
+
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):  
         user = None
+
     if user is not None and account_activation_token.check_token(user, token):
+
         user.is_active = True
         user.save()
-        messages.success(request, 'Votre compte a été activé ! vous pouvez maintenant vous connecter')
+
+        messages.success(request, 'Your account has been activated ! You can now log in')
+
         return redirect(reverse(connexion))
+
     else:
+
         return HttpResponse('Activation link is invalid!')

@@ -6,11 +6,14 @@ from django.contrib.auth import get_user_model
 import re
 
 User = get_user_model()
+MAIL = '^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9]+)\.([a-z]{2,})$'
 
 
 class CustomUserCreationForm(UserCreationForm):
-    """Formulaire de création d'utilisateur dans le site
-    d'administration de django"""
+    
+    """
+    Form to create a User in the django admin panel site
+    """
 
     class Meta(UserCreationForm):
         model = User
@@ -18,8 +21,10 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class CustomUserChangeForm(UserChangeForm):
-    """Formulaire de modification d'utilisateur dans le site d'administration
-    de django"""
+    
+    """
+    Form to chango info about a specific user in the django admin panel site
+    """
 
     class Meta(UserChangeForm):
         model = User
@@ -27,17 +32,23 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class Custom_password_reset_form(PasswordResetForm):
-    """Formulaire de reset de password,
-    on rentre notre email, si c'est un mail
-    epf on reçoit un mail à cette adresse"""
+    
+    """
+    this form allows a user to reset his password
+    """
+
     email = forms.EmailField(
         widget=forms.EmailInput(attrs={'class': 'form-control', 'autofocus': 'autofocus', 'placeholder': 'Email'}))
+    
+    class Meta:
+        model = User
+        fields = ('email',)
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        regex = re.compile('^([a-zA-Z0-9_\-\.]+)@?(epfedu|epf).fr$')
+        regex = re.compile(MAIL)
         if not regex.match(email):
-            raise forms.ValidationError('Entrer votre mail epf')
+            raise forms.ValidationError('Entrer un mail correct ')
         return email
 
 
@@ -50,7 +61,7 @@ class Custom_password_reset_form_confirm(SetPasswordForm):
 
 
 class ConnexionForm(forms.Form):
-    """Formulaire de connexion au site"""
+    """connexion form"""
     email = forms.CharField(
         widget=forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email', 'id': 'email'}))
     password = forms.CharField(
@@ -60,9 +71,9 @@ class ConnexionForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        regex = re.compile('^([a-zA-Z0-9_\-\.]+)@?(epfedu|epf).fr$')
+        regex = re.compile(MAIL)
         if not regex.match(email):
-            raise forms.ValidationError('Entrer votre mail epf')
+            raise forms.ValidationError('Entrer un mail correct')
         return email
 
 
@@ -72,7 +83,7 @@ class AutreForm(forms.Form):
     campus = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
                                     widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_autre'}))
     email = forms.EmailField(label="", widget=forms.EmailInput(
-        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@epf.fr', 'id': 'autre_email'}))
+        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@example.fr', 'id': 'autre_email'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password1_autre'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
@@ -92,8 +103,9 @@ class AutreForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if '@epf.fr' not in email:
-            raise forms.ValidationError('Entrer le mail epf')
+        regex = re.compile(MAIL)
+        if not regex.match(email):
+            raise forms.ValidationError('Entrer un mail correct ')
         try:
             user = User.objects.get(email=email)
             raise forms.ValidationError('Le mail existe déjà')
@@ -120,7 +132,7 @@ class AutreForm(forms.Form):
 class EtudiantForm(UserCreationForm):
     """Formulaire d'inscription pour les étudiants"""
     email = forms.EmailField(label="", widget=forms.EmailInput(
-        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@epfedu.fr', 'id': 'email'}))
+        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@example.fr', 'id': 'email'}))
     nom = forms.CharField(label="",
                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nom', 'id': 'nom'}))
     prenom = forms.CharField(label="", widget=forms.TextInput(
@@ -146,8 +158,9 @@ class EtudiantForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        if '@epfedu.fr' not in email:
-            raise forms.ValidationError('Entrer votre mail epf')
+        regex = re.compile(MAIL)
+        if not regex.match(email):
+            raise forms.ValidationError('Entrer un mail correct ')
         try:
             user = User.objects.get(email=email)
             raise forms.ValidationError('Le mail existe déjà')

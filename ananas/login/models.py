@@ -10,6 +10,8 @@ from actstream import action
 
 from .Manager import CustomUserManager
 
+# blank = True make the field optional
+
 
 class Campus(models.Model):
     """"Recense les différents campus de l'école"""
@@ -95,7 +97,8 @@ def Create_user_avatar(sender, instance, created,**kwargs):
         md5_email = hashlib.md5()
         md5_email.update(instance.email.encode('utf8'))
         avatar = "https://www.gravatar.com/avatar/{}?d=identicon".format(md5_email.hexdigest())
-        sender.objects.filter(email=instance.email).update(avatar=avatar)
+        instance.avatar = avatar
+        instance.save()
         action.send(instance,verb="création de compte")
 
 

@@ -27,7 +27,7 @@ if os.name == 'nt':
 else:
     DEBUG = False
 
-ALLOWED_HOSTS = ['ananas.localnetwork.tk', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION = "FR"
@@ -36,8 +36,8 @@ PHONENUMBER_DEFAULT_REGION = "FR"
 
 INSTALLED_APPS = [
     'django.contrib.admin',
+    'django.contrib.sites',
     'django.contrib.auth',
-'django.contrib.sites',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'actstream'
 ]
 
-SITE_ID=1
+SITE_ID = 1
 
 ACTSTREAM_SETTINGS = {
     'FETCH_RELATIONS': True,
@@ -198,7 +198,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.0/topics/i18n/
 
-LANGUAGE_CODE = 'fr'
+LANGUAGE_CODE = 'en-us' #Fr
 
 AUTH_USER_MODEL = "login.CustomUser"
 
@@ -213,6 +213,7 @@ USE_TZ = True
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
 
 MEDIA_URL = '/media/'
+
 
 LOGIN_URL = "connexion"
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
