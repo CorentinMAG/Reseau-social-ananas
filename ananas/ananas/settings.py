@@ -206,7 +206,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us' #Fr
 
-AUTH_USER_MODEL = "login.CustomUser"
+AUTH_USER_MODEL = "login.User"
 
 TIME_ZONE = 'CET'
 

@@ -1,12 +1,13 @@
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django import forms
-from .models import Campus, Majeure, Etudiant, Administration
+from .models import Campus, Master, Student, Administration
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from django.contrib.auth import get_user_model
 import re
 
 User = get_user_model()
 MAIL = '^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9]+)\.([a-z]{2,})$'
+REG_MAIL = re.compile(MAIL)
 
 class Custom_password_reset_form(PasswordResetForm):
     
@@ -23,8 +24,8 @@ class Custom_password_reset_form(PasswordResetForm):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        regex = re.compile(MAIL)
-        if not regex.match(email):
+
+        if not REG_MAIL.match(email):
             raise forms.ValidationError('Enter a valid email')
         return email
 
@@ -57,9 +58,8 @@ class ConnexionForm(forms.Form):
     def clean_email(self):
 
         email = self.cleaned_data['email']
-        regex = re.compile(MAIL)
 
-        if not regex.match(email):
+        if not REG_MAIL.match(email):
 
             raise forms.ValidationError('Enter a valid email')
 
@@ -97,8 +97,8 @@ class AutreForm(forms.Form):
 
     def clean_email(self):
         email = self.cleaned_data['email']
-        regex = re.compile(MAIL)
-        if not regex.match(email):
+
+        if not REG_MAIL.match(email):
             raise forms.ValidationError('Enter a valid email')
         try:
             user = User.objects.get(email=email)
@@ -106,7 +106,7 @@ class AutreForm(forms.Form):
         except User.DoesNotExist:
             return email
 
-    def save(self, commit=True):
+    def save(self, commit = True):
 
         first_name = self.cleaned_data["first_name"]
         last_name = self.cleaned_data["last_name"]
@@ -119,14 +119,12 @@ class AutreForm(forms.Form):
             last_name = last_name, 
             first_name = first_name, 
             password = password, 
-            campus = campus
+            campus = campus,
+            is_student = False
         )
-        user.is_active = False
-        user.is_etudiant = False
-        user.is_autre = True
 
-        profilAutre = Administration(user=user)
-        profilAutre.save()
+        admin = Administration(user = user)
+        admin.save()
 
         if commit:
             user.save()
@@ -140,7 +138,7 @@ class EtudiantForm(UserCreationForm):
     """
 
     email = forms.EmailField(label="", widget=forms.EmailInput(
-        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@example.fr', 'id': 'email'}))
+        attrs={'class': 'form-control', 'placeholder': 'john.doe@example.fr', 'id': 'email'}))
     last_name = forms.CharField(label="",
                           widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last name', 'id': 'nom'}))
     first_name = forms.CharField(label="", widget=forms.TextInput(
@@ -160,7 +158,7 @@ class EtudiantForm(UserCreationForm):
         super().__init__(*args, **kwargs)
 
         self.fields['campus'].queryset = Campus.objects.all()
-        self.fields['master'].queryset = Majeure.objects.all()
+        self.fields['master'].queryset = Master.objects.all()
 
     class Meta:
 
@@ -170,9 +168,8 @@ class EtudiantForm(UserCreationForm):
     def clean_email(self):
 
         email = self.cleaned_data['email']
-        regex = re.compile(MAIL)
 
-        if not regex.match(email):
+        if not REG_MAIL.match(email):
 
             raise forms.ValidationError('Enter a valid email')
 
@@ -199,11 +196,10 @@ class EtudiantForm(UserCreationForm):
             password = password, 
             campus = campus
         )
-        user.is_active = False
 
         master = self.cleaned_data['master']
-        profilEtudiant = Etudiant(user=user, majeure=master)
-        profilEtudiant.save()
+        student = Student(user=user, master=master)
+        student.save()
 
         if commit:
             user.save()

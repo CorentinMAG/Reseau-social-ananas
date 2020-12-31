@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from django.contrib.auth.decorators import login_required
 from .forms import ProfilForm
-from login.models import Etudiant
+from login.models import Student
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, reverse, redirect
 from timeline.models import Article, Commentaires

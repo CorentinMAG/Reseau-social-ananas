@@ -13,6 +13,7 @@ from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.auth import get_user_model
 from django.http import HttpResponse
 from django.core.exceptions import PermissionDenied
+from django.utils import timezone
 
 User = get_user_model()
 
@@ -24,6 +25,9 @@ def connexion(request):
     """
 
     if request.user.is_authenticated:
+
+        request.user.last_login = timezone.now()
+        request.user.save()
 
         # if the user is connected (meaning there is still an active session)
         # we create or retrieve his token
@@ -63,6 +67,9 @@ def connexion(request):
 
                         # we register the user into the current session
                         login(request, user)
+
+                        request.user.last_login = timezone.now()
+                        request.user.save()
 
                         return redirect(reverse('timeline-home'))
                 else:

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from .models import Campus,Majeure,Etudiant,Administration
+from .models import Campus,Master,Student,Administration
 from django.contrib.auth import get_user_model
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
@@ -36,16 +36,15 @@ class CustomUserAdmin(UserAdmin):
         'is_staff', 
         'is_active',
         'is_superuser',
-        'is_etudiant',
-        'is_autre'
+        'is_student',
         )
 
     # to activate filter in the right sidebar (change list view)
     list_filter = (
         'is_staff',
         'is_active',
-        'is_etudiant',
-        'is_autre')
+        'is_student'
+    )
 
     # control the layout of admin change page
     # (name:str, field_option = dict)
@@ -72,7 +71,7 @@ class CustomUserAdmin(UserAdmin):
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('email', 'first_name','last_name','password1', 'password2', 'is_staff', 'is_active','is_superuser','is_etudiant','is_autre')}
+            'fields': ('email', 'first_name','last_name','password1', 'password2', 'is_student')}
         ),
         ('Permissions', {'fields': ('is_staff', 'is_active','is_superuser','user_permissions')}),
         (('Groups'), {'fields': ('groups',)}),
@@ -86,27 +85,59 @@ class CustomUserAdmin(UserAdmin):
 
 
     def get_readonly_fields(self,request,obj=None):
+
         # if obj = None that means we are in the add page
-        if obj in request.GET:
-            return self.readonly_fields
+        if obj:
+            return self.readonly_fields + ['password']
+
         else:
-            return ['date_joined','last_login','password']
-            
+            return  self.readonly_fields
 
     # when we create a user, if we hit the save button the model is saved
     # and we are redirected to the change list view
     def response_add(self,request,obj,post_url_continue=None):
 
+        # when we create the user in the admin pannel,
+        # we pass is_active = True 
+        if not obj.is_active:
+            obj.is_active = True
+            obj.save()
+
         if '_continue' not in request.POST and '_addanother' not in request.POST:
 
-            return HttpResponseRedirect(reverse("admin:login_customuser_changelist"))
+            return HttpResponseRedirect(reverse("admin:login_user_changelist"))
 
         else:
 
             return super(CustomUserAdmin,self).response_add(request,obj,post_url_continue)
 
 
+
+@admin.register(Student)
+class CustomStudentAdmin(admin.ModelAdmin):
+    readonly_fields = ['user']
+
+    def get_readonly_fields(self,request,obj=None):
+        print(obj)
+        # if obj = None that means we are in the add page
+        if obj:
+            return self.readonly_fields
+        else:
+            return []
+
+
+@admin.register(Administration)
+class CustomAdminForAdmin(admin.ModelAdmin):
+    readonly_fields = ['user']
+
+    def get_readonly_fields(self,request,obj=None):
+        print(obj)
+        # if obj = None that means we are in the add page
+        if obj:
+            return self.readonly_fields
+        else:
+            return []
+
+
 admin.site.register(Campus)
-admin.site.register(Majeure)
-admin.site.register(Etudiant)
-admin.site.register(Administration)
+admin.site.register(Master)

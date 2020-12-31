@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from django import forms
-from login.models import Etudiant, Majeure, Campus
+from login.models import Master, Campus
 from string import Template
 from django.contrib.auth import get_user_model
 import re
@@ -25,7 +25,7 @@ class ProfilForm(forms.Form):
         attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
     password2 = forms.CharField(required=False, label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Vérification du mot de passe', 'id': 'password2'}))
-    majeure = forms.ModelChoiceField(required=False, queryset=Majeure.objects.all(), label="",
+    majeure = forms.ModelChoiceField(required=False, queryset=Master.objects.all(), label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
     campus = forms.ModelChoiceField(required=False, queryset=Campus.objects.all(), label="",
                                     widget=forms.Select(attrs={'class': 'form-control', 'id': 'campus'}))
