@@ -90,7 +90,7 @@ def deconnexion(request):
     # the current session is wiped out
     logout(request)
 
-    return redirect(reverse(connexion))
+    return redirect(reverse('login:connexion'))
 
 def error_404(request, *args, **kwargs):
 
@@ -186,10 +186,10 @@ class MyPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
 def RegisterView(request):
 
     """
-    view when we hit the 'enregistrer' button of the login page
+    view when we hit the 'sign up' button of the login page
     """
 
-    return render(request, "login/choosebetweenadminorstudent.html")
+    return render(request, "login/register.html")
 
 
 def _handleRegistration(request,form,template_name):
@@ -212,7 +212,7 @@ def _handleRegistration(request,form,template_name):
             # we send email to the user to activate his account
             current_site = get_current_site(request)
             mail_subject = 'Activate your Ananas account'
-            message = render_to_string('login/acc_active_email.html', {
+            message = render_to_string('login/activate_account.html', {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
@@ -229,7 +229,7 @@ def _handleRegistration(request,form,template_name):
             # variables and display them in the template
             messages.success(request, 'Your account has been created ! Now you need to activate it')
             
-            return redirect(reverse('connexion'))
+            return redirect(reverse('login:connexion'))
     else:
 
         _form = form()
@@ -237,24 +237,24 @@ def _handleRegistration(request,form,template_name):
     return render(request, template_name, {'form': _form})
 
 
-def EtudiantView(request):
+def StudentView(request):
 
     """
     handle registration for students
     """
 
     form = EtudiantForm
-    return _handleRegistration(request,form,'login/register.html')
+    return _handleRegistration(request,form,'login/student.html')
 
 
 
-def AutreView(request):
+def AdminView(request):
 
     """
     handle the registration form, similar to the EtudantView
     """
     form = AutreForm
-    return _handleRegistration(request,form,'login/autre.html')
+    return _handleRegistration(request,form,'login/admin.html')
 
 
 def activate(request, uidb64, token):
@@ -277,7 +277,7 @@ def activate(request, uidb64, token):
 
         messages.success(request, 'Your account has been activated ! You can now log in')
 
-        return redirect(reverse(connexion))
+        return redirect(reverse('login:connexion'))
 
     else:
 

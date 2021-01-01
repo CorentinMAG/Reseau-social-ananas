@@ -1,16 +1,17 @@
 {%load jsonTopy %}
+{% load static %}
 <div id="navbar_small"><i class="fas fa-bars"></i></div>
 <div id="navbar_sm"><i class="fas fa-bars"></i></div>
 	<nav id="sidepanel">
 
 		<div id=logo>
 			<a href="/timeline">
-			<img id="logo-img" src="../../static/messenger/img/epfblanc.png"/>
+			<img id="logo-img" src="{% static 'messenger/img/epfblanc.png' %}"/>
 				</a>
 		</div>
 
 		<div id="deconnection">
-			<a href="{%url 'deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
+			<a href="{%url 'login:deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
 			{% if user.is_superuser %}
 			<a href="/admin" class="btn btn-outline-light">Admin</a>
 			{% endif %}
@@ -21,7 +22,7 @@
           {% else %}
           <img id="profile-img"  style="object-fit: cover" src="{{request.user.avatar}}" class="online" alt="" />
           {% endif %}
-			<span id="user_name">{{username|parse}}</span>
+			<a id="user_name" href="{% url 'profil:profil' request.user.email %}">{{username|parse}}</a>
 		</div>
 		    <form method="post" class="form-inline form-filtre">
         {% csrf_token %}

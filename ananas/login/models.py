@@ -1,10 +1,10 @@
-import hashlib
+import hashlib, os
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils.translation import ugettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.dispatch import receiver
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from actstream import action
 
 from .Manager import CustomUserManager
@@ -52,7 +52,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     email = models.EmailField(_('email address'), unique = True, primary_key = True)
     avatar = models.URLField(max_length = 200)
-    photo = models.ImageField(upload_to = 'photoProfile/', null = True)
+    photo = models.ImageField(upload_to = 'photoProfile/', null = True, blank = True)
     first_name = models.CharField(max_length = 50, verbose_name = 'First name')
     last_name = models.CharField(max_length = 50, verbose_name = 'Last name')
     is_student = models.BooleanField(default = True)
@@ -122,6 +122,9 @@ class Administration(models.Model):
 
 @receiver(post_save, sender = User)
 def Create_user_avatar(sender, instance, created, **kwargs):
+    """
+    create user avatar when the user is created
+    """
 
     if created:
         md5_email = hashlib.md5()
@@ -132,3 +135,19 @@ def Create_user_avatar(sender, instance, created, **kwargs):
         action.send(instance,verb = "account creation")
 
 
+@receiver(pre_save,sender = User)
+def delete_file_on_change(sender, instance, **kwargs):
+    """
+    delete from the file system the user old photo
+    after updating 
+    """
+
+    try:
+        old_file = User.objects.get(pk = instance.pk).photo
+
+        new_file = instance.photo
+
+        if old_file != new_file:
+            old_file.delete(save = False)
+    except:
+        pass

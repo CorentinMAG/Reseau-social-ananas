@@ -14,20 +14,19 @@
   
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 	
-  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/register.css">
-  <link rel="shortcut icon" type="image/x-icon" href="{{STATIC_URL}}/static/img/ananas.png" />
+  <link rel="stylesheet" href="{% static 'login/css/register.css' %}">
+  <link rel="shortcut icon" type="image/x-icon" href="{% static 'img/ananas.png' %}" />
 </head>
 <body>
 	<div class="container">
 		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
-			<div class="title">Créer un compte</div>
 			{% if form.non_field_errors %}
 			<p class="error alert alert-danger">{{form.non_field_errors}}</p>
 			{% endif %}
 			<form method="post" action="">
 				{% csrf_token %}
 				<fieldset>
-					<legend id="informatif" style="width: 130px;">Administration</legend>
+					<legend id="informatif" style="width: 75px;">Student</legend>
 					<p><i class="fas fa-user"></i>{{form.last_name}}</p>
 					{% if form.last_name.errors %}
 					{% for error in form.last_name.errors %}
@@ -41,34 +40,40 @@
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
-					<p>{{form.campus}}</p>
-					{% if form.campus.errors %}
-					{%for error in form.campus.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
 					<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 					{% if form.email.errors %}
 					{%for error in form.email.errors%}
 			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
+					<p>{{form.master}}</p>
+					{% if form.master.errors %}
+					{%for error in form.master.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
+			{% endfor %}
+			{% endif %}
+					<p>{{form.campus}}</p>
+					{% if form.campus.errors %}
+					{%for error in form.campus.errors%}
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
+			{% endfor %}
+			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password1}}</p>
 					{% if form.password1.errors %}
 					{%for error in form.password1.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:55px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 					<p><i class="fas fa-unlock-alt"></i>{{form.password2}}</p>
 					{% if form.password2.errors %}
 					{%for error in form.password2.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:2px;"></i>{{error}}</p>
+			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:45px;"></i>{{error}}</p>
 			{% endfor %}
 			{% endif %}
 				</fieldset>
 				<div class="zone_button">
-					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span> Créer un compte</button>
-					<p class="mdc-button mdc-button--raised"> <a href="{% url 'register' %}"><span class="mdc-button__ripple"></span> Retour</a></p>
+					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span>Create account</button>
+					<p class="mdc-button mdc-button--raised"> <a href="{% url 'login:register' %}"><span class="mdc-button__ripple"></span>Go back</a></p>
 				</div>
 		
 			</form>

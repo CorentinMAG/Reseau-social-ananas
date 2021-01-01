@@ -16,11 +16,11 @@ urlpatterns = [
 	# one other way to do that is to create another path(r'^logout/$', 'django.contrib.auth.views.logout',{'next_page': '/'})
 	# but as we have already done a generic import of all auth urls it is not convenient 
     path('admin/', admin.site.urls),
-    path('account/', include('login.urls')),
+    path('account/', include('login.urls', namespace = 'login')),
     path('messenger-api/', include('messenger.api.urls')),
     path('messenger/', include('messenger.urls')),
     path('timeline/', include("timeline.urls")),
-    path('profil/', include("profil.urls")),
+    path('profil/', include("profil.urls", namespace = 'profil')),
     path('mdeditor/', include('mdeditor.urls')),
 	path('', include('pagedown.urls')),
     path('', lambda r: HttpResponseRedirect('account/connexion')),

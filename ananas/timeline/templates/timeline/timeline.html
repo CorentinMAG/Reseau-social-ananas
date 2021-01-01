@@ -1,7 +1,8 @@
 {% extends "header.html" %}
 {% block title %}Timeline{% endblock %}
 {% block headerlink%}
-<link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/timeline.css">
+{% load static %}
+<link rel="stylesheet" href="{% static 'timeline/css/timeline.css' %}">
 {% endblock %}
 {% block content %}
     {%if posts.count > 0 %}
@@ -136,9 +137,6 @@
     }
 
     window.onload = AppendNewChat(token);
-    document.querySelector('#user_name').addEventListener('click',(e)=>{
-	window.location = "/profil"
-});
 
 </script>
 {% endblock %}

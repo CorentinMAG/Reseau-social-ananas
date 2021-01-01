@@ -1,17 +1,22 @@
 {% extends "header-login.html" %}
 {% block title %}Connexion{%endblock%}
-{%block headerlink %}<!-- CSS connexion page -->
-  <link rel="stylesheet" href="{{STATIC_URL}}/static/login/css/connexion.css">
-<!-- End css connexion page -->{% endblock %}
+{%block headerlink %}
+{% load static %}
+<!-- CSS connexion page -->
+  <link rel="stylesheet" href="{% static 'login/css/connexion.css' %}">
+<!-- End css connexion page -->
+{% endblock %}
 {%block content%}
+
 <div class="container">
+	
 		<div class="content shadow-lg p-3 mb-5 bg-white rounded">
 			<div class="title">
-				<!--<h2>Se connecter</h2>-->
-				<img src="/static/login/img/phiblanc.png" alt="" height="110px" width="120px"/>
+				
+				<img src="{% static 'login/img/phiblanc.PNG' %}" alt="" height="110px" width="120px"/>
 			</div>
 			{% if error %}
-			<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>Email ou password invalides !</p>
+			<p class="error alert alert-danger" ><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>Email or password incorrect !</p>
 			{% endif %}
 			{% if form.email.errors %}
 			{% for error in form.email.errors%}
@@ -22,7 +27,7 @@
 				{% csrf_token %}
 				<p><i class="fas fa-envelope"></i>{{form.email}}</p>
 				<p><i class="fas fa-unlock"></i>{{form.password}}</p>
-				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Rester connecté</div><div style="text-align: right"><div class="onoffswitch">{{form.stay_connected}}
+				<p><div style="text-align: center;margin-top:0%;color: #FFFFFF;font-size: 17px;font-family: 'Helvetica',sans-serif;">Stay connected</div><div style="text-align: right"><div class="onoffswitch">{{form.stay_connected}}
 				    <label class="onoffswitch-label" for="myonoffswitch">
 				        <div class="onoffswitch-inner"></div>
 				        <div class="onoffswitch-switch"></div>
@@ -31,9 +36,9 @@
 				</div></p>
 
 				<div class="zone_button">
-					<p class="mdc-button mdc-button--raised"> <a href="{% url 'register' %}"> <span class="mdc-button__ripple"></span> S'enregistrer</a></p>
-					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span> Login</button>
-					<a href="{% url 'password_reset' %}">Mot de passe oublié ?</a>
+					<button type="submit" class="mdc-button mdc-button--raised"><i class="fas fa-sign-in-alt"></i>  <span class="mdc-button__ripple"></span>Sign in</button>
+					<p class="mdc-button mdc-button--raised"> <a href="{% url 'login:register' %}"> <span class="mdc-button__ripple"></span> Sign up</a></p>
+					<a href="{% url 'login:password_reset' %}">forgot your password ?</a>
 				</div>
 			</form>
 		</div>

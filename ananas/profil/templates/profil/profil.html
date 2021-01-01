@@ -32,36 +32,36 @@
 
 
             <div class="text-center">
-                {% if UserProfile.photo is not None and UserProfile.photo != "" %}
-                    <img src="{{ UserProfile.photo.url }}" alt="">
+                {% if UserProfil.photo is not None and UserProfil.photo != "" %}
+                    <img src="{{ UserProfil.photo.url }}" alt="">
                 {% else %}
-                    <img src="{{ UserProfile.avatar }}" alt="">
+                    <img src="{{ UserProfil.avatar }}" alt="">
                 {% endif %}
             </div>
             </hr><br>
 
 
             <div class="card mb-3">
-                <div class="card-header">Date d'inscription </div>
+                <div class="card-header">Inscription date </div>
                 <div class="card-body">
-                    <p class="card-text"> {{ UserProfile.date_joined }} </p>
+                    <p class="card-text"> {{ UserProfil.date_joined }} </p>
                 </div>
 
             </div>
             <div class="card mb-3">
-                <div class="card-header">Dernière connexion </div>
+                <div class="card-header">Last connexion </div>
                 <div class="card-body">
-                    <p class="card-text"> {{ UserProfile.last_login }} </p>
+                    <p class="card-text"> {{ UserProfil.last_login }} </p>
                 </div>
 
             </div>
 
 
             <div class="card mb-3">
-                <div class="card-header">Activité</div>
+                <div class="card-header">Activities</div>
                 <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Article{{countArticles|pluralize}}</strong></span>{{countArticles}}</li>
-                <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Commentaire{{countCommentaires|pluralize}}</strong></span>{{countCommentaires}}</li>
+                <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Comment{{countCommentaires|pluralize}}</strong></span>{{countCommentaires}}</li>
                 <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Message{{countMessages|pluralize}}</strong></span>{{countMessages}}</li>
             </ul>
             </div>
@@ -69,17 +69,17 @@
         </div><!--/col-3-->
         <div class="col-sm-9">
             <div class="userData ml-3">
-                    <h2 style="display: inline">{{ UserProfile.first_name }} {{ UserProfile.last_name }}</h2>
-                {% if UserProfile == request.user %}
-                    <a class="btn btn-light btn-lg" style="float: right" href="{% url 'update-profil' %}">Editer</a>
+                    <h2 style="display: inline">{{ UserProfil.first_name }} {{ UserProfil.last_name }}</h2>
+                {% if UserProfil == request.user %}
+                    <a class="btn btn-light btn-lg" style="float: right" href="{% url 'profil:update' %}">Editer</a>
                 {% endif %}
 
                 <br/>
 
-                {% if UserProfile.is_autre %}
+                {% if not UserProfil.is_student %}
                     <span class="badge badge-info">Administration</span>
                 {% else %}
-                    <span class="badge badge-info ">Etudiant</span>
+                    <span class="badge badge-info ">Student</span>
                 {% endif %}
             </div>
 
@@ -87,7 +87,7 @@
             <nav>
   <div class="nav nav-tabs" id="nav-tab" role="tablist">
     <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Profil</a>
-    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Activités</a>
+    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">Activities</a>
   </div>
 </nav>
 <div class="tab-content" id="nav-tabContent">
@@ -96,63 +96,47 @@
                 <div class="form-group">
 
                 <div class="col-xs-6">
-                    <label for="first_name"><h4>Prénom</h4></label>
-                    <p><i class="fas fa-user" id="first_name"></i><span>{{ UserProfile.first_name }}</span></p>
+                    <label for="first_name"><h4>First name</h4></label>
+                    <p><i class="fas fa-user" id="first_name"></i><span>{{ UserProfil.first_name }}</span></p>
                 </div>
             </div>
             <div class="form-group">
 
                 <div class="col-xs-6">
-                    <label for="last_name"><h4>Nom</h4></label>
-                    <p><i class="fas fa-user" id="last_name"></i><span>{{ UserProfile.last_name }}</span></p>
+                    <label for="last_name"><h4>Last name</h4></label>
+                    <p><i class="fas fa-user" id="last_name"></i><span>{{ UserProfil.last_name }}</span></p>
                 </div>
             </div>
             <div class="form-group">
 
                 <div class="col-xs-6">
                     <label for="email"><h4>Email</h4></label>
-                    <p><i class="fas fa-envelope" id="email"></i><span>{{ UserProfile.email }}</span></p>
-                </div>
-            </div>
-            <div class="form-group">
-
-                <div class="col-xs-6">
-                    <label for="birthdate"><h4>Date de naissance</h4></label>
-                    <p><i class="fas fa-birthday-cake" id="birthdate"></i>
-                        <span>
-                             {% if UserProfile.Birthdate != None %}
-                            {{ UserProfile.Birthdate }}
-                        {% else %}
-                            Non renseigné
-                        {% endif %}
-
-                        </span>
-                    </p>
+                    <p><i class="fas fa-envelope" id="email"></i><span>{{ UserProfil.email }}</span></p>
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="col-xs-6">
-                    {% if UserProfile.is_autre %}
+                    {% if not UserProfil.is_student %}
                         <label for="poste"><h4>Poste</h4></label>
                         <p><i class="fas fa-user" id="poste"></i>
                             <span>
-                                {% if UserProfile.user_admin.poste != None %}
-                                {{ UserProfile.user_admin.poste }}
+                                {% if UserProfil.user_admin.poste != None %}
+                                {{ UserProfil.user_admin.poste }}
                             {% else %}
-                                Non renseigné
+                                Unknown
                             {% endif %}
                             </span>
 
                         </p>
                     {% else %}
-                        <label for="majeure"><h4>Majeure</h4></label>
+                        <label for="majeure"><h4>Master</h4></label>
                         <p><i class="fas fa-user-graduate" id="majeure"></i>
                             <span>
-                                 {% if UserProfile.user_etudiant.majeure %}
-                            {{ UserProfile.user_etudiant.majeure }}
+                                 {% if UserProfil.user_student.master %}
+                            {{ UserProfil.user_student.master }}
                             {%else%}
-                            Non renseigné
+                            Unknown
                             {%endif%}
                             </span>
                         </p>
@@ -167,10 +151,10 @@
                     <label for="campus"><h4>Campus</h4></label>
                     <p><i class="fas fa-search-location" id="campus"></i>
                         <span>
-                            {% if UserProfile.campus != None %}
-                            {{ UserProfile.campus }}
+                            {% if UserProfil.campus != None %}
+                            {{ UserProfil.campus }}
                         {% else %}
-                            Non renseigné
+                            Unknown
                         {% endif %}
                         </span>
 
@@ -181,12 +165,12 @@
 
   </div>
   <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
-      {% activity_stream 'actor' UserProfile %}
+      {% activity_stream 'actor' UserProfil %}
       <ul style="padding: 20px">
           {% for action in stream %}
     <li>{% display_action action %}</li>
           {% empty %}
-          <div style="padding:20px">{{UserProfile.las_name|upper}} {{UserProfile.first_name}} n'est pas actif... :(</div>
+          <div style="padding:20px">{{UserProfil.first_name}} {{UserProfil.last_name|upper}} has no activity... :(</div>
 {% endfor %}
 
       </ul>

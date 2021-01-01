@@ -75,7 +75,7 @@ class AutreForm(forms.Form):
     campus = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
                                     widget=forms.Select(attrs={'class': 'form-control', 'id': 'select_campus_autre'}))
     email = forms.EmailField(label="", widget=forms.EmailInput(
-        attrs={'class': 'form-control', 'placeholder': 'prenom.nom@example.fr', 'id': 'autre_email'}))
+        attrs={'class': 'form-control', 'placeholder': 'john.doe@example.fr', 'id': 'autre_email'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
         attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password1_autre'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
@@ -147,9 +147,9 @@ class EtudiantForm(UserCreationForm):
                                     widget=forms.Select(
                                         attrs={'class': 'form-control', 'id': 'select_campus_etudiant'}))
     password1 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Mot de passe', 'id': 'password1'}))
+        attrs={'class': 'form-control', 'placeholder': 'Password', 'id': 'password1'}))
     password2 = forms.CharField(label="", widget=forms.PasswordInput(
-        attrs={'class': 'form-control', 'placeholder': 'Vérification du mot de passe', 'id': 'password2'}))
+        attrs={'class': 'form-control', 'placeholder': 'Confirm password', 'id': 'password2'}))
     master = forms.ModelChoiceField(empty_label=None, queryset=None, label="",
                                      widget=forms.Select(attrs={'class': 'form-control', 'id': 'majeure'}))
 

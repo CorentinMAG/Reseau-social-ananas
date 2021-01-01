@@ -37,33 +37,40 @@
 
 
       <div class="text-center">
-          {% if UserProfile.photo is not None and UserProfile.photo != "" %}
-          <img src="{{UserProfile.photo.url}}" alt="">
+          {% if UserProfil.photo is not None and UserProfil.photo != "" %}
+          <img src="{{UserProfil.photo.url}}" alt="">
           {% else %}
-          <img src="{{UserProfile.avatar}}" alt="">
+          <img src="{{UserProfil.avatar}}" alt="">
           {% endif %}
 
-        <h6>Télécharger une photo...</h6>
           <form class="form"  method="post" id="registrationForm" enctype="multipart/form-data">
-        {{form.photo}}
+        {{user_form.photo}}
       </div>
             </hr>
             <br>
 
 
           <div class="card mb-3">
-             <div class="card-header">Date d'inscription </div>
+             <div class="card-header">Inscription date </div>
                 <div class="card-body">
-                    <p class="card-text"> {{ UserProfile.date_joined }} </p>
+                    <p class="card-text"> {{ UserProfil.date_joined }} </p>
                 </div>
           </div>
 
+          <div class="card mb-3">
+                <div class="card-header">Last connexion </div>
+                <div class="card-body">
+                    <p class="card-text"> {{ UserProfil.last_login }} </p>
+                </div>
+
+            </div>
+
 
           <div class="card mb-3">
-                <div class="card-header">Activité</div>
+                <div class="card-header">Activities</div>
                 <ul class="list-group list-group-flush">
                 <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Article{{countArticles|pluralize}}</strong></span>{{countArticles}}</li>
-                <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Commentaire{{countCommentaires|pluralize}}</strong></span>{{countCommentaires}}</li>
+                <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Comment{{countCommentaires|pluralize}}</strong></span>{{countCommentaires}}</li>
                 <li class="list-group-item d-flex justify-content-between"><span class=""><strong>Message{{countMessages|pluralize}}</strong></span>{{countMessages}}</li>
             </ul>
             </div>
@@ -73,14 +80,14 @@
 
     	<div class="col-sm-9">
                             <div class="userData ml-3">
-                                <h2 style="display: inline" >{{ UserProfile.first_name}} {{ UserProfile.last_name }}</h2>
+                                <h2 style="display: inline" >{{ UserProfil.first_name}} {{ UserProfil.last_name }}</h2>
                             </div>
             <br/>
 
-                {% if UserProfile.is_autre %}
+                {% if not UserProfil.is_student %}
                     <span class="badge badge-info">Administration</span>
                 {% else %}
-                    <span class="badge badge-info ">Etudiant</span>
+                    <span class="badge badge-info ">Student</span>
                 {% endif %}
 
                 <hr>
@@ -90,45 +97,33 @@
                       <div class="form-group">
 
                           <div class="col-xs-6">
-                              <label for="first_name"><h4>Prénom</h4></label>
-                              <p><i class="fas fa-user" id="first_name"f></i>{{form.prenom}}</p>
+                              <label for="first_name"><h4>First name</h4></label>
+                              <p><i class="fas fa-user" id="first_name"f></i>{{user_form.first_name}}</p>
                           </div>
                       </div>
                       <div class="form-group">
 
                           <div class="col-xs-6">
-                            <label for="last_name"><h4>Nom</h4></label>
-                              <p><i class="fas fa-user" id="last_name"f></i>{{form.nom}}</p>
+                            <label for="last_name"><h4>Last name</h4></label>
+                              <p><i class="fas fa-user" id="last_name"f></i>{{user_form.last_name}}</p>
                           </div>
                       </div>
                       <div class="form-group">
 
                           <div class="col-xs-6">
                               <h4>Email</h4>
-                              {{UserProfile.email}}
-                          </div>
-                      </div>
-                      <div class="form-group">
-
-                          <div class="col-xs-6">
-                              {% if form.naissance and form.naissance.errors %}
-					{%for error in form.naissance.errors%}
-			<p class="error alert alert-danger"><i class="fas fa-exclamation-triangle" style="top:32%;left:10px;"></i>{{error}}</p>
-			{% endfor %}
-			{% endif %}
-                              <label for="birthdate"><h4>Date de naissance</h4></label>
-                             <p><i class="fas fa-birthday-cake" id="birthdate"></i>{{form.naissance}}</p>
+                              {{user.email}}
                           </div>
                       </div>
 
                       <div class="form-group">
                           <div class="col-xs-6">
-                              {% if user.is_autre%}
+                              {% if not UserProfil.is_student%}
                               <label for="poste"><h4>Poste</h4></label>
-                             <p><i class="fas fa-user" id="poste"></i>{{form.poste}}</p>
+                             <p><i class="fas fa-user" id="poste"></i>{{child_form.poste}}</p>
                               {% else %}
-                              <label for="majeure"><h4>Majeure</h4></label>
-                             <p><i class="fas fa-user-graduate" id="majeure"></i>{{form.majeure}}</p>
+                              <label for="majeure"><h4>Master</h4></label>
+                             <p><i class="fas fa-user-graduate" id="majeure"></i>{{child_form.master}}</p>
                               {% endif %}
 
                           </div>
@@ -138,15 +133,15 @@
 
                           <div class="col-xs-6">
                               <label for="campus"><h4>Campus</h4></label>
-                              <p><i class="fas fa-search-location" id="campus"></i>{{form.campus}}</p>
+                              <p><i class="fas fa-search-location" id="campus"></i>{{user_form.campus}}</p>
                           </div>
                       </div>
                       <div class="form-group">
                            <div class="col-xs-12">
                                 <br>
-                              	<button class="btn btn-lg btn-success" type="submit">Enregistrer</button>
+                              	<button class="btn btn-lg btn-success" type="submit">Save</button>
                                	<a class="btn btn-lg btn-light"
-                                        href="{% url 'profile-home' UserProfile.email %}">Retour</a></button>
+                                        href="{% url 'profil:profil' UserProfil.email %}">Go back</a></button>
                             </div>
                       </div>
               	</form>
