@@ -5,67 +5,66 @@
 <link rel="stylesheet" href="{% static 'timeline/css/timeline.css' %}">
 {% endblock %}
 {% block content %}
-    {%if posts.count > 0 %}
-    {% if can_add_article %}
-<div class="container">
-    <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
-</div>
-
-    {% endif %}
-    {% endif %}
-        <div class="container" style="min-height: 100vh">
-            <div class="row">
-    {% for post in posts %}
-        <div class="col-lg-6 col-sm-6 mb-4">
-          <div class="card h-100 shadow-sm p-3 mb-5 bg-white rounded">
-            <p class="img-container"><img class="card-img-top" src="{{post.photo.url}}" alt=""></p>
-            <div class="card-body">
-              <h4 class="card-title">
-                <a href="{% url 'view_article' id=post.pk slug=post.slug %}" class="title-article">{{ post.titre }}</a>
-              </h4>
-                <h6 class="tags-article">
-                    {% for tag in post.tags.all %}
-                    <span class="badge badge-info tags-article">{{tag}}</span>
-                    {% endfor %}
-                </h6>
-                <hr/>
-                <div class="card-text content-markdown">
-                  {{ post.get_markdown|truncatechars_html:200}}
-              </div>
+    {%if articles.count > 0 %}
+        {% if perms.timeline.add_article %}
+            <div class="container">
+                <a href="{% url 'timeline:add_article' %}" class="btn btn-info add-article" >New article</a>
             </div>
-              {% if user == post.auteur %}
-               <a class="btn btn-danger" style="width: 40%;margin:5px;" href="{% url "delete-article" post.pk %}">Supprimer</a>
-              {% endif %}
-          </div>
-        </div>
+        {% endif %}
+    {% endif %}
+    <div class="container" style="min-height: 100vh">
+        <div class="row">
+            {% for article in articles %}
+                <div class="col-lg-6 col-sm-6 mb-4">
+                  <div class="card h-100 shadow-sm p-3 mb-5 bg-white rounded">
+                    <p class="img-container"><img class="card-img-top" src="{{article.photo.url}}" alt=""></p>
+                    <div class="card-body">
+                      <h4 class="card-title">
+                        <a href="{% url 'timeline:view_article' pk=article.pk slug=article.slug %}" class="title-article">{{ article.title }}</a>
+                      </h4>
+                        <h6 class="tags-article">
+                            {% for tag in article.tags.all %}
+                                <span class="badge badge-info tags-article">{{tag}}</span>
+                            {% endfor %}
+                        </h6>
+                        <hr/>
+                        <div class="card-text content-markdown">
+                          {{ article.get_markdown|truncatechars_html:200}}
+                      </div>
+                    </div>
+                    {% if request.user == article.publisher %}
+                        <a class="btn btn-danger" style="width: 40%;margin:5px;" href="{% url 'timeline:delete_article' pk=article.pk %}">Delete</a>
+                    {% endif %}
+                  </div>
+                </div>
 
-        {% empty %}
-        <div class="jumbotron">
-            <h1 class="display-4">Aucun article !</h1>
-            <p class="lead">Il n'y a aucun article sur la timeline, il est temps d'en créer !</p>
-            <hr class="my-4">
-            <p>Votre timeline parait désespérément vide.... :(</p>
-            {% if can_add_article or user.is_superuser %}
-                <a href="{% url 'add-article' %}" class="btn btn-info add-article" >Nouveau post</a>
-            {% endif %}
+                {% empty %}
+                <div class="jumbotron">
+                    <h1 class="display-4">There is no Articles !</h1>
+                    <p class="lead">There is no articles on the timeline, it's time to create one !</p>
+                    <hr class="my-4">
+                    <p>Your timeline looks so empty... :(</p>
+                    {% if perms.timeline.add_article %}
+                        <a href="{% url 'timeline:add_article' %}" class="btn btn-info add-article" >New article</a>
+                    {% endif %}
+                </div>
+            {% endfor %}
         </div>
-    {% endfor %}
+        {% if is_paginated %}
+            <div class="pagination">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}">Previous</a> —
+                {% endif %}
+                Page {{ page_obj.number }} over {{ page_obj.paginator.num_pages }}
+                {% if page_obj.has_next %}
+                    — <a href="?page={{ page_obj.next_page_number }}">Next</a>
+                {% endif %}
             </div>
-            {% if is_paginated %}
-    <div class="pagination">
-           {% if page_obj.has_previous %}
-               <a href="?page={{ page_obj.previous_page_number }}">Précédente</a> —
-           {% endif %}
-           Page {{ page_obj.number }} sur {{ page_obj.paginator.num_pages }}
-           {% if page_obj.has_next %}
-              — <a href="?page={{ page_obj.next_page_number }}">Suivante</a>
-           {% endif %}
+        {% endif %}
     </div>
-{% endif %}
-        </div>
 {% endblock %}
 {% block script%}
-    <script type="text/javascript">
+<!--     <script type="text/javascript">
     let chat_rooms = document.querySelector('#all_chats').firstElementChild;
     const token = "{{ request.session.token }}";
     const email = {{ email }}
@@ -78,7 +77,7 @@
             headers:{'Authorization':`Token ${token}`,'Content-Type': 'application/json'}
         }).then(resp=>{
             resp.json().then(data=>{
-                if(data['detail']){console.error('Pas de chat!!')}
+                if(data['detail']){console.error('No chat !!')}
                 else{
                     let current_chat_id=document.querySelectorAll(`li[data-chat_id]`);
                     if(current_chat_id.length>0){
@@ -138,6 +137,6 @@
 
     window.onload = AppendNewChat(token);
 
-</script>
+</script> -->
 {% endblock %}
 

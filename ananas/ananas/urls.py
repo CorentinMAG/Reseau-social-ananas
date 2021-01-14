@@ -19,7 +19,7 @@ urlpatterns = [
     path('account/', include('login.urls', namespace = 'login')),
     path('messenger-api/', include('messenger.api.urls')),
     path('messenger/', include('messenger.urls')),
-    path('timeline/', include("timeline.urls")),
+    path('timeline/', include("timeline.urls", namespace = 'timeline')),
     path('profil/', include("profil.urls", namespace = 'profil')),
     path('mdeditor/', include('mdeditor.urls')),
 	path('', include('pagedown.urls')),

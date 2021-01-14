@@ -37,7 +37,7 @@ def connexion(request):
             token, _ = Token.objects.get_or_create(user=request.user)
             request.session['token'] = token.key
 
-        return redirect(reverse('timeline-home'))
+        return redirect('timeline:timeline-home')
 
     else:
         error = False
@@ -71,7 +71,7 @@ def connexion(request):
                         request.user.last_login = timezone.now()
                         request.user.save()
 
-                        return redirect(reverse('timeline-home'))
+                        return redirect('timeline:timeline-home')
                 else:
                     error = True
         else:

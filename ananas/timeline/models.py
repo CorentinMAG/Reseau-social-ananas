@@ -11,6 +11,12 @@ from mdeditor.fields import MDTextField
 
 
 def render_blank_link(self, tokens, idx, options, env):
+
+    """
+    link inside an article are opened in a new window 
+    (we don't leave the current page)
+    """
+
     aIndex = tokens[idx].attrIndex('target')
     if (aIndex < 0):
         tokens[idx].attrPush(['target', '_blank'])  # add new attribute
@@ -34,9 +40,13 @@ User = get_user_model()
 
 
 class Tags(models.Model):
-    """Tag lié à l'article, en facilite sa recherche."""
-    text_tag = models.CharField(max_length=50)
-    type_tag = models.CharField(max_length=50)
+
+    """
+    Article's tags
+    """
+
+    text_tag = models.CharField(max_length = 50)
+    type_tag = models.CharField(max_length = 50)
 
     def __str__(self):
         return self.text_tag
@@ -47,25 +57,25 @@ class Tags(models.Model):
 
 
 class Article(models.Model):
+    
     """
-    Un post posté sur la timeline
+    Article
     """
-    id = models.AutoField(primary_key=True)
-    date = models.DateTimeField(auto_now_add=True,
-                                verbose_name="Date de parution")
-    titre = models.CharField(max_length=100)
-    auteur = models.ForeignKey(User, on_delete=models.CASCADE)
-    contenu_post = MDTextField()
-    tags = models.ManyToManyField(Tags, related_name='tag')
-    slug = models.SlugField(max_length=100)
-    photo = models.ImageField(upload_to="photos/")
-    modified = models.DateTimeField(null=True, blank=True)
+
+    date = models.DateTimeField(auto_now_add = True, verbose_name = "publish date")
+    title = models.CharField(max_length = 100)
+    publisher = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'my_articles')
+    post = MDTextField()
+    tags = models.ManyToManyField(Tags, blank = True)
+    slug = models.SlugField(max_length = 100)
+    photo = models.ImageField(upload_to = "article/")
+    modified = models.DateTimeField(null = True)
 
     def __str__(self):
-        return self.titre
+        return self.title
 
     def get_markdown(self):
-        content = self.contenu_post
+        content = self.post
         markdown_content = md.render(content)
         return mark_safe(markdown_content)
 
@@ -75,48 +85,23 @@ class Article(models.Model):
         ordering = ["-date"]
 
 
-def _delete_file(path):
-    if os.path.isfile(path):
-        os.remove(path)
+class Comment(models.Model):
 
-
-@receiver(post_delete, sender=Article)
-def delete_article(sender, instance, **kwargs):
-    """Ainsi quand on supprime un article la photo associé est également supprimé
-    (inutile de la garder)"""
-    if instance.photo:
-        _delete_file(instance.photo.path)
-
-
-class Pieces_jointes_post(models.Model):
     """
-    Pièces jointes dans les articles (Photos, documents, ...)
+    Article's comments
     """
-    id_pj = models.AutoField(primary_key=True)
-    lien_pj = models.URLField()
-    id_post = models.ForeignKey(Article, on_delete=models.CASCADE)
 
-    def __str__(self):
-        return self.lien_pj
-
-
-class Commentaires(models.Model):
-    """
-    Commentaires du post.
-    """
-    id_comm = models.AutoField(primary_key=True)
-    contenu_comm = models.CharField(max_length=500)
-    id_post = models.ForeignKey(Article, on_delete=models.CASCADE, blank=True, null=True)
-    id_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    date_comm = models.DateTimeField(auto_now_add=True,
-                                     verbose_name="Date de commentaire", blank=True, null=True)
-    parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
+    content = models.CharField(max_length = 500)
+    article = models.ForeignKey(Article, on_delete = models.CASCADE, related_name = 'comments')
+    user = models.ForeignKey(User, on_delete = models.CASCADE, related_name = 'my_comments')
+    date = models.DateTimeField(auto_now_add = True, verbose_name = "comment date")
+    parent = models.ForeignKey('self', null = True, blank = True, on_delete = models.CASCADE)
 
     def children(self):
-        return Commentaires.objects.filter(parent=self)
+        return Comment.objects.filter(parent = self)
 
     def get_markdown(self):
-        content = self.contenu_comm
+        content = self.content
         markdown_content = md.render(content)
         return mark_safe(markdown_content)
 
@@ -127,16 +112,19 @@ class Commentaires(models.Model):
         else:
             return True
 
-    def approve(self):
-        self.approved_comment = True
-        self.save()
-
     def __str__(self):
-        return self.contenu_comm
+        return self.content
 
     class Meta:
-        verbose_name = 'Commentaire'
-        verbose_name_plural = "Commentaires"
-        ordering = ["-date_comm"]
+        ordering = ["-date"]
 
 
+@receiver(post_delete, sender = Article)
+def delete_article(sender, instance, **kwargs):
+
+    """
+    delete photo from the file system when an Article is deleted
+    """
+
+    if instance.photo and os.path.isfile(instance.photo.path):
+        os.remove(instance.photo.path)

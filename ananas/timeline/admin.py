@@ -1,35 +1,51 @@
 from django.contrib import admin
 from django.utils.text import Truncator
 
-from .models import Article, Tags, Commentaires
+from .models import Article, Tags, Comment
 
 
+@admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
+
     """
-    Personnalise l'affichage des articles dans l'interface admin
+    Article view in the django admin site
     """
-    list_display = ('titre', 'auteur', 'date', 'apercu_contenu')
-    list_filter = ('auteur',)
+
+    readony_fields = [
+        'date',
+        'modified'
+    ]
+
+    list_display = ('title', 'publisher', 'date', 'truncated_post')
+
+    list_filter = ('publisher','date')
     date_hierarchy = 'date'
     ordering = ('date',)
-    search_fields = ('titre',)
-    prepopulated_fields = {'slug': ('titre',), }
+    search_fields = ('title',)
+    prepopulated_fields = {'slug': ('title',), }
 
-    def apercu_contenu(self, article):
+
+    fieldsets = (
+        (None, {'fields': ('title','publisher','post','photo')}),
+        ('Information', {'fields': ('tags', 'slug')}),
+    )
+
+    def truncated_post(self, article):
+
         """
-        Retourne les 40 premiers caractères du contenu de l'article,
-        suivi de points de suspension si le texte est plus long.
+        Return the first 40 characters of the article followed by
+        ... if the text is longer
         """
-        return Truncator(article.contenu_post).chars(40, truncate='...')
+
+        return Truncator(article.post).chars(40, truncate='...')
 
 
-class CommentairesAdmin(admin.ModelAdmin):
-    list_display = ('id_post', 'contenu_comm', 'date_comm',)
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
 
-    list_filter = ('date_comm',)
-    date_hierarchy = 'date_comm'
+    list_display = ('content', 'date',)
 
+    list_filter = ('date',)
+    date_hierarchy = 'date'
 
-admin.site.register(Article, ArticleAdmin)
 admin.site.register(Tags)
-admin.site.register(Commentaires, CommentairesAdmin)

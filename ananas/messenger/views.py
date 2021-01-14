@@ -4,7 +4,7 @@ from .models import Chat
 from django.contrib.auth import get_user_model
 from django.utils.safestring import mark_safe
 import json
-from timeline.views import search
+#from timeline.views import search
 from timeline.form import SearchTag
 from timeline.models import Article, Tags
 

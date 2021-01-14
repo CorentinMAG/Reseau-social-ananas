@@ -5,7 +5,7 @@ from .forms import UpdateAdminProfil, UpdateUserProfil, UpdateStudentProfil
 from login.models import Student
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404, reverse, redirect
-from timeline.models import Article, Commentaires
+from timeline.models import Article, Comment
 from messenger.models import Message
 from actstream import action
 from actstream.models import user_stream
@@ -25,10 +25,10 @@ def profil(request, email):
     args = {
         'UserProfil': user,
         'countMessages': Message.objects.filter(contact = user).count(),
-        'countArticles': Article.objects.filter(auteur = user).count(),
-        'countComments': Commentaires.objects.filter(id_user = user).count()
+        'countArticles': Article.objects.filter(publisher = user).count(),
+        'countComments': Comment.objects.filter(user = user).count()
     }
-
+    
     return render(request, 'profil/profil.html', args)
 
 
@@ -75,8 +75,8 @@ def profilEdit(request):
             'child_form':child_form,
             'UserProfil': user,
             'countMessages': Message.objects.filter(contact = user).count(),
-            'countArticles': Article.objects.filter(auteur = user).count(),
-            'countCommentaires': Commentaires.objects.filter(id_user = user).count()
+            'countArticles': Article.objects.filter(publisher = user).count(),
+            'countCommentaires': Comment.objects.filter(user = user).count()
         }
 
     return render(request, 'profil/profiledit.html', args)

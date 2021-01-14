@@ -1,8 +1,9 @@
 {% extends "header.html" %}
 {% block title %}Article{%endblock%}
 {%block headerlink %}
-<link rel="stylesheet" href="{{STATIC_URL}}/static/timeline/css/comment.css">
-<link href="{{STATIC_URL}}/static/timeline/ZoomBox/css/zoom.css" rel="stylesheet" type="text/css" />
+{% load static %}
+<link rel="stylesheet" href="{% static 'timeline/css/comment.css' %}">
+<link href="{% static 'timeline/ZoomBox/css/zoom.css' %}" rel="stylesheet" type="text/css" />
 <link rel="stylesheet"
       href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/styles/default.min.css">
 <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.0/highlight.min.js"></script>
@@ -20,37 +21,37 @@
       <div class="col-lg-12">
 
         <!-- Title -->
-        <h1 class="mt-4" style="line-height: 0.8;">{{post.titre}}</h1>
+        <h1 class="mt-4" style="line-height: 0.8;">{{article.title}}</h1>
 
         <!-- Author -->
         <p class="lead">
-          par
-          <a class="author-article" href="{% url 'profile-home' post.auteur.email %}">{{ post.auteur.last_name |upper}} {{post.auteur.first_name}}</a>
-           {% if user == post.auteur or user.is_superuser %} <a id="update" href="{% url 'update-article' post.pk post.slug %}" class="btn btn-success">Modifier</a> {% endif %}
+          by
+          <a class="author-article" href="{% url 'profil:profil' email=article.publisher.email %}">{{ article.publisher.last_name |upper}} {{article.publisher.first_name}}</a>
+           {% if user == article.publisher or user.is_superuser %} <a id="update" href="{% url 'timeline:update_article' pk=article.pk slug=article.slug %}" class="btn btn-success">Modify</a> <a id="delete" style='float:right;' href="{% url 'timeline:delete_article' pk=article.pk %}" class="btn btn-danger">Delete</a>{% endif %}
         </p>
-          <div>
+         <!--  <div>
               {% for tag in tagsArticle %}
-    <a class="badge badge-info" href="{% url 'search' tag.text_tag%}">{{tag.text_tag}}</a>
+    <a class="badge badge-info" href="{% url 'timeline:search' tag.text_tag%}">{{tag.text_tag}}</a>
        {% endfor %}
-          </div>
+          </div> -->
 
         <hr>
 
         <!-- Date/Time -->
-        <p>Rédigé le {{ post.date }}</p>
-           {% if post.modified%}
-          <small>Dernière modification : {{post.modified}}</small>{%endif%}
+        <p>Posted in {{ article.date }}</p>
+           {% if article.modified%}
+          <small>Last modification : {{article.modified}}</small>{%endif%}
 
         <hr>
 
         <!-- Preview Image -->
-        <img class="img-fluid" data-action="zoom" src="{{post.photo.url}}" alt="" style="margin:auto;display: block">
+        <img class="img-fluid" data-action="zoom" src="{{article.photo.url}}" alt="" style="margin:auto;display: block">
 
         <hr>
 
         <!-- Post Content -->
           <div class="content">
-              {{post.get_markdown}}
+              {{article.get_markdown}}
           </div>
 
         <hr>
@@ -58,14 +59,14 @@
         <div class="post-comments">
             <!--Partie commentaire-->
             <div class="card my-4">
-          <h5 class="card-header">Laisser un commentaire : </h5>
+          <h5 class="card-header">Let a comment : </h5>
           <div class="card-body">
               <form id="post-comment-form" method="post">
                 {% csrf_token %}
                   <div class="form-group">
                 {{ form.contenu_comm }}
                       </div>
-                  <button type="submit" class="btn btn-success">Publier</button>
+                  <button type="submit" class="btn btn-success">Publish</button>
             </form>
           </div>
         </div>
@@ -83,7 +84,7 @@
                     </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{comment.id_user.last_name|upper}} {{comment.id_user.first_name}} {% if comment.children.count > 0 %} | <small>{{comment.children.count}} répons{{comment.children.count|pluralize:"e,es"}} </small> {% endif %}</h6> <span class="m-b-15 d-block comment_text" style="font-size: 1.1em;padding-left:5px;">{{ comment.get_markdown }} </span>
-                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{comment.date_comm |timesince}}</span> <button type="button" class="btn btn-link btn-sm comment-reply-btn">Répondre</button>{% if request.user == comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'delete_comm' comment.pk %}">Supprimer</a>{%endif%}</div>
+                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{comment.date_comm |timesince}}</span> <button type="button" class="btn btn-link btn-sm comment-reply-btn">Répondre</button>{% if request.user == comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'timeline:delete_comm' comment.pk %}">Supprimer</a>{%endif%}</div>
 
                     <div class="comment-reply toggle_children" >
                       <form method="post" class="form-inline comment-form">
@@ -103,7 +104,7 @@
                     </div>
                     <div class="comment-text w-100 media-body">
                         <h6 class="font-medium">{{child_comment.id_user.last_name|upper}} {{child_comment.id_user.first_name}}</h6> </span><span class="m-b-15 d-block comment_text">{{ child_comment.get_markdown }} </span>
-                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span>{% if request.user == child_comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'delete_comm' child_comment.pk %}">Supprimer</a>{% endif %}</div>
+                        <div class="comment-footer"> <span class="text-muted float-right">il y a {{child_comment.date_comm |timesince}}</span>{% if request.user == child_comment.id_user %}<a class="btn btn-link btn-sm" href="{% url 'timeline:delete_comm' pk=child_comment.pk %}">Supprimer</a>{% endif %}</div>
                     </div>
                 </div>
                         {% endfor%}
@@ -119,7 +120,7 @@
     </div>
 {% endblock %}
 {% block script%}
-        <script>
+ <!--        <script>
             let all_reply = document.querySelectorAll('.comment-reply-btn');
             all_reply.forEach((element)=>{
                 element.addEventListener('click',(e)=>{
@@ -213,5 +214,5 @@
             document.querySelectorAll('table').forEach((table)=>{
                 table.classList.add('table','table-striped')
             })
-        </script>
-        {%endblock%}
+        </script> -->
+{%endblock%}

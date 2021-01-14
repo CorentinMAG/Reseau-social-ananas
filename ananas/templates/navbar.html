@@ -1,18 +1,18 @@
-{%load jsonTopy %}
+<!-- {%load jsonTopy %} -->
 {% load static %}
 <div id="navbar_small"><i class="fas fa-bars"></i></div>
 <div id="navbar_sm"><i class="fas fa-bars"></i></div>
 	<nav id="sidepanel">
 
 		<div id=logo>
-			<a href="/timeline">
+			<a href="/">
 			<img id="logo-img" src="{% static 'messenger/img/epfblanc.png' %}"/>
 				</a>
 		</div>
 
 		<div id="deconnection">
-			<a href="{%url 'login:deconnexion' %}" class="btn btn-outline-light" >Déconnexion</a>
-			{% if user.is_superuser %}
+			<a href="{% url 'login:deconnexion' %}" class="btn btn-outline-light" >Log out</a>
+			{% if request.user.is_superuser %}
 			<a href="/admin" class="btn btn-outline-light">Admin</a>
 			{% endif %}
 		</div>
@@ -22,45 +22,42 @@
           {% else %}
           <img id="profile-img"  style="object-fit: cover" src="{{request.user.avatar}}" class="online" alt="" />
           {% endif %}
-			<a id="user_name" href="{% url 'profil:profil' request.user.email %}">{{username|parse}}</a>
+			<a id="user_name" href="{% url 'profil:profil' request.user.email %}">{{request.user.first_name}}</a>
 		</div>
-		    <form method="post" class="form-inline form-filtre">
+		    <!-- <form method="post" class="form-inline form-filtre">
         {% csrf_token %}
         {{ formTri }}
 				<button type="submit" class="btn btn-info"><i class="fas fa-search"></i></button>
-    </form>
+    </form> -->
 	<div id="timeline">
 		<span id="news">NEWS</span>
-		<ul>
-			{% regroup tags by type_tag as list_tag%}
+		<!-- <ul>
+			{% regroup tags by type_tag as list_tag %}
 			{% for type in list_tag%}
-			<li><a class="btn-link" href="{% url 'search-type' type.grouper %}">{{type.grouper}}</a></li>
+			<li><a class="btn-link" href="{% url 'timeline:search-type' type.grouper %}">{{type.grouper}}</a></li>
 			{% endfor %}
 
 		</ul>
 
-		<span id="tag_list_name">Tags à la une : </span>
+		<span id="tag_list_name">Hot tags : </span>
 		<div id="tag_list">
 			{% for tag in tags %}
-			<a class="badge badge-info" href="{% url 'search' tag.text_tag %}">{{tag.text_tag}}</a>
+			<a class="badge badge-info" href="{% url 'timeline:search' tag.text_tag %}">{{tag.text_tag}}</a>
 			{%endfor%}
-		</div>
+		</div> -->
 
 
 	</div>
 
 		<div class="ajout_chat">
-			<span id="messagerie" style="cursor: pointer;">Messagerie</span>
+			<!-- <span id="messagerie" style="cursor: pointer;">Messenger</span>
 
 
 			{% if request.path != '/timeline/' and article != True  %}
 			<span id="btn-add-c" class="btn btn-danger btn-circle" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus" aria-hidden="true"></i></span>
-			{% endif %}
+			{% endif %} -->
 
 		</div>
-
-
-
 
 		<div id="all_chats">
 			<ul>

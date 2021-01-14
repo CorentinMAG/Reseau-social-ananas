@@ -1,5 +1,5 @@
 from django.forms import ModelForm
-from .models import Commentaires, Article, Tags
+from .models import Comment, Article, Tags
 from django import forms
 from pagedown.widgets import PagedownWidget
 from mdeditor.fields import MDTextFormField
@@ -17,8 +17,8 @@ class CommentForm(ModelForm):
         attrs={'class': 'form-control', 'placeholder': 'Entrer votre commentaire...', 'rows': '3'}))
 
     class Meta:
-        model = Commentaires
-        fields = ('contenu_comm',)
+        model = Comment
+        fields = ('content',)
 
 
 class AddTags(forms.ModelForm):
@@ -48,21 +48,27 @@ class SearchTag(forms.ModelForm):
 
 
 class ArticleForm(forms.ModelForm):
-    titre = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Titre', 'id': 'titre_article'}))
-    contenu_post = MDTextFormField()
-    tags = forms.ModelMultipleChoiceField(queryset=None,
-                                          widget=forms.SelectMultiple(
-                                              attrs={'class': 'form-control', 'id': 'tags_article'}))
-    photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control-file', 'id': 'file_article'}))
+    # title = forms.CharField(
+    #     widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title', 'id': 'titre_article'}))
+    # content = MDTextFormField()
+    # tags = forms.ModelMultipleChoiceField(queryset=None,
+    #                                       widget=forms.SelectMultiple(
+    #                                           attrs={'class': 'form-control', 'id': 'tags_article'}))
+    # photo = forms.FileField(widget=forms.FileInput(attrs={'class': 'form-control-file', 'id': 'file_article'}))
 
-    def __init__(self,*args,**kwargs):
-        super().__init__(*args,**kwargs)
-        self.fields['tags'].queryset = Tags.objects.exclude(type_tag='invisible')
+    # def __init__(self,*args,**kwargs):
+    #     super().__init__(*args,**kwargs)
+    #     self.fields['tags'].queryset = Tags.objects.exclude(type_tag = 'invisible')
+    photo = forms.ImageField()
 
     class Meta:
         model = Article
-        exclude = ('auteur', 'slug')
+        exclude = ['publisher', 'slug','modified']
+        widgets = {
+            'title':forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Title', 'id': 'titre_article'}),
+            'tags':forms.SelectMultiple(attrs={'class': 'form-control', 'id': 'tags_article'}),
+            'content':MDTextFormField(),
+        }
 
     def clean_photo(self):
 

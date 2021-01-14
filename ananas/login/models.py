@@ -121,7 +121,21 @@ class Administration(models.Model):
 
 
 @receiver(post_save, sender = User)
+def create_admin_for_superuser(sender, instance, created, **kwargs):
+
+    """
+    once a user is creayed by the command line we have 
+    to create the corresponding Administration model
+    """
+    
+    if created:
+        if instance.is_superuser:
+            admin = Administration.objects.create(user = instance)
+            admin.save()
+
+@receiver(post_save, sender = User)
 def Create_user_avatar(sender, instance, created, **kwargs):
+
     """
     create user avatar when the user is created
     """
@@ -137,6 +151,7 @@ def Create_user_avatar(sender, instance, created, **kwargs):
 
 @receiver(pre_save,sender = User)
 def delete_file_on_change(sender, instance, **kwargs):
+    
     """
     delete from the file system the user old photo
     after updating 
